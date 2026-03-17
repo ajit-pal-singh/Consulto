@@ -17,6 +17,7 @@ class HeaderCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
 
+        titleLabel.font = .systemFont(ofSize: titleLabel.font.pointSize, weight: .semibold).rounded
         blueCardView.layer.cornerRadius = 20
         blueCardView.clipsToBounds = true
     }

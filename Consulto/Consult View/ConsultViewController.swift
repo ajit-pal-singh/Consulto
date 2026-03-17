@@ -56,27 +56,24 @@ class ConsultViewController: UIViewController,
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("[ConsultVC] didSelectItemAt: \(indexPath)")
-        print("[ConsultVC] Attempting to load storyboard 'ConsultDetailView'")
+        
         let storyboardB = UIStoryboard(name: "ConsultDetailView", bundle: nil)
-        print("[ConsultVC] Storyboard loaded: \(storyboardB)")
-        let rawVC = storyboardB.instantiateViewController(withIdentifier: "ConsultDetailedView")
-        print("[ConsultVC] Instantiated VC type: \(type(of: rawVC))")
-
-        if let detailVC = rawVC as? ConsultDetailedViewController {
-            print("[ConsultVC] Showing detail via show(_:sender:) on main thread")
-            // Ensure UI navigation happens on the main thread and after selection animation completes
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                guard let nav = self.navigationController else {
-                    assertionFailure("[ConsultVC] Expected a UINavigationController for show (push) presentation.")
-                    return
-                }
-                print("[ConsultVC] Using navigation controller: \(nav)")
-                self.show(detailVC, sender: self)
-            }
-        } else {
-            assertionFailure("[ConsultVC] Could not cast to ConsultDetailedViewController. Check Custom Class and Module in storyboard.")
+        
+        guard let detailVC = storyboardB.instantiateViewController(
+            withIdentifier: "ConsultDetailedView"
+        ) as? ConsultDetailedViewController else {
+            assertionFailure("Could not cast to ConsultDetailedViewController")
+            return
         }
+        
+        // ✅ PASS THE SELECTED SESSION
+        let selectedSession = consultSessions[indexPath.item]
+        detailVC.consultSession = selectedSession
+        
+        print("[ConsultVC] Passing session: \(selectedSession.title)")
+        
+        // Navigate
+        navigationController?.pushViewController(detailVC, animated: true)
     }
     
     func setupHeaderActions() {

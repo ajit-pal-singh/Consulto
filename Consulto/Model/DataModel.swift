@@ -18,7 +18,7 @@ struct SampleData {
             name: "Amoxicillin",
             dosage: "250 mg",
             frequency: .thriceDaily,
-            duration: "7 days",
+            duration: "From last 7 days",
             notes: "Before meals"
         ),
         Medication(
@@ -27,7 +27,7 @@ struct SampleData {
             name: "Diclofenac",
             dosage: "50 mg",
             frequency: .twiceDaily,
-            duration: "5 days",
+            duration: "From last 5 days",
             notes: "With water"
         )
     ]
@@ -39,7 +39,7 @@ struct SampleData {
     ]
 
     static let questions: [Question] = [
-        Question(text: "Is this related to dehydration?", isSelected: false),
+        Question(text: "Is this related to dehydration?", isSelected: true),
         Question(text: "Should I adjust my sleep schedule?", isSelected: false),
         Question(text: "Do I need further blood tests?", isSelected: false)
     ]
@@ -73,18 +73,20 @@ struct SampleData {
             symptoms: [
                 Symptom(name: "Headache", description: "Throbbing ache after screen time.", isExpanded: false),
                 Symptom(name: "Nausea", description: "Mild queasiness in the evening.", isExpanded: false),
-                Symptom(name: "Photophobia", description: "Light sensitivity during episodes.", isExpanded: false)
+                Symptom(name: "Photophobia", description: "Light sensitivity during episodes.", isExpanded: false),
             ],
             questions: [
+                Question(text: "Is this related to dehydration?", isSelected: false),
+                Question(text: "Should I reduce caffeine?", isSelected: false),
                 Question(text: "Is this related to dehydration?", isSelected: false),
                 Question(text: "Should I reduce caffeine?", isSelected: false)
             ],
             medications: [
-                Medication(id: UUID(), recordID: UUID(), name: "Amoxicillin", dosage: "250 mg", frequency: .thriceDaily, duration: "7 days", notes: "Before meals")
+                Medication(id: UUID(), recordID: UUID(), name: "Amoxicillin", dosage: "250 mg", frequency: .thriceDaily, duration: "From last 7 days", notes: "Before meals")
             ],
             records: records,
-            symptomsCount: 3,
-            questionsCount: 2,
+            symptomsCount: symptoms.count,
+            questionsCount: questions.count,
             notes: "Hydration plan and 20-20-20 rule advised.",
             status: .completed,
             createdAt: Calendar.current.date(byAdding: .day, value: -30, to: Date())!
@@ -104,11 +106,11 @@ struct SampleData {
                 Question(text: "Should I adjust my sleep schedule?", isSelected: false)
             ],
             medications: [
-                Medication(id: UUID(), recordID: UUID(), name: "Diclofenac", dosage: "50 mg", frequency: .twiceDaily, duration: "5 days", notes: "With water")
+                Medication(id: UUID(), recordID: UUID(), name: "Diclofenac", dosage: "50 mg", frequency: .twiceDaily, duration: "From last 5 days", notes: "With water")
             ],
             records: records,
-            symptomsCount: 4,
-            questionsCount: 1,
+            symptomsCount: symptoms.count,
+            questionsCount: questions.count,
             notes: "Recommended balanced macros and fiber.",
             status: .completed,
             createdAt: Calendar.current.date(byAdding: .day, value: -20, to: Date())!
@@ -130,8 +132,8 @@ struct SampleData {
             ],
             medications: [],
             records: [],
-            symptomsCount: 5,
-            questionsCount: 1,
+            symptomsCount: symptoms.count,
+            questionsCount: questions.count,
             notes: "Set consistent bedtime and limit screens.",
             status: .completed,
             createdAt: Calendar.current.date(byAdding: .day, value: -12, to: Date())!
@@ -151,8 +153,8 @@ struct SampleData {
             ],
             medications: [],
             records: records,
-            symptomsCount: 3,
-            questionsCount: 1,
+            symptomsCount: symptoms.count,
+            questionsCount: questions.count,
             notes: "Continue hydration and posture checks.",
             status: .completed,
             createdAt: Calendar.current.date(byAdding: .day, value: -5, to: Date())!
@@ -174,8 +176,8 @@ struct SampleData {
             ],
             medications: medications,
             records: records,
-            symptomsCount: 4,
-            questionsCount: 2,
+            symptomsCount: symptoms.count,
+            questionsCount: questions.count,
             notes: "Introduce micro-breaks and short walks.",
             status: .pending,
             createdAt: Date()

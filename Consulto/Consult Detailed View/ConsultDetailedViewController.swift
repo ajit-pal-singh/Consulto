@@ -13,6 +13,10 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     
     private var screenGradientLayer: CAGradientLayer?
     
+    //Session passed from previous screen
+    var consultSession: ConsultSession?
+    
+    //Data used by collection view
     var sessionTitle: String = ""
     var symptoms: [Symptom] = []
     var medications: [Medication] = []
@@ -24,12 +28,8 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         view.backgroundColor = .clear
         collectionView.backgroundColor = .clear
         
-        sessionTitle = ConsultSessionDataModel.sampleSessionTitle()
-        symptoms = ConsultSessionDataModel.sampleSymptoms()
-        medications = ConsultSessionDataModel.sampleMedications()
-        records = ConsultSessionDataModel.sampleRecords()
-        questions = ConsultSessionDataModel.sampleQuestions()
-
+        loadSessionData()
+        
         setupCollectionView()
         applyScreenBackgroundGradient()
         collectionView.reloadData()
@@ -38,6 +38,28 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         screenGradientLayer?.frame = view.bounds
+    }
+    
+    private func loadSessionData() {
+
+        // If session was passed from previous screen
+        if let session = consultSession {
+            sessionTitle = session.title
+            symptoms = session.symptoms
+            medications = session.medications
+            records = session.records
+            questions = session.questions
+        }
+        else {
+            // fallback for testing
+            let sampleSession = SampleData.consultSessions.first!
+
+            sessionTitle = sampleSession.title
+            symptoms = sampleSession.symptoms
+            medications = sampleSession.medications
+            records = sampleSession.records
+            questions = sampleSession.questions
+        }
     }
     
     private func setupCollectionView() {
@@ -126,7 +148,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
 
         let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 6
+        section.interGroupSpacing = 10
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
 
         // Section header
@@ -206,7 +228,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
 
         let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 12
+        section.interGroupSpacing = 10
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
         
         let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
@@ -239,13 +261,9 @@ extension ConsultDetailedViewController: UICollectionViewDataSource {
         switch section {
         case 0: return 1
         case 1: return symptoms.count
-        // Temporarily disabled medications section items count
-        // case 2: return medications.count
-        case 2: return 0
+        case 2: return medications.count
         case 3: return records.count
-        // Temporarily disabled questions section items count
-        // case 4: return questions.count
-        case 4: return 0
+        case 4: return questions.count
         default: return 0
         }
     }
@@ -255,7 +273,6 @@ extension ConsultDetailedViewController: UICollectionViewDataSource {
         if indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HeaderCell", for: indexPath) as! HeaderCollectionViewCell
             cell.titleLabel.text = sessionTitle
-//            cell.configure(title: sessionTitle)
             return cell
         }
         else if indexPath.section == 1 {
@@ -276,29 +293,27 @@ extension ConsultDetailedViewController: UICollectionViewDataSource {
             }
             return cell
         }
-        /*
-        // Temporarily disabled MedicationCell block
+        
         else if indexPath.section == 2 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MedicationCell", for: indexPath) as! MedicationCollectionViewCell
             let med = medications[indexPath.item]
-            cell.configure(name: med.name, dose: med.dosage ?? "", frequency: med.frequency?.rawValue ?? "", duration: med.duration ?? "")
+            cell.configure(name: med.name, dosage: med.dosage ?? "", frequency: med.frequency?.rawValue ?? "", duration: med.duration ?? "")
             return cell
         }
-        */
+        
         else if indexPath.section == 3 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecordCell", for: indexPath) as! RecordCardCollectionViewCell
             let record = records[indexPath.item]
             cell.configure(with: record)
             return cell
         }
-        /*
-        // Temporarily disabled QuestionCell block
-        else {
+        
+        else if indexPath.section == 4 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "QuestionCell", for: indexPath) as! QuestionCollectionViewCell
             cell.configure(with: questions[indexPath.item])
             return cell
         }
-        */
+        
         // Return empty cell if none matched (should not happen)
         return UICollectionViewCell()
     }
@@ -314,18 +329,12 @@ extension ConsultDetailedViewController: UICollectionViewDataSource {
         switch indexPath.section {
         case 1:
             header.configure(title: "Symptoms")
-        /*
-        // Temporarily disabled medications section header
         case 2:
             header.configure(title: "Current Medications")
-        */
         case 3:
             header.configure(title: "Added Records")
-        /*
-        // Temporarily disabled questions section header
         case 4:
             header.configure(title: "Questions")
-        */
         default:
             header.configure(title: "")
         }

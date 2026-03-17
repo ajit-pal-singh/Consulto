@@ -1,4 +1,3 @@
-
 import UIKit
 
 struct Consult {
@@ -17,6 +16,7 @@ class consultCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var dateLabel: UILabel?
     @IBOutlet weak var symptomsLabel: UILabel?
     @IBOutlet weak var questionsLabel: UILabel?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -56,7 +56,7 @@ class consultCollectionViewCell: UICollectionViewCell {
 
         symptomsLabel!.text = "\(symptomsCount) Symptoms"
         questionsLabel!.text = "\(questionsCount) Questions"
-       }
+    }
     
     func configureChips(symptoms: [Symptom]) {
 
@@ -158,7 +158,6 @@ class consultCollectionViewCell: UICollectionViewCell {
         chipsStackView.addArrangedSubview(spacer)
     }
 
-    
     private func makeChip(text: String, isMoreChip: Bool = false) -> UIView {
 
         let label = UILabel()

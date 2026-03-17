@@ -1,8 +1,8 @@
 //
 //  QuestionCollectionViewCell.swift
-//  ConsultSession
+//  Consulto
 //
-//  Created by geu on 07/02/26.
+//  Created by Tevika Kumbhawat on 16/03/26.
 //
 
 import UIKit
@@ -10,12 +10,14 @@ import UIKit
 class QuestionCollectionViewCell: UICollectionViewCell {
 
     @IBOutlet weak var questionCardView: UIView!
-    @IBOutlet weak var questionLabel: UILabel!
     @IBOutlet weak var statusImageView: UIImageView!
+    @IBOutlet weak var questionLabel: UILabel!
     
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
+        questionLabel.font = .systemFont(ofSize: questionLabel.font.pointSize, weight: .medium).rounded
         
         questionCardView.layer.cornerRadius = 20
         questionCardView.backgroundColor = .white
@@ -34,3 +36,4 @@ class QuestionCollectionViewCell: UICollectionViewCell {
     }
 
 }
+

@@ -7,104 +7,120 @@
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
-    <customFonts key="customFonts">
-        <array key="Montserrat.ttf">
-            <string>Montserrat-Medium</string>
-            <string>Montserrat-SemiBold</string>
-        </array>
-    </customFonts>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MedicationCell" id="gTV-IL-0wX" customClass="MedicationCollectionViewCell" customModule="ConsultSession">
-            <rect key="frame" x="0.0" y="0.0" width="167" height="136"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="MedicationCollectionViewCell" customModule="Consulto" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="165" height="127"/>
             <autoresizingMask key="autoresizingMask"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                <rect key="frame" x="0.0" y="0.0" width="167" height="136"/>
+                <rect key="frame" x="0.0" y="0.0" width="165" height="127"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AYn-ON-Ip2" userLabel="medicationCardView">
-                        <rect key="frame" x="0.0" y="0.0" width="167" height="136"/>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iaj-pi-aDu" userLabel="Medication Card View">
+                        <rect key="frame" x="0.0" y="0.0" width="165" height="127"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="PillsIcon2" translatesAutoresizingMaskIntoConstraints="NO" id="Nax-pe-AwQ">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="PillsIcon2" translatesAutoresizingMaskIntoConstraints="NO" id="ZSg-lX-EkK">
                                 <rect key="frame" x="6" y="6" width="40" height="40"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="a6i-sQ-64a"/>
-                                    <constraint firstAttribute="width" constant="40" id="y1o-K9-o9M"/>
+                                    <constraint firstAttribute="height" constant="40" id="Bk1-l1-UZD"/>
+                                    <constraint firstAttribute="width" constant="40" id="Nrz-VJ-joX"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OXJ-bT-3ub" userLabel="NameLabel">
-                                <rect key="frame" x="16" y="42" width="135" height="19.666666666666671"/>
-                                <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="16"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d2h-cW-Hnr" userLabel="Name Label">
+                                <rect key="frame" x="16" y="42" width="133" height="27"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dose" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SSB-Jd-GGW" userLabel="DoseLabel">
-                                <rect key="frame" x="16" y="61.666666666666657" width="26" height="13"/>
-                                <fontDescription key="fontDescription" name="Montserrat-Medium" family="Montserrat" pointSize="10"/>
-                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="•" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EIg-80-IjK" userLabel="DotLabel">
-                                <rect key="frame" x="46" y="59.999999999999993" width="4" height="14.666666666666664"/>
-                                <fontDescription key="fontDescription" name="Montserrat-Medium" family="Montserrat" pointSize="12"/>
-                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Frequency" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ei1-Ri-1dh" userLabel="FrequencyLabel">
-                                <rect key="frame" x="54" y="61.666666666666657" width="54.333333333333343" height="13"/>
-                                <fontDescription key="fontDescription" name="Montserrat-Medium" family="Montserrat" pointSize="10"/>
-                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sU5-c4-1u4" userLabel="durationContainerView">
-                                <rect key="frame" x="16" y="78.666666666666671" width="111" height="20"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OJf-BQ-FhC" userLabel="Duration Container View">
+                                <rect key="frame" x="16" y="91" width="125" height="20"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Duration" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aFM-Bs-FFG" userLabel="durationLabel">
-                                        <rect key="frame" x="4" y="4" width="103" height="12"/>
-                                        <fontDescription key="fontDescription" name="Montserrat-Medium" family="Montserrat" pointSize="10"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Duration" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CGo-OJ-cCq" userLabel="Duration Label">
+                                        <rect key="frame" x="4" y="4" width="117" height="12"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="12"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="aFM-Bs-FFG" firstAttribute="leading" secondItem="sU5-c4-1u4" secondAttribute="leading" constant="4" id="24Z-FW-cTE"/>
-                                    <constraint firstAttribute="height" constant="20" id="676-WY-Aug"/>
-                                    <constraint firstItem="aFM-Bs-FFG" firstAttribute="top" secondItem="sU5-c4-1u4" secondAttribute="top" constant="4" id="Wwr-Fo-X5K"/>
-                                    <constraint firstAttribute="bottom" secondItem="aFM-Bs-FFG" secondAttribute="bottom" constant="4" id="h35-Wg-mHA"/>
-                                    <constraint firstAttribute="trailing" secondItem="aFM-Bs-FFG" secondAttribute="trailing" constant="4" id="hAQ-9C-zKl"/>
+                                    <constraint firstAttribute="bottom" secondItem="CGo-OJ-cCq" secondAttribute="bottom" constant="4" id="4i1-8t-rF9"/>
+                                    <constraint firstAttribute="trailing" secondItem="CGo-OJ-cCq" secondAttribute="trailing" constant="4" id="J4z-If-dGk"/>
+                                    <constraint firstItem="CGo-OJ-cCq" firstAttribute="top" secondItem="OJf-BQ-FhC" secondAttribute="top" constant="4" id="huX-sh-ssv"/>
+                                    <constraint firstAttribute="height" constant="20" id="lMo-em-niM"/>
+                                    <constraint firstItem="CGo-OJ-cCq" firstAttribute="leading" secondItem="OJf-BQ-FhC" secondAttribute="leading" constant="4" id="tBg-aU-iJS"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hQz-hZ-eOs" userLabel="Container View">
+                                <rect key="frame" x="12" y="71" width="141" height="16"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dosage" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fXS-kO-Zo8" userLabel="Dosage Label">
+                                        <rect key="frame" x="5" y="1.0000000000000009" width="44" height="14.333333333333336"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="12"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="•" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jmv-sl-U3x" userLabel="Dot Label">
+                                        <rect key="frame" x="53" y="1.0000000000000009" width="6" height="14.333333333333336"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="12"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Frequency" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UtB-91-hVc" userLabel="Frequency Label">
+                                        <rect key="frame" x="62" y="1.0000000000000009" width="61.333333333333343" height="14.333333333333336"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="12"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="fXS-kO-Zo8" firstAttribute="leading" secondItem="hQz-hZ-eOs" secondAttribute="leading" constant="5" id="1gM-xQ-NHF"/>
+                                    <constraint firstAttribute="height" constant="16" id="1oE-gP-zVO"/>
+                                    <constraint firstItem="UtB-91-hVc" firstAttribute="centerY" secondItem="hQz-hZ-eOs" secondAttribute="centerY" id="Bw2-sz-bbA"/>
+                                    <constraint firstItem="Jmv-sl-U3x" firstAttribute="leading" secondItem="fXS-kO-Zo8" secondAttribute="trailing" constant="4" id="Esu-rF-6DR"/>
+                                    <constraint firstItem="Jmv-sl-U3x" firstAttribute="centerY" secondItem="hQz-hZ-eOs" secondAttribute="centerY" id="GLR-VO-f1e"/>
+                                    <constraint firstItem="UtB-91-hVc" firstAttribute="leading" secondItem="Jmv-sl-U3x" secondAttribute="trailing" constant="3" id="u6z-XI-wr3"/>
+                                    <constraint firstItem="fXS-kO-Zo8" firstAttribute="centerY" secondItem="hQz-hZ-eOs" secondAttribute="centerY" id="ynK-sQ-oxZ"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="sU5-c4-1u4" firstAttribute="top" secondItem="SSB-Jd-GGW" secondAttribute="bottom" constant="4" id="4t2-hP-RVr"/>
-                            <constraint firstItem="Nax-pe-AwQ" firstAttribute="top" secondItem="AYn-ON-Ip2" secondAttribute="top" constant="6" id="8m3-cz-62P"/>
-                            <constraint firstItem="Nax-pe-AwQ" firstAttribute="leading" secondItem="AYn-ON-Ip2" secondAttribute="leading" constant="6" id="LAV-wp-hnb"/>
-                            <constraint firstItem="Ei1-Ri-1dh" firstAttribute="leading" secondItem="EIg-80-IjK" secondAttribute="trailing" constant="4" id="P0i-hp-vXU"/>
-                            <constraint firstItem="SSB-Jd-GGW" firstAttribute="top" secondItem="OXJ-bT-3ub" secondAttribute="bottom" id="QKb-bF-QFy"/>
-                            <constraint firstAttribute="trailing" secondItem="OXJ-bT-3ub" secondAttribute="trailing" constant="16" id="UZD-a2-ZRF"/>
-                            <constraint firstItem="sU5-c4-1u4" firstAttribute="leading" secondItem="AYn-ON-Ip2" secondAttribute="leading" constant="16" id="YIO-gW-THv"/>
-                            <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="sU5-c4-1u4" secondAttribute="trailing" constant="40" id="ZQg-XE-gBd"/>
-                            <constraint firstItem="EIg-80-IjK" firstAttribute="leading" secondItem="SSB-Jd-GGW" secondAttribute="trailing" constant="4" id="b9j-gp-KSO"/>
-                            <constraint firstItem="SSB-Jd-GGW" firstAttribute="leading" secondItem="AYn-ON-Ip2" secondAttribute="leading" constant="16" id="rVe-vm-V9s"/>
-                            <constraint firstItem="Ei1-Ri-1dh" firstAttribute="top" secondItem="OXJ-bT-3ub" secondAttribute="bottom" id="uUw-EG-IKo"/>
-                            <constraint firstItem="OXJ-bT-3ub" firstAttribute="leading" secondItem="AYn-ON-Ip2" secondAttribute="leading" constant="16" id="udn-Cp-TQv"/>
-                            <constraint firstItem="OXJ-bT-3ub" firstAttribute="top" secondItem="AYn-ON-Ip2" secondAttribute="top" constant="42" id="upn-6D-mUu"/>
-                            <constraint firstItem="EIg-80-IjK" firstAttribute="top" secondItem="AYn-ON-Ip2" secondAttribute="top" constant="60" id="xPf-1B-jqs"/>
+                            <constraint firstItem="ZSg-lX-EkK" firstAttribute="leading" secondItem="iaj-pi-aDu" secondAttribute="leading" constant="6" id="5NH-S9-InD"/>
+                            <constraint firstItem="OJf-BQ-FhC" firstAttribute="leading" secondItem="iaj-pi-aDu" secondAttribute="leading" constant="16" id="7UK-FR-J6t"/>
+                            <constraint firstItem="hQz-hZ-eOs" firstAttribute="top" secondItem="d2h-cW-Hnr" secondAttribute="bottom" constant="2" id="Cza-xN-Ubk"/>
+                            <constraint firstItem="d2h-cW-Hnr" firstAttribute="leading" secondItem="iaj-pi-aDu" secondAttribute="leading" constant="16" id="LMg-2X-akY"/>
+                            <constraint firstAttribute="trailing" secondItem="OJf-BQ-FhC" secondAttribute="trailing" constant="24" id="O8A-sC-s81"/>
+                            <constraint firstItem="d2h-cW-Hnr" firstAttribute="top" secondItem="iaj-pi-aDu" secondAttribute="top" constant="42" id="Uu0-7d-6XU"/>
+                            <constraint firstAttribute="trailing" secondItem="hQz-hZ-eOs" secondAttribute="trailing" constant="12" id="WcZ-30-zRF"/>
+                            <constraint firstItem="OJf-BQ-FhC" firstAttribute="top" secondItem="hQz-hZ-eOs" secondAttribute="bottom" constant="4" id="cAM-V4-lvP"/>
+                            <constraint firstItem="hQz-hZ-eOs" firstAttribute="leading" secondItem="iaj-pi-aDu" secondAttribute="leading" constant="12" id="coH-0W-MgD"/>
+                            <constraint firstAttribute="trailing" secondItem="d2h-cW-Hnr" secondAttribute="trailing" constant="16" id="dGs-mq-aSl"/>
+                            <constraint firstItem="ZSg-lX-EkK" firstAttribute="top" secondItem="iaj-pi-aDu" secondAttribute="top" constant="6" id="ovn-Fd-19I"/>
+                            <constraint firstAttribute="bottom" secondItem="OJf-BQ-FhC" secondAttribute="bottom" constant="16" id="pbu-bh-kGi"/>
                         </constraints>
                     </view>
                 </subviews>
             </view>
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <constraints>
-                <constraint firstItem="AYn-ON-Ip2" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="OZr-d6-c21"/>
-                <constraint firstAttribute="bottom" secondItem="AYn-ON-Ip2" secondAttribute="bottom" id="WyV-n1-USt"/>
-                <constraint firstAttribute="trailing" secondItem="AYn-ON-Ip2" secondAttribute="trailing" id="jKf-KW-p5p"/>
-                <constraint firstItem="AYn-ON-Ip2" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="lPR-a0-FeU"/>
+                <constraint firstItem="iaj-pi-aDu" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="QZN-BR-UDC"/>
+                <constraint firstItem="iaj-pi-aDu" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="U0v-nI-dXq"/>
+                <constraint firstAttribute="bottom" secondItem="iaj-pi-aDu" secondAttribute="bottom" id="UW8-xu-2cW"/>
+                <constraint firstAttribute="trailing" secondItem="iaj-pi-aDu" secondAttribute="trailing" id="ikJ-0m-eaN"/>
             </constraints>
-            <size key="customSize" width="167" height="136"/>
-            <point key="canvasLocation" x="-16.030534351145036" y="180.98591549295776"/>
+            <size key="customSize" width="165" height="127"/>
+            <connections>
+                <outlet property="dosageLabel" destination="fXS-kO-Zo8" id="NvI-A9-t6Y"/>
+                <outlet property="dotLabel" destination="Jmv-sl-U3x" id="Dcd-bA-pYy"/>
+                <outlet property="durationContainerView" destination="OJf-BQ-FhC" id="mS7-Ab-HZ2"/>
+                <outlet property="durationLabel" destination="CGo-OJ-cCq" id="giw-ws-Zex"/>
+                <outlet property="frequencyLabel" destination="UtB-91-hVc" id="QHs-gG-P9N"/>
+                <outlet property="iconImageView" destination="ZSg-lX-EkK" id="Bop-Ul-6bL"/>
+                <outlet property="medicationCardView" destination="iaj-pi-aDu" id="8bG-q0-Meh"/>
+                <outlet property="nameLabel" destination="d2h-cW-Hnr" id="RlB-f3-d5w"/>
+            </connections>
+            <point key="canvasLocation" x="225.19083969465649" y="179.92957746478874"/>
         </collectionViewCell>
     </objects>
     <resources>

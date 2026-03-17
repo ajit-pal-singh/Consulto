@@ -27,6 +27,9 @@ class SymptomCollectionViewCell: UICollectionViewCell {
         symptomCardView.layer.cornerRadius = 12
         symptomCardView.clipsToBounds = true
         
+        symptomTitleLabel.font = .systemFont(ofSize: symptomTitleLabel.font.pointSize, weight: .medium).rounded
+        descriptionLabel.font = .systemFont(ofSize: descriptionLabel.font.pointSize, weight: .medium).rounded
+        
         descriptionLabel.lineBreakMode = .byTruncatingTail
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapChevron))
