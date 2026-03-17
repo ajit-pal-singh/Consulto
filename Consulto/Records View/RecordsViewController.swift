@@ -1,8 +1,10 @@
 import UIKit
 import SwiftUI
 import Combine
+import PhotosUI
+import UniformTypeIdentifiers
 
-class RecordsViewController: UIViewController, UINavigationControllerDelegate {
+class RecordsViewController: UIViewController, UINavigationControllerDelegate, PHPickerViewControllerDelegate, UIDocumentPickerDelegate, UIImagePickerControllerDelegate {
 
     @IBOutlet weak var recordsCollectionView: UICollectionView!
         
@@ -18,7 +20,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate {
     @IBOutlet weak var platterContainerView: UIView!
 
     // Platter Properties
-    var platterHostingController: UIHostingController<AttachmentPlatterView>?
+    var platterViewController: AttachmentPlatterViewController?
     var overlayDimmingView: UIView?
     var platterBottomConstraint: NSLayoutConstraint?
     
@@ -224,6 +226,51 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate {
         }
     }
     
+    // MARK: - Attachment Pickers
+    func openCamera() {
+        guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
+            print("Camera is not available on this device.")
+            return
+        }
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+    
+    func openGallery() {
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 0 // 0 means multiple selection
+        config.filter = .images
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+    
+    func openDocumentPicker() {
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.pdf, .image, .plainText], asCopy: true)
+        picker.delegate = self
+        picker.allowsMultipleSelection = true
+        present(picker, animated: true)
+    }
+    
+    // MARK: - Picker Delegates
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        print("Selected \(results.count) photos from Gallery")
+        // TODO: Handle imported photos
+    }
+    
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        print("Selected \(urls.count) documents")
+        // TODO: Handle imported files
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true)
+        print("Captured an image from Camera")
+        // TODO: Handle captured camera image
+    }
 }
 
 
@@ -247,7 +294,7 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         // 0. Enable interaction on the container so taps register
         container.isUserInteractionEnabled = true
         
-        // 1. Create Dimming View (optional, for focus)
+        // 1. Create Dimming View
         let dimmingView = UIView()
         dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         dimmingView.alpha = 0
@@ -266,38 +313,43 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         ])
         self.overlayDimmingView = dimmingView
         
-        // 2. specific setup for hosting controller
-        let platterView = AttachmentPlatterView(
-            onCameraTap: { print("Camera Tapped") },
-            onGalleryTap: { print("Gallery Tapped") },
-            onDocumentTap: { print("Document Tapped") },
-            onDismiss: { [weak self] in self?.dismissPlatter() }
-        )
+        // 2. Instantiate View Controller from Storyboard
+        let storyboard = UIStoryboard(name: "Main", bundle: nil) // Update "Main" if your storyboard has a different name
+        guard let platterVC = storyboard.instantiateViewController(withIdentifier: "AttachmentPlatterVC") as? AttachmentPlatterViewController else {
+            print("Could not instantiate AttachmentPlatterVC")
+            return
+        }
         
-        let hostingController = UIHostingController(rootView: platterView)
+        // Setup Callbacks
+        platterVC.onCameraTap = { [weak self] in self?.openCamera() }
+        platterVC.onGalleryTap = { [weak self] in self?.openGallery() }
+        platterVC.onDocumentTap = { [weak self] in self?.openDocumentPicker() }
+        platterVC.onDismiss = { [weak self] in self?.dismissPlatter() }
         
-        hostingController.view.backgroundColor = .clear
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        platterVC.view.translatesAutoresizingMaskIntoConstraints = false
         
-        addChild(hostingController)
-        container.addSubview(hostingController.view)
-        hostingController.didMove(toParent: self)
+        addChild(platterVC)
+        container.addSubview(platterVC.view)
+        platterVC.didMove(toParent: self)
         
-        // Add Pan Gesture for Swipe Down
+        // Add Pan Gesture for Swipe Down to dismiss
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePlatterPan(_:)))
-        hostingController.view.addGestureRecognizer(panGesture)
+        platterVC.view.addGestureRecognizer(panGesture)
         
-        self.platterHostingController = hostingController
+        self.platterViewController = platterVC
         
         // 3. Constraints (Start Off-Screen)
-        let bottomConstraint = hostingController.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 400) // Start below screen
+        // Adjust the height constant internally inside PlatterContainerView in Storyboard, or here:
+        let bottomConstraint = platterVC.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 400) // Start below screen
         self.platterBottomConstraint = bottomConstraint
         
         NSLayoutConstraint.activate([
-            hostingController.view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 5),
-            hostingController.view.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -5),
+            platterVC.view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 5),
+            platterVC.view.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -5),
             bottomConstraint,
-            // Height is handled by intrinsic content size of SwiftUI view
+            // Height to match the internal subview bounds if not constrained by the container.
+            // If dragging doesn't feel right, add a fixed height constraint here. e.g.
+            platterVC.view.heightAnchor.constraint(equalToConstant: 280) 
         ])
         
         container.layoutIfNeeded() // Set initial state
@@ -313,7 +365,7 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
     }
     
     @objc func dismissPlatter() {
-        guard let hostingController = platterHostingController else { return }
+        guard let vc = platterViewController else { return }
         
         // Animate Out
         self.platterBottomConstraint?.constant = 400 // Move down
@@ -325,12 +377,12 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         }) { _ in
             // Clean up
             self.overlayDimmingView?.removeFromSuperview()
-            hostingController.willMove(toParent: nil)
-            hostingController.view.removeFromSuperview()
-            hostingController.removeFromParent()
+            vc.willMove(toParent: nil)
+            vc.view.removeFromSuperview()
+            vc.removeFromParent()
             
             self.overlayDimmingView = nil
-            self.platterHostingController = nil
+            self.platterViewController = nil
             self.platterBottomConstraint = nil
             
             // Disable interaction on the container so it doesn't block touches

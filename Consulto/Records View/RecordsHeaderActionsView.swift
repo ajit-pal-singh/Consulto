@@ -7,18 +7,6 @@ struct HeaderActionsView: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // Filter Button
-            Button(action: {
-                onFilterAction?()
-            }) {
-                Image(systemName: "line.3.horizontal.decrease")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .frame(width: 44, height: 44)
-            }
-            .buttonStyle(.plain)
-            .glassEffect(.regular.interactive())
-            
             // Add Button
             Button(action: {
                 // Action
@@ -31,6 +19,19 @@ struct HeaderActionsView: View {
             }
             .buttonStyle(.plain) // Remove default button tap style
             .glassEffect(.regular.interactive()) // The requested modifier
+
+            // Filter Button
+            Button(action: {
+                onFilterAction?()
+            }) {
+                Image(systemName: "line.3.horizontal.decrease")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .frame(width: 44, height: 44)
+            }
+            .buttonStyle(.plain)
+            .glassEffect(.regular.interactive())
+            
         }
         .frame(maxWidth: .infinity, alignment: .trailing) // Align content to the right
         .padding(.vertical, 4) // Breathing room
