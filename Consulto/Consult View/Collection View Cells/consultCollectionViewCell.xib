@@ -33,7 +33,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pdH-9w-80u" userLabel="ContainerView">
-                                <rect key="frame" x="22" y="50.333333333333336" width="312" height="13"/>
+                                <rect key="frame" x="20" y="50.333333333333336" width="314" height="13"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EpB-Qr-RCB" userLabel="dateLabel">
                                         <rect key="frame" x="0.0" y="0.0" width="23.333333333333332" height="13"/>
@@ -54,13 +54,13 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="•" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HFS-g4-w4L">
-                                        <rect key="frame" x="94.333333333333329" y="-3.6666666666666714" width="7.6666666666666714" height="20.333333333333332"/>
+                                        <rect key="frame" x="95.333333333333329" y="-3.6666666666666714" width="7.6666666666666714" height="20.333333333333332"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Questions" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kg0-rM-h4O" userLabel="questionsLabel">
-                                        <rect key="frame" x="106" y="0.0" width="50" height="13"/>
+                                        <rect key="frame" x="107" y="0.0" width="50" height="13"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="11"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -71,7 +71,7 @@
                                     <constraint firstItem="1GP-Vs-wVN" firstAttribute="leading" secondItem="xSc-WD-75F" secondAttribute="trailing" constant="6" id="EWl-bX-rnK"/>
                                     <constraint firstItem="1GP-Vs-wVN" firstAttribute="centerY" secondItem="pdH-9w-80u" secondAttribute="centerY" id="LAw-9e-Me9"/>
                                     <constraint firstItem="EpB-Qr-RCB" firstAttribute="leading" secondItem="pdH-9w-80u" secondAttribute="leading" id="UAY-OI-9vr"/>
-                                    <constraint firstItem="HFS-g4-w4L" firstAttribute="leading" secondItem="1GP-Vs-wVN" secondAttribute="trailing" constant="3" id="VwU-Rn-fIG"/>
+                                    <constraint firstItem="HFS-g4-w4L" firstAttribute="leading" secondItem="1GP-Vs-wVN" secondAttribute="trailing" constant="4" id="VwU-Rn-fIG"/>
                                     <constraint firstItem="xSc-WD-75F" firstAttribute="centerY" secondItem="pdH-9w-80u" secondAttribute="centerY" id="aZE-Wv-DWz"/>
                                     <constraint firstItem="HFS-g4-w4L" firstAttribute="centerY" secondItem="pdH-9w-80u" secondAttribute="centerY" id="dh2-7s-U4N"/>
                                     <constraint firstItem="kg0-rM-h4O" firstAttribute="centerY" secondItem="pdH-9w-80u" secondAttribute="centerY" id="dnR-6a-h40"/>
@@ -81,10 +81,10 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cCy-aw-0UN" userLabel="chipsContainerView">
-                                <rect key="frame" x="16" y="73.333333333333329" width="318" height="30"/>
+                                <rect key="frame" x="20" y="73.333333333333329" width="314" height="30"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="QPB-WK-xMw">
-                                        <rect key="frame" x="0.0" y="0.0" width="318" height="30"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="314" height="30"/>
                                     </stackView>
                                 </subviews>
                                 <constraints>
@@ -99,9 +99,9 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="cCy-aw-0UN" secondAttribute="trailing" constant="20" id="3Pd-9q-soX"/>
-                            <constraint firstItem="pdH-9w-80u" firstAttribute="leading" secondItem="rlo-zF-UiK" secondAttribute="leading" constant="22" id="65b-7L-1c9"/>
+                            <constraint firstItem="pdH-9w-80u" firstAttribute="leading" secondItem="rlo-zF-UiK" secondAttribute="leading" constant="20" id="65b-7L-1c9"/>
                             <constraint firstItem="RV6-Sh-nf4" firstAttribute="leading" secondItem="rlo-zF-UiK" secondAttribute="leading" constant="20" id="LYr-BP-wDF"/>
-                            <constraint firstItem="cCy-aw-0UN" firstAttribute="leading" secondItem="rlo-zF-UiK" secondAttribute="leading" constant="16" id="LwI-83-aoE"/>
+                            <constraint firstItem="cCy-aw-0UN" firstAttribute="leading" secondItem="rlo-zF-UiK" secondAttribute="leading" constant="20" id="LwI-83-aoE"/>
                             <constraint firstAttribute="trailing" secondItem="RV6-Sh-nf4" secondAttribute="trailing" constant="110" id="aCJ-G0-2bm"/>
                             <constraint firstItem="RV6-Sh-nf4" firstAttribute="top" secondItem="rlo-zF-UiK" secondAttribute="top" constant="20" id="ahf-XE-PgR"/>
                             <constraint firstItem="pdH-9w-80u" firstAttribute="top" secondItem="RV6-Sh-nf4" secondAttribute="bottom" constant="5" id="ati-M8-MMC"/>

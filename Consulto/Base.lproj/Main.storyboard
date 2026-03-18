@@ -333,7 +333,7 @@
         <!--Record Detailed View-->
         <scene sceneID="mmy-di-Ssc">
             <objects>
-                <viewController title="Record Detailed View" id="tPK-gZ-7o0" customClass="RecordDetailedViewController" customModule="Consulto" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RecordDetailedViewController" title="Record Detailed View" id="tPK-gZ-7o0" customClass="RecordDetailedViewController" customModule="Consulto" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="LfV-4F-suJ">
                         <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -477,7 +477,7 @@
                         <constraints>
                             <constraint firstItem="bU4-IG-zD1" firstAttribute="leading" secondItem="Ho3-Se-861" secondAttribute="leading" id="6qZ-fS-tKf"/>
                             <constraint firstItem="bU4-IG-zD1" firstAttribute="trailing" secondItem="Ho3-Se-861" secondAttribute="trailing" id="TZ1-UA-YIa"/>
-                            <constraint firstItem="bU4-IG-zD1" firstAttribute="top" secondItem="LfV-4F-suJ" secondAttribute="top" id="at3-Gi-nE8"/>
+                            <constraint firstItem="bU4-IG-zD1" firstAttribute="top" secondItem="Ho3-Se-861" secondAttribute="top" id="at3-Gi-nE8"/>
                             <constraint firstAttribute="bottom" secondItem="bU4-IG-zD1" secondAttribute="bottom" id="ofF-uf-9Ib"/>
                         </constraints>
                     </view>

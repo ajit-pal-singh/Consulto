@@ -25,14 +25,47 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .clear
+        let bgColor = UIColor(red: 245 / 255, green: 245 / 255, blue: 245 / 255, alpha: 1.0)
+        view.backgroundColor = bgColor
         collectionView.backgroundColor = .clear
+
+        // Add action to the Done button defined in Storyboard
+        if let doneBtn = navigationItem.rightBarButtonItem {
+            doneBtn.target = self
+            doneBtn.action = #selector(doneTapped)
+        } else {
+            // Fallback if not hooked up in storyboard properly
+            let doneBtn = UIBarButtonItem(
+                barButtonSystemItem: .done, target: self, action: #selector(doneTapped))
+            navigationItem.rightBarButtonItem = doneBtn
+        }
 
         loadSessionData()
 
         setupCollectionView()
-        applyScreenBackgroundGradient()
+        // applyScreenBackgroundGradient()
         collectionView.reloadData()
+    }
+
+    @objc private func doneTapped() {
+        // Mark session as completed
+        if var session = consultSession {
+            session.status = .completed
+            session.questions = self.questions
+            session.symptoms = self.symptoms
+
+            consultSession = session  // Update local copy just in case
+
+            // Post notification to inform Main Consult Screen to reload
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ConsultSessionUpdated"),
+                object: nil,
+                userInfo: ["session": session]
+            )
+        }
+
+        // Pop back to the previous screen
+        self.navigationController?.popViewController(animated: true)
     }
 
     override func viewDidLayoutSubviews() {
@@ -182,12 +215,12 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     private func medicationsSection() -> NSCollectionLayoutSection {
 
         let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(0.5), heightDimension: .absolute(114))
+            widthDimension: .fractionalWidth(0.5), heightDimension: .estimated(120))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(114))
+            heightDimension: .estimated(120))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         group.interItemSpacing = .fixed(16)
 
@@ -261,7 +294,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 10
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0, leading: 16, bottom: 0, trailing: 16)
+            top: 0, leading: 16, bottom: 100, trailing: 16)
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -280,8 +313,35 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        if indexPath.section == 3 {
+        if indexPath.section == 1 {
+            symptoms[indexPath.item].isExpanded.toggle()
+            let symptom = symptoms[indexPath.item]
+            if let cell = collectionView.cellForItem(at: indexPath) as? SymptomCollectionViewCell {
+                cell.configure(
+                    title: symptom.name, description: symptom.description,
+                    isExpanded: symptom.isExpanded)
+            }
+            collectionView.performBatchUpdates(nil)
+        } else if indexPath.section == 3 {
+            let selectedRecord = records[indexPath.item]
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let destinationVC = storyboard.instantiateViewController(
+                withIdentifier: "RecordDetailedViewController") as? RecordDetailedViewController
+            {
+                destinationVC.record = selectedRecord
+                if let navigationController = self.navigationController {
+                    navigationController.pushViewController(destinationVC, animated: true)
+                } else {
+                    self.present(destinationVC, animated: true, completion: nil)
+                }
+            } else {
+                print("Could not instantiate RecordDetailedViewController")
+            }
+        } else if indexPath.section == 4 {
             questions[indexPath.item].isSelected.toggle()
+            if let cell = collectionView.cellForItem(at: indexPath) as? QuestionCollectionViewCell {
+                cell.configure(with: questions[indexPath.item])
+            }
             collectionView.performBatchUpdates(nil)
         }
     }
@@ -334,6 +394,10 @@ extension ConsultDetailedViewController: UICollectionViewDataSource {
                 else { return }
 
                 self.symptoms[tappedIndexPath.item].isExpanded.toggle()
+                let symptom = self.symptoms[tappedIndexPath.item]
+                cell.configure(
+                    title: symptom.name, description: symptom.description,
+                    isExpanded: symptom.isExpanded)
 
                 self.collectionView.performBatchUpdates(nil)
             }

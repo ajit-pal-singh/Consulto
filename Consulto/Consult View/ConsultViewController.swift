@@ -1,19 +1,19 @@
-import UIKit
 import SwiftUI
+import UIKit
 
 class ConsultViewController: UIViewController,
-                             UINavigationControllerDelegate,
-                             UICollectionViewDataSource,
-                             UICollectionViewDelegate {
-    
-    
+    UINavigationControllerDelegate,
+    UICollectionViewDataSource,
+    UICollectionViewDelegate
+{
+
     @IBOutlet weak var headerActionsContainerView: UIView!
     @IBOutlet weak var consultCollectionView: UICollectionView!
     @IBOutlet weak var blurEffectView: UIVisualEffectView!
-    
+
     // MARK: - Data Source
-    private let consultSessions = SampleData.consultSessions
-    
+    private var consultSessions = SampleData.consultSessions
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         print("[ConsultVC] init(coder:) called")
@@ -21,91 +21,110 @@ class ConsultViewController: UIViewController,
         tabBarItem = UITabBarItem(
             title: "Consult",
             image: UIImage(named: "Consult"),
-            selectedImage: UIImage(named: "Consult")  
+            selectedImage: UIImage(named: "Consult")
         )
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         print("[ConsultVC] viewDidLoad")
-        
+
         self.title = "Consult"
         self.tabBarItem.title = "Consult"
         self.navigationController?.tabBarItem.title = "Consult"
-        
+
         navigationController?.delegate = self
         consultCollectionView.delegate = self
         consultCollectionView.dataSource = self
         print("[ConsultVC] Collection view dataSource and delegate set")
         consultCollectionView.collectionViewLayout = createLayout()
-        
+
         consultCollectionView.register(
             UINib(nibName: "consultCollectionViewCell", bundle: nil),
             forCellWithReuseIdentifier: "consult_cell"
         )
-        print("[ConsultVC] Registered cell nib consultCollectionViewCell with reuseIdentifier consult_cell")
-        
+        print(
+            "[ConsultVC] Registered cell nib consultCollectionViewCell with reuseIdentifier consult_cell"
+        )
+
         setupHeaderActions()
+
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(handleSessionUpdate(_:)),
+            name: NSNotification.Name("ConsultSessionUpdated"), object: nil)
     }
-    
+
+    @objc private func handleSessionUpdate(_ notification: Notification) {
+        if let userInfo = notification.userInfo,
+            let updatedSession = userInfo["session"] as? ConsultSession
+        {
+            if let index = consultSessions.firstIndex(where: { $0.id == updatedSession.id }) {
+                consultSessions[index] = updatedSession
+                consultCollectionView.reloadItems(at: [IndexPath(item: index, section: 0)])
+            }
+        }
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         let hasNav = (navigationController != nil)
         print("[ConsultVC] viewDidAppear. navigationController present? \(hasNav)")
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("[ConsultVC] didSelectItemAt: \(indexPath)")
-        
+
         let storyboardB = UIStoryboard(name: "ConsultDetailView", bundle: nil)
-        
-        guard let detailVC = storyboardB.instantiateViewController(
-            withIdentifier: "ConsultDetailedView"
-        ) as? ConsultDetailedViewController else {
+
+        guard
+            let detailVC = storyboardB.instantiateViewController(
+                withIdentifier: "ConsultDetailedView"
+            ) as? ConsultDetailedViewController
+        else {
             assertionFailure("Could not cast to ConsultDetailedViewController")
             return
         }
-        
+
         // ✅ PASS THE SELECTED SESSION
         let selectedSession = consultSessions[indexPath.item]
         detailVC.consultSession = selectedSession
-        
+
         print("[ConsultVC] Passing session: \(selectedSession.title)")
-        
+
         // Navigate
         navigationController?.pushViewController(detailVC, animated: true)
     }
-    
+
     func setupHeaderActions() {
         guard let container = headerActionsContainerView else { return }
         print("[ConsultVC] Setting up header actions")
-        
+
         // Clear any existing subviews
         container.subviews.forEach { $0.removeFromSuperview() }
         container.backgroundColor = .clear
-        
+
         let swiftUIView = ConsultHeaderActionsView {
             print("Add Consult Tapped")
             // TODO: Handle add action
         }
-        
+
         let hostingController = UIHostingController(rootView: swiftUIView)
         hostingController.view.backgroundColor = .clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        
+
         addChild(hostingController)
         container.addSubview(hostingController.view)
-        
+
         NSLayoutConstraint.activate([
             hostingController.view.topAnchor.constraint(equalTo: container.topAnchor),
             hostingController.view.bottomAnchor.constraint(equalTo: container.bottomAnchor),
             hostingController.view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            hostingController.view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
+            hostingController.view.trailingAnchor.constraint(equalTo: container.trailingAnchor),
         ])
-        
+
         hostingController.didMove(toParent: self)
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         print("[ConsultVC] viewDidLayoutSubviews")
@@ -113,7 +132,7 @@ class ConsultViewController: UIViewController,
             setupBlurGradientMask()
         }
     }
-    
+
     func setupBlurGradientMask() {
         guard let blurEffectView = blurEffectView else { return }
         print("[ConsultVC] setupBlurGradientMask with bounds: \(blurEffectView.bounds)")
@@ -122,12 +141,14 @@ class ConsultViewController: UIViewController,
         gradientMask.colors = [
             UIColor.black.cgColor,
             UIColor.black.cgColor,
-            UIColor.clear.cgColor
+            UIColor.clear.cgColor,
         ]
         gradientMask.locations = [0.0, 0.8, 1.0]
         blurEffectView.layer.mask = gradientMask
 
-        if let existingOverlay = blurEffectView.layer.sublayers?.first(where: { $0.name == "SolidOverlay" }) {
+        if let existingOverlay = blurEffectView.layer.sublayers?.first(where: {
+            $0.name == "SolidOverlay"
+        }) {
             existingOverlay.frame = blurEffectView.bounds
         } else {
             let overlayLayer = CALayer()
@@ -144,18 +165,19 @@ class ConsultViewController: UIViewController,
             blurEffectView.layer.addSublayer(overlayLayer)
         }
     }
-    
+
     // MARK: - Navigation Bar
     func navigationController(
         _ navigationController: UINavigationController,
         willShow viewController: UIViewController,
         animated: Bool
     ) {
-        print("[ConsultVC] willShow: \(type(of: viewController)) hidden? \(viewController === self)")
+        print(
+            "[ConsultVC] willShow: \(type(of: viewController)) hidden? \(viewController === self)")
         let isConsultScreen = (viewController === self)
         navigationController.setNavigationBarHidden(isConsultScreen, animated: animated)
     }
-    
+
     // MARK: - UICollectionView DataSource
     func collectionView(
         _ collectionView: UICollectionView,
@@ -164,42 +186,43 @@ class ConsultViewController: UIViewController,
         print("[ConsultVC] numberOfItemsInSection=\(consultSessions.count)")
         return consultSessions.count
     }
-    
+
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         print("[ConsultVC] cellForItemAt: \(indexPath)")
-        
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "consult_cell",
-            for: indexPath
-        ) as! consultCollectionViewCell
-        
+
+        let cell =
+            collectionView.dequeueReusableCell(
+                withReuseIdentifier: "consult_cell",
+                for: indexPath
+            ) as! consultCollectionViewCell
+
         cell.configure(with: consultSessions[indexPath.item])
         return cell
     }
-    
+
     // MARK: - Compositional Layout
     private func createLayout() -> UICollectionViewLayout {
-        
+
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .absolute(120)
         )
-        
+
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
+
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .absolute(120)
         )
-        
+
         let group = NSCollectionLayoutGroup.vertical(
             layoutSize: groupSize,
             subitems: [item]
         )
-        
+
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = NSDirectionalEdgeInsets(
             top: 70,
@@ -207,10 +230,9 @@ class ConsultViewController: UIViewController,
             bottom: 20,
             trailing: 16
         )
-        
+
         section.interGroupSpacing = 16
-        
+
         return UICollectionViewCompositionalLayout(section: section)
     }
 }
-

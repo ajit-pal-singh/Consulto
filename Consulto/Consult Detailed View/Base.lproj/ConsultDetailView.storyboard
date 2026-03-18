@@ -47,7 +47,9 @@
                             <constraint firstItem="nKj-LQ-Wbt" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="ysY-1T-ode"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="VBX-Ja-8VH"/>
+                    <navigationItem key="navigationItem" id="VBX-Ja-8VH">
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="Tvg-KA-Ne7"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="collectionView" destination="nKj-LQ-Wbt" id="BAe-Mg-cpu"/>
                     </connections>

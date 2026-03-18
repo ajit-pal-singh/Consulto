@@ -26,9 +26,9 @@ class consultCollectionViewCell: UICollectionViewCell {
         self.layer.masksToBounds = false
         
         titleLabel?.font = .systemFont(ofSize: titleLabel?.font.pointSize ?? 17, weight: .semibold).rounded
-        dateLabel?.font = .systemFont(ofSize: dateLabel?.font.pointSize ?? 15, weight: .semibold).rounded
-        symptomsLabel?.font = .systemFont(ofSize: symptomsLabel?.font.pointSize ?? 15, weight: .medium).rounded
-        questionsLabel?.font = .systemFont(ofSize: questionsLabel?.font.pointSize ?? 15, weight: .medium).rounded
+        dateLabel?.font = .systemFont(ofSize: dateLabel?.font.pointSize ?? 16, weight: .medium).rounded
+        symptomsLabel?.font = .systemFont(ofSize: symptomsLabel?.font.pointSize ?? 16, weight: .medium).rounded
+        questionsLabel?.font = .systemFont(ofSize: questionsLabel?.font.pointSize ?? 16, weight: .medium).rounded
 
         if let cardView = cardView {
             cardView.layer.shadowColor = UIColor.black.cgColor

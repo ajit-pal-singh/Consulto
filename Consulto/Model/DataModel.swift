@@ -33,9 +33,9 @@ struct SampleData {
     ]
 
     static let symptoms: [Symptom] = [
-        Symptom(name: "Headache", description: "Pulsating discomfort around temples.", isExpanded: false),
-        Symptom(name: "Nausea", description: "Uneasy feeling with urge to vomit.", isExpanded: false),
-        Symptom(name: "Fatigue", description: "Persistent tiredness despite rest.", isExpanded: false),
+        Symptom(name: "Headache", description: "Persistent pain in the head, especially in the morning. Continuous for at least one week. Not able to sleep properly at night.", isExpanded: false),
+        Symptom(name: "Nausea", description: "Uneasy feeling with urge to vomit. Food seems tasteless.", isExpanded: false),
+        Symptom(name: "Fatigue", description: "Persistent tiredness despite rest. Feeling light-headed or unsteady while standing.", isExpanded: false),
     ]
 
     static let questions: [Question] = [
@@ -71,8 +71,8 @@ struct SampleData {
             title: "Initial GP Visit",
             date: Calendar.current.date(byAdding: .day, value: -30, to: Date())!,
             symptoms: [
-                Symptom(name: "Headache", description: "Throbbing ache after screen time.", isExpanded: false),
-                Symptom(name: "Nausea", description: "Mild queasiness in the evening.", isExpanded: false),
+                Symptom(name: "Headache", description: "Persistent pain in the head, especially in the morning. Continuous for at least one week. Not able to sleep properly at night.", isExpanded: false),
+                Symptom(name: "Nausea", description: "Uneasy feeling with urge to vomit. Food seems tasteless.", isExpanded: false),
                 Symptom(name: "Photophobia", description: "Light sensitivity during episodes.", isExpanded: false),
             ],
             questions: [

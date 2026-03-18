@@ -24,22 +24,22 @@
                                 <rect key="frame" x="0.0" y="0.0" width="350" height="77"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cvN-Ua-vci" userLabel="titleLabel">
-                                        <rect key="frame" x="20" y="12" width="310" height="32.666666666666664"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <rect key="frame" x="20" y="14.000000000000002" width="310" height="21.666666666666671"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="XMw-xx-gRw" userLabel="descriptionRowStackView">
-                                        <rect key="frame" x="20" y="39.666666666666664" width="310" height="23.333333333333336"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" alignment="top" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="XMw-xx-gRw" userLabel="descriptionRowStackView">
+                                        <rect key="frame" x="20" y="40.666666666666664" width="310" height="22.333333333333336"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8xV-Fj-jVz">
-                                                <rect key="frame" x="0.0" y="3" width="282" height="17"/>
-                                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="282" height="19.333333333333332"/>
+                                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.down" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="3Gi-Mc-Dgt">
-                                                <rect key="frame" x="290" y="7.0000000000000036" width="20" height="10"/>
+                                                <rect key="frame" x="290" y="5.3333333333333321" width="20" height="10"/>
                                                 <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="20" id="W4a-NP-s7W"/>
@@ -47,22 +47,17 @@
                                                 </constraints>
                                             </imageView>
                                         </subviews>
-                                        <constraints>
-                                            <constraint firstItem="3Gi-Mc-Dgt" firstAttribute="top" secondItem="XMw-xx-gRw" secondAttribute="top" constant="1.6699999999999999" id="14m-X5-1H0"/>
-                                            <constraint firstAttribute="trailing" secondItem="3Gi-Mc-Dgt" secondAttribute="trailing" id="e2D-Cw-yBG"/>
-                                        </constraints>
                                     </stackView>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="XMw-xx-gRw" secondAttribute="trailing" constant="20" id="Gw8-C5-kOF"/>
-                                    <constraint firstAttribute="height" constant="77" id="Lw5-79-HSD"/>
                                     <constraint firstAttribute="trailing" secondItem="cvN-Ua-vci" secondAttribute="trailing" constant="20" id="UhO-nF-Ady"/>
-                                    <constraint firstItem="XMw-xx-gRw" firstAttribute="top" secondItem="cvN-Ua-vci" secondAttribute="bottom" constant="-5" id="bWx-F9-wRb"/>
+                                    <constraint firstItem="XMw-xx-gRw" firstAttribute="top" secondItem="cvN-Ua-vci" secondAttribute="bottom" constant="5" id="bWx-F9-wRb"/>
                                     <constraint firstItem="cvN-Ua-vci" firstAttribute="leading" secondItem="A5L-g9-Uey" secondAttribute="leading" constant="20" id="lcQ-Kk-eT9"/>
                                     <constraint firstItem="XMw-xx-gRw" firstAttribute="leading" secondItem="A5L-g9-Uey" secondAttribute="leading" constant="20" id="pfP-1g-WgN"/>
-                                    <constraint firstItem="cvN-Ua-vci" firstAttribute="top" secondItem="A5L-g9-Uey" secondAttribute="top" constant="12" id="vpl-uS-koU"/>
-                                    <constraint firstAttribute="bottom" relation="lessThanOrEqual" secondItem="XMw-xx-gRw" secondAttribute="bottom" constant="14" id="z4A-Ms-Z3G"/>
+                                    <constraint firstItem="cvN-Ua-vci" firstAttribute="top" secondItem="A5L-g9-Uey" secondAttribute="top" constant="14" id="vpl-uS-koU"/>
+                                    <constraint firstAttribute="bottom" secondItem="XMw-xx-gRw" secondAttribute="bottom" constant="14" id="z4A-Ms-Z3G"/>
                                 </constraints>
                             </view>
                         </subviews>

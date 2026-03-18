@@ -24,8 +24,15 @@ class SymptomCollectionViewCell: UICollectionViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        symptomCardView.layer.cornerRadius = 12
+        symptomCardView.layer.cornerRadius = 20
         symptomCardView.clipsToBounds = true
+        
+        // Shadow for the cell
+        self.layer.shadowColor = UIColor.black.cgColor
+        self.layer.shadowOffset = CGSize(width: 0, height: 2)
+        self.layer.shadowOpacity = 0.08
+        self.layer.shadowRadius = 10
+        self.layer.masksToBounds = false
 
         symptomTitleLabel.font =
             .systemFont(ofSize: symptomTitleLabel.font.pointSize, weight: .medium).rounded
@@ -35,8 +42,8 @@ class SymptomCollectionViewCell: UICollectionViewCell {
         descriptionLabel.lineBreakMode = .byTruncatingTail
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapChevron))
-        symptomCardView.isUserInteractionEnabled = true
-        symptomCardView.addGestureRecognizer(tap)
+        chevronImageView.isUserInteractionEnabled = true
+        chevronImageView.addGestureRecognizer(tap)
     }
 
     override func prepareForReuse() {
