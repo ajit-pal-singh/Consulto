@@ -52,6 +52,10 @@ class ConsultViewController: UIViewController,
         NotificationCenter.default.addObserver(
             self, selector: #selector(handleSessionUpdate(_:)),
             name: NSNotification.Name("ConsultSessionUpdated"), object: nil)
+        
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(handleNewSession(_:)),
+            name: NSNotification.Name("NewConsultSessionCreated"), object: nil)
     }
 
     @objc private func handleSessionUpdate(_ notification: Notification) {
@@ -64,6 +68,23 @@ class ConsultViewController: UIViewController,
             }
         }
     }
+    
+    @objc private func handleNewSession(_ notification: Notification) {
+        if let userInfo = notification.userInfo,
+           let newSession = userInfo["session"] as? ConsultSession
+        {
+            consultSessions.insert(newSession, at: 0)
+            consultCollectionView.insertItems(at: [IndexPath(item: 0, section: 0)])
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+          
+          if segue.identifier == "prepare_consultation" {
+              let navVC = segue.destination as! UINavigationController
+              let prepareVC = navVC.topViewController as! PrepareConsultationTableViewController
+          }
+      }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -85,27 +106,26 @@ class ConsultViewController: UIViewController,
             return
         }
 
-        // ✅ PASS THE SELECTED SESSION
         let selectedSession = consultSessions[indexPath.item]
         detailVC.consultSession = selectedSession
 
         print("[ConsultVC] Passing session: \(selectedSession.title)")
 
-        // Navigate
         navigationController?.pushViewController(detailVC, animated: true)
     }
 
     func setupHeaderActions() {
         guard let container = headerActionsContainerView else { return }
         print("[ConsultVC] Setting up header actions")
-
-        // Clear any existing subviews
+        
         container.subviews.forEach { $0.removeFromSuperview() }
         container.backgroundColor = .clear
 
         let swiftUIView = ConsultHeaderActionsView {
             print("Add Consult Tapped")
-            // TODO: Handle add action
+            
+            self.performSegue(withIdentifier: "prepare_consultation", sender: nil)
+            
         }
 
         let hostingController = UIHostingController(rootView: swiftUIView)

@@ -17,6 +17,12 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     var records: [HealthRecord] = []
     private var allRecords: [HealthRecord] = []
     
+    // Selection Mode
+    var selectionMode: Bool = false
+    var alreadySelectedRecordIDs: Set<UUID> = []
+    var selectedRecords: [HealthRecord] = []
+    var didSelectRecords: (([HealthRecord]) -> Void)?
+    
     @IBOutlet weak var platterContainerView: UIView!
 
     // Platter Properties
@@ -51,6 +57,27 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
                 self?.filterRecords(by: newFilter)
             }
             .store(in: &cancellables)
+        
+        if selectionMode {
+            self.title = "Select Records"
+            navigationItem.rightBarButtonItem = UIBarButtonItem(
+                title: "Done", style: .done, target: self, action: #selector(doneSelectingTapped))
+            navigationItem.leftBarButtonItem = UIBarButtonItem(
+                title: "Cancel", style: .plain, target: self, action: #selector(cancelSelectionTapped))
+            navigationController?.setNavigationBarHidden(false, animated: false)
+            
+            headerActionsContainerView?.superview?.isHidden = true
+            blurEffectView?.isHidden = true
+        }
+    }
+    
+    @objc private func doneSelectingTapped() {
+        didSelectRecords?(selectedRecords)
+        dismiss(animated: true)
+    }
+    
+    @objc private func cancelSelectionTapped() {
+        dismiss(animated: true)
     }
     
     func setupHeaderActions() {
@@ -161,8 +188,9 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     
     // Navigation Handler
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-            let isRecordsScreen = (viewController === self)
-            navigationController.setNavigationBarHidden(isRecordsScreen, animated: animated)
+        if selectionMode { return }
+        let isRecordsScreen = (viewController === self)
+        navigationController.setNavigationBarHidden(isRecordsScreen, animated: animated)
     }
     
     // Gradient Generation
@@ -432,6 +460,18 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         let record = records[indexPath.item]
         cell.configure(with: record)
         
+        if selectionMode {
+            let isSelected = selectedRecords.contains(where: { $0.id == record.id })
+            let isAlreadyAdded = alreadySelectedRecordIDs.contains(record.id)
+            cell.contentView.layer.cornerRadius = 12
+            cell.contentView.layer.borderWidth = isSelected ? 2.5 : 0
+            cell.contentView.layer.borderColor = isSelected ? UIColor.systemBlue.cgColor : UIColor.clear.cgColor
+            cell.contentView.alpha = isAlreadyAdded ? 0.5 : 1.0
+        } else {
+            cell.contentView.layer.borderWidth = 0
+            cell.contentView.alpha = 1.0
+        }
+        
         return cell
     }
     
@@ -450,7 +490,9 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        // Records Grid
+        if selectionMode {
+            return UIEdgeInsets(top: 70, left: 16, bottom: 20, right: 16)
+        }
         return UIEdgeInsets(top: 130, left: 16, bottom: 20, right: 16)
     }
     
@@ -463,8 +505,18 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedRecord = records[indexPath.item]
-        performSegue(withIdentifier: detailSegueIdentifier, sender: selectedRecord)
+        let tappedRecord = records[indexPath.item]
+        
+        if selectionMode {
+            if let existingIndex = selectedRecords.firstIndex(where: { $0.id == tappedRecord.id }) {
+                selectedRecords.remove(at: existingIndex)
+            } else {
+                selectedRecords.append(tappedRecord)
+            }
+            collectionView.reloadItems(at: [indexPath])
+        } else {
+            performSegue(withIdentifier: detailSegueIdentifier, sender: tappedRecord)
+        }
     }
 }
 

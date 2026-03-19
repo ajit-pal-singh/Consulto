@@ -1,10 +1,3 @@
-//
-//  QuestionCollectionViewCell.swift
-//  Consulto
-//
-//  Created by Tevika Kumbhawat on 16/03/26.
-//
-
 import UIKit
 
 class QuestionCollectionViewCell: UICollectionViewCell {

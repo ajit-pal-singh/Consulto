@@ -1,10 +1,3 @@
-//
-//  HeaderCollectionViewCell.swift
-//  ConsultSession
-//
-//  Created by geu on 03/02/26.
-//
-
 import UIKit
 
 class HeaderCollectionViewCell: UICollectionViewCell {

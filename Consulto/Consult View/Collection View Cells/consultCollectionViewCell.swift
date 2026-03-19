@@ -19,7 +19,6 @@ class consultCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
         
         self.clipsToBounds = false
         self.contentView.clipsToBounds = false
@@ -32,9 +31,9 @@ class consultCollectionViewCell: UICollectionViewCell {
 
         if let cardView = cardView {
             cardView.layer.shadowColor = UIColor.black.cgColor
-            cardView.layer.shadowOpacity = 0.05
-            cardView.layer.shadowOffset = CGSize(width: 0, height: 4)
-            cardView.layer.shadowRadius = 6
+            cardView.layer.shadowOpacity = 0.08
+            cardView.layer.shadowOffset = CGSize(width: 0, height: 2)
+            cardView.layer.shadowRadius = 10
             cardView.layer.masksToBounds = false
         }
     }
