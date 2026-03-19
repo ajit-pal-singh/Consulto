@@ -204,7 +204,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             let overlayLayer = CALayer()
             overlayLayer.name = "SolidOverlay"
             overlayLayer.frame = blurEffectView.bounds
-            overlayLayer.backgroundColor = UIColor(hex: "#f5f5f5")?.withAlphaComponent(0.5).cgColor
+            overlayLayer.backgroundColor = UIColor(hex: "#f5f5f5").withAlphaComponent(0.5).cgColor
             
             // Important: We need to mask the overlay too so it fades out with the blur
             let overlayMask = CAGradientLayer()

@@ -56,7 +56,7 @@
                             <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HO5-sT-Jd5" userLabel="Custom Navigation">
                                 <rect key="frame" x="0.0" y="65" width="393" height="50"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Consult" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TZ0-zJ-h0i">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Prepare" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TZ0-zJ-h0i">
                                         <rect key="frame" x="16" y="4.3333333333333286" width="136.33333333333334" height="41.666666666666664"/>
                                         <fontDescription key="fontDescription" name="Montserrat-Bold" family="Montserrat" pointSize="34"/>
                                         <nil key="textColor"/>
@@ -94,7 +94,7 @@
                         </constraints>
                     </view>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Consult" id="wHb-1K-ICr"/>
+                    <navigationItem key="navigationItem" title="Prepare" id="wHb-1K-ICr"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
@@ -111,7 +111,7 @@
         <scene sceneID="pjI-yD-ypq">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" toolbarHidden="NO" id="r4g-4g-uYX" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Records" image="Consult" id="v2i-Hx-ji1"/>
+                    <tabBarItem key="tabBarItem" title="Prepare" image="Consult" id="v2i-Hx-ji1"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="72V-Gj-g8k">
                         <rect key="frame" x="0.0" y="118" width="393" height="106"/>

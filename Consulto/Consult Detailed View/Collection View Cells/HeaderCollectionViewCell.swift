@@ -59,8 +59,8 @@ class HeaderCollectionViewCell: UICollectionViewCell {
         if gradientLayer == nil {
             let gradient = CAGradientLayer()
             gradient.colors = [
-                UIColor(hex: "5AA9FF")!.cgColor,
-                UIColor(hex: "236CBE")!.cgColor,
+                UIColor(hex: "5AA9FF").cgColor,
+                UIColor(hex: "236CBE").cgColor,
             ]
             gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
             gradient.endPoint = CGPoint(x: 0.5, y: 1.0)
@@ -99,20 +99,3 @@ class HeaderCollectionViewCell: UICollectionViewCell {
     }
 }
 
-extension UIColor {
-    convenience init?(hex: String) {
-        var hex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        hex = hex.replacingOccurrences(of: "#", with: "")
-
-        guard hex.count == 6 else { return nil }
-
-        var rgb: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&rgb)
-
-        self.init(
-            red: CGFloat((rgb >> 16) & 0xFF) / 255,
-            green: CGFloat((rgb >> 8) & 0xFF) / 255,
-            blue: CGFloat(rgb & 0xFF) / 255,
-            alpha: 1)
-    }
-}

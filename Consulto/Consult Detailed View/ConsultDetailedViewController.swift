@@ -132,8 +132,8 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
 
         let gradient = CAGradientLayer()
         gradient.colors = [
-            UIColor(hex: "D9EBFF")!.cgColor,
-            UIColor(hex: "F7F9FC")!.cgColor,
+            UIColor(hex: "D9EBFF").cgColor,
+            UIColor(hex: "F7F9FC").cgColor,
         ]
 
         gradient.startPoint = CGPoint(x: 0.5, y: 0.0)

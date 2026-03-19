@@ -19,7 +19,7 @@ class ConsultViewController: UIViewController,
         print("[ConsultVC] init(coder:) called")
 
         tabBarItem = UITabBarItem(
-            title: "Consult",
+            title: "Prepare",
             image: UIImage(named: "Consult"),
             selectedImage: UIImage(named: "Consult")
         )
@@ -29,9 +29,9 @@ class ConsultViewController: UIViewController,
         super.viewDidLoad()
         print("[ConsultVC] viewDidLoad")
 
-        self.title = "Consult"
-        self.tabBarItem.title = "Consult"
-        self.navigationController?.tabBarItem.title = "Consult"
+        self.title = "Prepare"
+        self.tabBarItem.title = "Prepare"
+        self.navigationController?.tabBarItem.title = "Prepare"
 
         navigationController?.delegate = self
         consultCollectionView.delegate = self
@@ -154,7 +154,7 @@ class ConsultViewController: UIViewController,
             let overlayLayer = CALayer()
             overlayLayer.name = "SolidOverlay"
             overlayLayer.frame = blurEffectView.bounds
-            overlayLayer.backgroundColor = UIColor(hex: "#f5f5f5")?.withAlphaComponent(0.5).cgColor
+            overlayLayer.backgroundColor = UIColor(hex: "#f5f5f5").withAlphaComponent(0.5).cgColor
 
             let overlayMask = CAGradientLayer()
             overlayMask.frame = overlayLayer.bounds

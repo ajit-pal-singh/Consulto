@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C3570B7C2F6BB32A003A86BE /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = C3570B7B2F6BB32A003A86BE /* DGCharts */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		C3A7A24C2F1CFC9E006572F5 /* Consulto.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Consulto.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3570B7C2F6BB32A003A86BE /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = Consulto;
 			packageProductDependencies = (
+				C3570B7B2F6BB32A003A86BE /* DGCharts */,
 			);
 			productName = Consulto;
 			productReference = C3A7A24C2F1CFC9E006572F5 /* Consulto.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = C3A7A2432F1CFC9E006572F5;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C3570B7A2F6BB32A003A86BE /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C3A7A24D2F1CFC9E006572F5 /* Products */;
 			projectDirPath = "";
@@ -351,6 +360,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C3570B7A2F6BB32A003A86BE /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ChartsOrg/Charts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C3570B7B2F6BB32A003A86BE /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C3570B7A2F6BB32A003A86BE /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C3A7A2442F1CFC9E006572F5 /* Project object */;
 }

@@ -32,7 +32,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "256"
             endingLineNumber = "256"
-            landmarkName = "collectionView(_:cellForItemAt:)"
+            landmarkName = "recordsSection()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
