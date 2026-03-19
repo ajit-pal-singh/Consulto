@@ -152,7 +152,7 @@
         <scene sceneID="pjI-yD-ypq">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" toolbarHidden="NO" id="r4g-4g-uYX" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Records" image="Consult" id="v2i-Hx-ji1"/>
+                    <tabBarItem key="tabBarItem" title="Prepare" image="Consult" id="v2i-Hx-ji1"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="72V-Gj-g8k">
                         <rect key="frame" x="0.0" y="118" width="393" height="106"/>
