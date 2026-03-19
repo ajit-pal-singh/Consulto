@@ -1,10 +1,3 @@
-//
-//  SectionHeaderView.swift
-//  ConsultSession
-//
-//  Created by geu on 05/02/26.
-//
-
 import UIKit
 
 class SectionHeaderView: UICollectionReusableView {

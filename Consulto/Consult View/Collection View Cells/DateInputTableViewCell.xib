@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DateInputCell" rowHeight="101" id="KGk-i7-Jjw" customClass="DateInputTableViewCell" customModule="Consulto" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="324" height="101"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="324" height="101"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="z2l-V1-QYn">
+                        <rect key="frame" x="16" y="16" width="252" height="69"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                        <textInputTraits key="textInputTraits"/>
+                    </textField>
+                    <datePicker alpha="0.20000000000000001" contentMode="scaleToFill" placeholderIntrinsicWidth="24" placeholderIntrinsicHeight="24" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" style="compact" translatesAutoresizingMaskIntoConstraints="NO" id="5Oo-Ox-HBm">
+                        <rect key="frame" x="284" y="38.666666666666664" width="120.33333333333331" height="24"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="24" id="DBo-10-lWZ"/>
+                            <constraint firstAttribute="width" constant="24" id="Jtk-R0-wER"/>
+                        </constraints>
+                    </datePicker>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="calendar" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="B0G-tG-xmM">
+                        <rect key="frame" x="284" y="40.333333333333329" width="24" height="21.000000000000007"/>
+                        <color key="tintColor" systemColor="systemGrayColor"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="24" id="fC9-T5-fCb"/>
+                            <constraint firstAttribute="width" constant="24" id="pa4-NG-AvW"/>
+                        </constraints>
+                    </imageView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="B0G-tG-xmM" firstAttribute="leading" secondItem="z2l-V1-QYn" secondAttribute="trailing" constant="16" id="0d1-m6-aZ5"/>
+                    <constraint firstAttribute="trailing" secondItem="5Oo-Ox-HBm" secondAttribute="trailing" constant="16" id="3Km-Wz-bzV"/>
+                    <constraint firstAttribute="bottom" secondItem="z2l-V1-QYn" secondAttribute="bottom" constant="16" id="BS2-tU-p2R"/>
+                    <constraint firstItem="B0G-tG-xmM" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="Ivy-Zu-yEc"/>
+                    <constraint firstItem="5Oo-Ox-HBm" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="KP2-Ca-znL"/>
+                    <constraint firstItem="5Oo-Ox-HBm" firstAttribute="leading" secondItem="z2l-V1-QYn" secondAttribute="trailing" constant="16" id="Ofi-Oh-fSF"/>
+                    <constraint firstItem="z2l-V1-QYn" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="QM1-D9-LuU"/>
+                    <constraint firstAttribute="trailing" secondItem="B0G-tG-xmM" secondAttribute="trailing" constant="16" id="kJm-mV-d84"/>
+                    <constraint firstItem="z2l-V1-QYn" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="oI4-Vw-sHl"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="compactDatePicker" destination="5Oo-Ox-HBm" id="vBe-nN-N9j"/>
+                <outlet property="dateTextField" destination="z2l-V1-QYn" id="Z3Q-KR-vBm"/>
+            </connections>
+            <point key="canvasLocation" x="4.5801526717557248" y="132.74647887323945"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="calendar" catalog="system" width="128" height="107"/>
+        <systemColor name="systemGrayColor">
+            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

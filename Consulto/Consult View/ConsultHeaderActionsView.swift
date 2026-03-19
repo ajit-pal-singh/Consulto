@@ -6,9 +6,8 @@ struct ConsultHeaderActionsView: View {
     
     var body: some View {
         HStack {
-            Spacer() // Push to the right
+            Spacer()
             
-            // Add Button
             Button(action: {
                 onAddAction?()
             }) {

@@ -18,7 +18,7 @@
         <!--Records-->
         <scene sceneID="EnV-ed-EwG">
             <objects>
-                <viewController automaticallyAdjustsScrollViewInsets="NO" id="eId-5j-vbN" customClass="RecordsViewController" customModule="Consulto" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RecordsViewController" automaticallyAdjustsScrollViewInsets="NO" id="eId-5j-vbN" customClass="RecordsViewController" customModule="Consulto" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ia1-JT-vTB">
                         <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

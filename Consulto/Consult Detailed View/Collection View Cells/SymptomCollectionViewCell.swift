@@ -1,10 +1,3 @@
-//
-//  SymptomCollectionViewCell.swift
-//  ConsultSession
-//
-//  Created by geu on 04/02/26.
-//
-
 import UIKit
 
 class SymptomCollectionViewCell: UICollectionViewCell {

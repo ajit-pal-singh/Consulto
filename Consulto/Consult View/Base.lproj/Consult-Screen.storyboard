@@ -56,14 +56,14 @@
                             <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HO5-sT-Jd5" userLabel="Custom Navigation">
                                 <rect key="frame" x="0.0" y="65" width="393" height="50"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Consult" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TZ0-zJ-h0i">
-                                        <rect key="frame" x="16" y="4.3333333333333286" width="136.33333333333334" height="41.666666666666664"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Prepare" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TZ0-zJ-h0i">
+                                        <rect key="frame" x="16.000000000000007" y="5.3333333333333286" width="118.66666666666669" height="39.666666666666664"/>
                                         <fontDescription key="fontDescription" name="Montserrat-Bold" family="Montserrat" pointSize="34"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6cy-NZ-kwg">
-                                        <rect key="frame" x="152.33333333333337" y="4.3333333333333286" width="224.66666666666663" height="41.333333333333336"/>
+                                        <rect key="frame" x="134.66666666666663" y="4.3333333333333286" width="242.33333333333337" height="41.333333333333336"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                 </subviews>
@@ -101,11 +101,52 @@
                         <outlet property="blurEffectView" destination="zPO-mj-cs3" id="7Bs-hq-Zek"/>
                         <outlet property="consultCollectionView" destination="8rr-Rt-P5N" id="lOr-T5-efD"/>
                         <outlet property="headerActionsContainerView" destination="6cy-NZ-kwg" id="V78-94-yNo"/>
+                        <segue destination="w14-Vl-wmp" kind="presentation" identifier="prepare_consultation" id="fpf-Qp-TXe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tB3-b5-3qe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2075.5725190839694" y="-145.07042253521126"/>
+        </scene>
+        <!--Prepare Consultation-->
+        <scene sceneID="sQ3-Ha-hs2">
+            <objects>
+                <tableViewController id="pKe-bS-aIb" customClass="PrepareConsultationTableViewController" customModule="Consulto" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="Qwe-JE-hRt">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="793"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="j1f-rx-dfK">
+                                <rect key="frame" x="20" y="55.333332061767578" width="353" height="51"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="j1f-rx-dfK" id="Sjy-os-4Wn">
+                                    <rect key="frame" x="0.0" y="0.0" width="353" height="51"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="pKe-bS-aIb" id="Mmp-Y8-qmD"/>
+                            <outlet property="delegate" destination="pKe-bS-aIb" id="ga8-Kq-CFV"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Prepare Consultation" id="ivW-hm-hbL">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="f0C-MG-qk1">
+                            <connections>
+                                <action selector="cancelTapped:" destination="pKe-bS-aIb" id="y1s-9v-jzg"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="5kJ-sh-hg1">
+                            <connections>
+                                <action selector="doneTapped:" destination="pKe-bS-aIb" id="fbq-ns-2Hm"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0qD-Ne-UIl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4512.2137404580153" y="-145.07042253521126"/>
         </scene>
         <!--Records-->
         <scene sceneID="pjI-yD-ypq">
@@ -128,6 +169,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DJA-ct-eiQ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1148.854961832061" y="-145.07042253521126"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="6Qs-Xn-Xlp">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="w14-Vl-wmp" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="rsL-C0-ziT">
+                        <rect key="frame" x="0.0" y="16" width="393" height="54"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="pKe-bS-aIb" kind="relationship" relationship="rootViewController" id="GPz-zj-OVt"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="s4w-LV-KKs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3585.4961832061067" y="-145.07042253521126"/>
         </scene>
     </scenes>
     <resources>

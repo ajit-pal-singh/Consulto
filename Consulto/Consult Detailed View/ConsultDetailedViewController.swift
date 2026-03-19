@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  ConsultSession
-//
-//  Created by geu on 03/02/26.
-//
-
 import UIKit
 
 class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate {
@@ -22,11 +15,16 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     var medications: [Medication] = []
     var records: [HealthRecord] = []
     var questions: [Question] = []
+    
+    enum DetailSection {
+        case header, symptoms, medications, records, questions
+    }
+    var visibleSections: [DetailSection] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let bgColor = UIColor(red: 245 / 255, green: 245 / 255, blue: 245 / 255, alpha: 1.0)
-        view.backgroundColor = bgColor
+//        let bgColor = UIColor(red: 245 / 255, green: 245 / 255, blue: 245 / 255, alpha: 1.0)
+        view.backgroundColor = UIColor(hex: "F5F5F5")
         collectionView.backgroundColor = .clear
 
         // Add action to the Done button defined in Storyboard
@@ -74,8 +72,6 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     }
 
     private func loadSessionData() {
-
-        // If session was passed from previous screen
         if let session = consultSession {
             sessionTitle = session.title
             symptoms = session.symptoms
@@ -83,15 +79,21 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
             records = session.records
             questions = session.questions
         } else {
-            // fallback for testing
             let sampleSession = SampleData.consultSessions.first!
-
             sessionTitle = sampleSession.title
             symptoms = sampleSession.symptoms
             medications = sampleSession.medications
             records = sampleSession.records
             questions = sampleSession.questions
         }
+        buildVisibleSections()
+    }
+    
+    private func buildVisibleSections() {
+        visibleSections = [.header, .symptoms]  // Always visible
+        if !medications.isEmpty { visibleSections.append(.medications) }
+        if !records.isEmpty { visibleSections.append(.records) }
+        if !questions.isEmpty { visibleSections.append(.questions) }
     }
 
     private func setupCollectionView() {
@@ -147,20 +149,14 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     }
 
     private func generateLayout() -> UICollectionViewCompositionalLayout {
-        UICollectionViewCompositionalLayout { sectionIndex, _ in
-            switch sectionIndex {
-            case 0:
-                return self.headerSection()
-            case 1:
-                return self.symptomsSection()
-            case 2:
-                return self.medicationsSection()
-            case 3:
-                return self.recordsSection()
-            case 4:
-                return self.questionsSection()
-            default:
-                return nil
+        UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
+            guard let self = self, sectionIndex < self.visibleSections.count else { return nil }
+            switch self.visibleSections[sectionIndex] {
+            case .header: return self.headerSection()
+            case .symptoms: return self.symptomsSection()
+            case .medications: return self.medicationsSection()
+            case .records: return self.recordsSection()
+            case .questions: return self.questionsSection()
             }
         }
     }
@@ -199,7 +195,6 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         section.contentInsets = NSDirectionalEdgeInsets(
             top: 0, leading: 16, bottom: 0, trailing: 16)
 
-        // Section header
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
 
@@ -309,40 +304,33 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         return section
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
-    ) {
-        if indexPath.section == 1 {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch visibleSections[indexPath.section] {
+        case .symptoms:
             symptoms[indexPath.item].isExpanded.toggle()
             let symptom = symptoms[indexPath.item]
             if let cell = collectionView.cellForItem(at: indexPath) as? SymptomCollectionViewCell {
-                cell.configure(
-                    title: symptom.name, description: symptom.description,
-                    isExpanded: symptom.isExpanded)
+                cell.configure(title: symptom.name, description: symptom.description, isExpanded: symptom.isExpanded)
             }
             collectionView.performBatchUpdates(nil)
-        } else if indexPath.section == 3 {
+        case .records:
             let selectedRecord = records[indexPath.item]
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            if let destinationVC = storyboard.instantiateViewController(
-                withIdentifier: "RecordDetailedViewController") as? RecordDetailedViewController
-            {
+            if let destinationVC = storyboard.instantiateViewController(withIdentifier: "RecordDetailedViewController") as? RecordDetailedViewController {
                 destinationVC.record = selectedRecord
                 if let navigationController = self.navigationController {
                     navigationController.pushViewController(destinationVC, animated: true)
                 } else {
                     self.present(destinationVC, animated: true, completion: nil)
                 }
-            } else {
-                print("Could not instantiate RecordDetailedViewController")
             }
-        } else if indexPath.section == 4 {
+        case .questions:
             questions[indexPath.item].isSelected.toggle()
             if let cell = collectionView.cellForItem(at: indexPath) as? QuestionCollectionViewCell {
                 cell.configure(with: questions[indexPath.item])
             }
             collectionView.performBatchUpdates(nil)
+        default: break
         }
     }
 }
@@ -350,114 +338,64 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
 extension ConsultDetailedViewController: UICollectionViewDataSource {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 5
+        return visibleSections.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int)
-        -> Int
-    {
-        switch section {
-        case 0: return 1
-        case 1: return symptoms.count
-        case 2: return medications.count
-        case 3: return records.count
-        case 4: return questions.count
-        default: return 0
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch visibleSections[section] {
+        case .header: return 1
+        case .symptoms: return symptoms.count
+        case .medications: return medications.count
+        case .records: return records.count
+        case .questions: return questions.count
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath)
-        -> UICollectionViewCell
-    {
-
-        if indexPath.section == 0 {
-            let cell =
-                collectionView.dequeueReusableCell(
-                    withReuseIdentifier: "HeaderCell", for: indexPath) as! HeaderCollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        switch visibleSections[indexPath.section] {
+        case .header:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HeaderCell", for: indexPath) as! HeaderCollectionViewCell
             cell.titleLabel.text = sessionTitle
             return cell
-        } else if indexPath.section == 1 {
-            let cell =
-                collectionView.dequeueReusableCell(
-                    withReuseIdentifier: "SymptomCell", for: indexPath)
-                as! SymptomCollectionViewCell
+        case .symptoms:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SymptomCell", for: indexPath) as! SymptomCollectionViewCell
             let symptom = symptoms[indexPath.item]
-            cell.configure(
-                title: symptom.name, description: symptom.description,
-                isExpanded: symptom.isExpanded)
-
+            cell.configure(title: symptom.name, description: symptom.description, isExpanded: symptom.isExpanded)
             cell.onChevronTap = { [weak self, weak cell] in
-                guard
-                    let self = self,
-                    let cell = cell,
-                    let tappedIndexPath = self.collectionView.indexPath(for: cell)
-                else { return }
-
+                guard let self = self, let cell = cell, let tappedIndexPath = self.collectionView.indexPath(for: cell) else { return }
                 self.symptoms[tappedIndexPath.item].isExpanded.toggle()
-                let symptom = self.symptoms[tappedIndexPath.item]
-                cell.configure(
-                    title: symptom.name, description: symptom.description,
-                    isExpanded: symptom.isExpanded)
-
+                let s = self.symptoms[tappedIndexPath.item]
+                cell.configure(title: s.name, description: s.description, isExpanded: s.isExpanded)
                 self.collectionView.performBatchUpdates(nil)
             }
             return cell
-        } else if indexPath.section == 2 {
-            let cell =
-                collectionView.dequeueReusableCell(
-                    withReuseIdentifier: "MedicationCell", for: indexPath)
-                as! MedicationCollectionViewCell
+        case .medications:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MedicationCell", for: indexPath) as! MedicationCollectionViewCell
             let med = medications[indexPath.item]
-            cell.configure(
-                name: med.name, dosage: med.dosage ?? "", frequency: med.frequency?.rawValue ?? "",
-                duration: med.duration ?? "")
+            cell.configure(name: med.name, dosage: med.dosage ?? "", frequency: med.frequency?.rawValue ?? "", duration: med.duration ?? "")
             return cell
-        } else if indexPath.section == 3 {
-            let cell =
-                collectionView.dequeueReusableCell(
-                    withReuseIdentifier: "RecordCell", for: indexPath)
-                as! RecordCardCollectionViewCell
-            let record = records[indexPath.item]
-            cell.configure(with: record)
+        case .records:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecordCell", for: indexPath) as! RecordCardCollectionViewCell
+            cell.configure(with: records[indexPath.item])
             return cell
-        } else if indexPath.section == 4 {
-            let cell =
-                collectionView.dequeueReusableCell(
-                    withReuseIdentifier: "QuestionCell", for: indexPath)
-                as! QuestionCollectionViewCell
+        case .questions:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "QuestionCell", for: indexPath) as! QuestionCollectionViewCell
             cell.configure(with: questions[indexPath.item])
             return cell
         }
-
-        // Return empty cell if none matched (should not happen)
-        return UICollectionViewCell()
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {
-
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard kind == UICollectionView.elementKindSectionHeader else {
             return UICollectionReusableView()
         }
-
-        let header =
-            collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind, withReuseIdentifier: "SectionHeaderView", for: indexPath)
-            as! SectionHeaderView
-
-        switch indexPath.section {
-        case 1:
-            header.configure(title: "Symptoms")
-        case 2:
-            header.configure(title: "Current Medications")
-        case 3:
-            header.configure(title: "Added Records")
-        case 4:
-            header.configure(title: "Questions")
-        default:
-            header.configure(title: "")
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "SectionHeaderView", for: indexPath) as! SectionHeaderView
+        switch visibleSections[indexPath.section] {
+        case .symptoms: header.configure(title: "Symptoms")
+        case .medications: header.configure(title: "Current Medications")
+        case .records: header.configure(title: "Added Records")
+        case .questions: header.configure(title: "Questions")
+        default: header.configure(title: "")
         }
         return header
     }
