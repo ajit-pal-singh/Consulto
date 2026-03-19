@@ -68,6 +68,7 @@ struct SampleData {
         ConsultSession(
             id: UUID(),
             userID: user.id,
+            doctorName: "Dr. Sandeep Gupta",
             title: "Initial GP Visit",
             date: Calendar.current.date(byAdding: .day, value: -30, to: Date())!,
             symptoms: [
@@ -85,8 +86,6 @@ struct SampleData {
                 Medication(id: UUID(), recordID: UUID(), name: "Amoxicillin", dosage: "250 mg", frequency: .thriceDaily, duration: "From last 7 days", notes: "Before meals")
             ],
             records: records,
-            symptomsCount: symptoms.count,
-            questionsCount: questions.count,
             notes: "Hydration plan and 20-20-20 rule advised.",
             status: .completed,
             createdAt: Calendar.current.date(byAdding: .day, value: -30, to: Date())!
@@ -94,6 +93,7 @@ struct SampleData {
         ConsultSession(
             id: UUID(),
             userID: user.id,
+            doctorName: "Dr. Vijay Sinha",
             title: "Dietary Review",
             date: Calendar.current.date(byAdding: .day, value: -20, to: Date())!,
             symptoms: [
@@ -109,8 +109,6 @@ struct SampleData {
                 Medication(id: UUID(), recordID: UUID(), name: "Diclofenac", dosage: "50 mg", frequency: .twiceDaily, duration: "From last 5 days", notes: "With water")
             ],
             records: records,
-            symptomsCount: symptoms.count,
-            questionsCount: questions.count,
             notes: "Recommended balanced macros and fiber.",
             status: .completed,
             createdAt: Calendar.current.date(byAdding: .day, value: -20, to: Date())!
@@ -118,6 +116,7 @@ struct SampleData {
         ConsultSession(
             id: UUID(),
             userID: user.id,
+            doctorName: "Dr. Anupam Jain",
             title: "Sleep Hygiene Check",
             date: Calendar.current.date(byAdding: .day, value: -12, to: Date())!,
             symptoms: [
@@ -132,8 +131,6 @@ struct SampleData {
             ],
             medications: [],
             records: [],
-            symptomsCount: symptoms.count,
-            questionsCount: questions.count,
             notes: "Set consistent bedtime and limit screens.",
             status: .completed,
             createdAt: Calendar.current.date(byAdding: .day, value: -12, to: Date())!
@@ -141,6 +138,7 @@ struct SampleData {
         ConsultSession(
             id: UUID(),
             userID: user.id,
+            doctorName: "Dr. Sandeep Gupta",
             title: "Follow-up: Headache Control",
             date: Calendar.current.date(byAdding: .day, value: -5, to: Date())!,
             symptoms: [
@@ -153,8 +151,6 @@ struct SampleData {
             ],
             medications: [],
             records: records,
-            symptomsCount: symptoms.count,
-            questionsCount: questions.count,
             notes: "Continue hydration and posture checks.",
             status: .completed,
             createdAt: Calendar.current.date(byAdding: .day, value: -5, to: Date())!
@@ -162,6 +158,7 @@ struct SampleData {
         ConsultSession(
             id: UUID(),
             userID: user.id,
+            doctorName: "Dr. Rohan Verma",
             title: "Current Session: Wellness Review",
             date: Date(),
             symptoms: [
@@ -176,15 +173,12 @@ struct SampleData {
             ],
             medications: medications,
             records: records,
-            symptomsCount: symptoms.count,
-            questionsCount: questions.count,
             notes: "Introduce micro-breaks and short walks.",
             status: .pending,
             createdAt: Date()
         )
     ]
     
-    // Record View & Record Detailed View - Sample Data
     static func getSampleRecords() -> [HealthRecord] {
         var records: [HealthRecord] = []
 
@@ -230,7 +224,7 @@ struct SampleData {
         for i in 0..<titles.count {
             let record = HealthRecord(
                 id: UUID(),
-                userID: UUID(), // Dummy User ID
+                userID: UUID(),
                 title: titles[i],
                 recordType: types[i],
                 healthFacilityName: facilities[i],

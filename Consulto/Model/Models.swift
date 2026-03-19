@@ -87,6 +87,7 @@ struct ConsultSession {
     let id: UUID
     let userID: UUID
 
+    var doctorName: String
     var title: String
     var date: Date
 
@@ -95,8 +96,12 @@ struct ConsultSession {
     var medications: [Medication]
     var records: [HealthRecord]
     
-    var symptomsCount: Int
-    var questionsCount: Int
+    var symptomsCount: Int {
+        return symptoms.count
+    }
+    var questionsCount: Int {
+        return questions.count
+    }
 
     var notes: String?
     var status: ConsultStatus

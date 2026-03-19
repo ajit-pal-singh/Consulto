@@ -63,14 +63,13 @@ class PrepareConsultationTableViewController: UITableViewController {
         let newSession = ConsultSession(
             id: UUID(),
             userID: UUID(),
+            doctorName: doctorName,
             title: sessionTitle,
             date: sessionDate,
             symptoms: validSymptoms,
             questions: validQuestions,
             medications: medications,
             records: records,
-            symptomsCount: validSymptoms.count,
-            questionsCount: validQuestions.count,
             notes: notes.isEmpty ? nil : notes,
             status: .pending,
             createdAt: Date()

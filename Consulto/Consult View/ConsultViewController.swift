@@ -43,9 +43,6 @@ class ConsultViewController: UIViewController,
             UINib(nibName: "consultCollectionViewCell", bundle: nil),
             forCellWithReuseIdentifier: "consult_cell"
         )
-        print(
-            "[ConsultVC] Registered cell nib consultCollectionViewCell with reuseIdentifier consult_cell"
-        )
 
         setupHeaderActions()
 
