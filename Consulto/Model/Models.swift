@@ -81,8 +81,6 @@ enum MedicationFrequency: String {
 
 // MARK: - Consult
 
-// MARK: - Consult
-
 struct ConsultSession {
     let id: UUID
     let userID: UUID

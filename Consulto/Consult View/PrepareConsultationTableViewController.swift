@@ -10,11 +10,15 @@ class PrepareConsultationTableViewController: UITableViewController {
     var records: [HealthRecord] = []
     var questions: [Question] = []
     var notes: String = ""
+    var existingSessionID: UUID?
+    var existingUserID: UUID?
+    var existingCreatedAt: Date?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = UIColor(hex: "F5F5F5")
+        tableView.showsVerticalScrollIndicator = false
 
         tableView.register(
             UINib(nibName: "InputTextFieldTableViewCell", bundle: nil),
@@ -31,6 +35,18 @@ class PrepareConsultationTableViewController: UITableViewController {
         tableView.register(UINib(nibName: "AddActionTableViewCell", bundle: nil), forCellReuseIdentifier: "AddActionCell")
         tableView.register(UINib(nibName: "QuestionTableViewCell", bundle: nil), forCellReuseIdentifier: "QuestionCell")
         tableView.register(UINib(nibName: "AddRecordTableViewCell", bundle: nil), forCellReuseIdentifier: "AddRecordCell")
+        
+        validateForm()
+    }
+    
+    // This is for done button in prepare sheet to be active only when the user enters the doctor name, purpose , date, atleast 1 symptom.
+    private func validateForm() {
+        let isDoctorNameValid = !doctorName.trimmingCharacters(in: .whitespaces).isEmpty
+        let isTitleValid = !sessionTitle.trimmingCharacters(in: .whitespaces).isEmpty
+        let hasValidSymptom = !symptoms.isEmpty && symptoms.contains { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        
+        let isValid = isDoctorNameValid && isTitleValid && hasValidSymptom
+        self.navigationItem.rightBarButtonItem?.isEnabled = isValid
     }
 
     @IBAction func cancelTapped(_ sender: Any) {
@@ -38,31 +54,16 @@ class PrepareConsultationTableViewController: UITableViewController {
     }
 
     @IBAction func doneTapped(_ sender: Any) {
-        // Validate mandatory fields
-        var missing: [String] = []
-        if doctorName.trimmingCharacters(in: .whitespaces).isEmpty { missing.append("Doctor's Name") }
-        if sessionTitle.trimmingCharacters(in: .whitespaces).isEmpty { missing.append("Purpose") }
-        if symptoms.isEmpty || symptoms.allSatisfy({ $0.name.trimmingCharacters(in: .whitespaces).isEmpty }) {
-            missing.append("At least one Symptom")
-        }
-        
-        if !missing.isEmpty {
-            let alert = UIAlertController(
-                title: "Required Fields Missing",
-                message: missing.joined(separator: ", ") + " must be filled.",
-                preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            present(alert, animated: true)
-            return
-        }
         
         // Filter out empty symptoms/questions
         let validSymptoms = symptoms.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validQuestions = questions.filter { !$0.text.trimmingCharacters(in: .whitespaces).isEmpty }
         
+        let isEditing = existingSessionID != nil
+        
         let newSession = ConsultSession(
-            id: UUID(),
-            userID: UUID(),
+            id: existingSessionID ?? UUID(),
+            userID: existingUserID ?? UUID(),
             doctorName: doctorName,
             title: sessionTitle,
             date: sessionDate,
@@ -72,11 +73,13 @@ class PrepareConsultationTableViewController: UITableViewController {
             records: records,
             notes: notes.isEmpty ? nil : notes,
             status: .pending,
-            createdAt: Date()
+            createdAt: existingCreatedAt ?? Date()
         )
         
+        let notificationName = isEditing ? "ConsultSessionUpdated" : "NewConsultSessionCreated"
+        
         NotificationCenter.default.post(
-            name: NSNotification.Name("NewConsultSessionCreated"),
+            name: NSNotification.Name(notificationName),
             object: nil,
             userInfo: ["session": newSession]
         )
@@ -110,6 +113,9 @@ class PrepareConsultationTableViewController: UITableViewController {
         current += symptomsCount
         if section == current { return .addSymptom }
         current += 1
+        
+        if section == current { return .questions }
+        current += 1
 
         let medicationsCount = medications.count
         if section >= current && section < current + medicationsCount {
@@ -122,8 +128,6 @@ class PrepareConsultationTableViewController: UITableViewController {
         if section == current { return .records }
         current += 1
 
-        if section == current { return .questions }
-        current += 1
 
         if section == current { return .notes }
         fatalError("Unknown section mapping")
@@ -159,11 +163,17 @@ class PrepareConsultationTableViewController: UITableViewController {
             if indexPath.row == 0 {
                 cell.inputTextField.placeholder = "Doctor's Name"
                 cell.inputTextField.text = self.doctorName
-                cell.didChangeText = { [weak self] text in self?.doctorName = text }
+                cell.didChangeText = { [weak self] text in
+                    self?.doctorName = text
+                    self?.validateForm()
+                }
             } else {
                 cell.inputTextField.placeholder = "Purpose of Consultation"
                 cell.inputTextField.text = self.sessionTitle
-                cell.didChangeText = { [weak self] text in self?.sessionTitle = text }
+                cell.didChangeText = { [weak self] text in
+                    self?.sessionTitle = text
+                    self?.validateForm()
+                }
             }
             return cell
 
@@ -187,11 +197,13 @@ class PrepareConsultationTableViewController: UITableViewController {
 
                 cell.didChangeName = { [weak self] text in
                     self?.symptoms[index].name = text
+                    self?.validateForm()
                 }
 
                 cell.didTapDelete = { [weak self] in
                     self?.symptoms.remove(at: index)
                     self?.tableView.reloadData()
+                    self?.validateForm()
                 }
                 return cell
 
@@ -241,6 +253,14 @@ class PrepareConsultationTableViewController: UITableViewController {
             cell.selectionStyle = .none
             cell.records = self.records
             cell.reloadRecords()
+            
+            cell.didDeleteRecord = { [weak self] index in
+                guard let self = self else { return }
+                self.records.remove(at: index)
+                self.tableView.reloadData()
+                self.validateForm()
+            }
+            
             cell.didTapAddRecord = { [weak self] in
                 guard let self = self else { return }
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -252,7 +272,7 @@ class PrepareConsultationTableViewController: UITableViewController {
                 recordsVC.didSelectRecords = { [weak self] selectedRecords in
                     guard let self = self else { return }
                     for record in selectedRecords {
-                        if !self.records.contains(where: { $0.id == record.id }) {
+                        if !self.records.contains(where: { $0.id == record.id || $0.title == record.title }) {
                             self.records.append(record)
                         }
                     }
@@ -350,14 +370,15 @@ class PrepareConsultationTableViewController: UITableViewController {
         case .addSymptom:
             let newSymptom = Symptom(name: "", description: "", isExpanded: false)
             symptoms.append(newSymptom)
-
             tableView.reloadData()
+            validateForm()
 
     
         case .symptom(let index):
             if indexPath.row == 0 {
                 symptoms.remove(at: index)
                 tableView.reloadData()
+                validateForm()
             }
 
         case .addMedication:

@@ -19,6 +19,9 @@ class DateInputTableViewCell: UITableViewCell {
         dateTextField.keyboardType = .numbersAndPunctuation
 
         compactDatePicker?.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
+        
+        // Prevent selecting past dates
+        compactDatePicker?.minimumDate = Calendar.current.startOfDay(for: Date())
     }
 
     @objc func dateChanged(_ sender: UIDatePicker) {

@@ -31,6 +31,7 @@ class ConsultViewController: UIViewController,
         navigationController?.delegate = self
         consultCollectionView.delegate = self
         consultCollectionView.dataSource = self
+        consultCollectionView.showsVerticalScrollIndicator = false
         print("[ConsultVC] Collection view dataSource and delegate set")
         consultCollectionView.collectionViewLayout = createLayout()
 
@@ -214,7 +215,45 @@ class ConsultViewController: UIViewController,
         cell.configure(with: consultSessions[indexPath.item])
         return cell
     }
-
+    
+    // Context Menu to delete the particular prepare card and mark the consultation status.(220 to 254)
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let session = consultSessions[indexPath.item]
+        
+        let identifier = NSNumber(value: indexPath.item)
+        return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { [weak self] _ in
+            let isPending = session.status == .pending
+            let toggleTitle = isPending ? "Mark as Completed" : "Mark as Pending"
+            let toggleIcon = isPending ? "checkmark.circle" : "arrow.uturn.backward.circle"
+            
+            let toggleStatusAction = UIAction(title: toggleTitle, image: UIImage(systemName: toggleIcon)) { _ in
+                self?.consultSessions[indexPath.item].status = isPending ? .completed : .pending
+                self?.consultCollectionView.reloadItems(at: [indexPath])
+            }
+            
+            let deleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                self?.consultSessions.remove(at: indexPath.item)
+                self?.consultCollectionView.deleteItems(at: [indexPath])
+            }
+            
+            return UIMenu(title: "", children: [toggleStatusAction, deleteAction])
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard let item = configuration.identifier as? NSNumber else { return nil }
+        let indexPath = IndexPath(item: item.intValue, section: 0)
+        
+        guard let cell = collectionView.cellForItem(at: indexPath) else { return nil }
+        
+        let parameters = UIPreviewParameters()
+        parameters.backgroundColor = .clear
+        parameters.visiblePath = UIBezierPath(roundedRect: cell.bounds, cornerRadius: 16)
+        
+        return UITargetedPreview(view: cell, parameters: parameters)
+    }
+    
     // MARK: - Compositional Layout
     private func createLayout() -> UICollectionViewLayout {
 

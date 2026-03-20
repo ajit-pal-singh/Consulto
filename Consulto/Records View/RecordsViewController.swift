@@ -479,6 +479,9 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         let tappedRecord = records[indexPath.item]
         
         if selectionMode {
+            if alreadySelectedRecordIDs.contains(tappedRecord.id) {
+                return
+            }
             if let existingIndex = selectedRecords.firstIndex(where: { $0.id == tappedRecord.id }) {
                 selectedRecords.remove(at: existingIndex)
             } else {

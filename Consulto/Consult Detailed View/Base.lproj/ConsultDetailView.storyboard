@@ -48,7 +48,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="VBX-Ja-8VH">
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="Tvg-KA-Ne7"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="Tvg-KA-Ne7">
+                            <connections>
+                                <action selector="editTapped:" destination="BYZ-38-t0r" id="A1A-2A-3A4"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="collectionView" destination="nKj-LQ-Wbt" id="BAe-Mg-cpu"/>

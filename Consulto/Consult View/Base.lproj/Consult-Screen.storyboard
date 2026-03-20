@@ -57,13 +57,13 @@
                                 <rect key="frame" x="0.0" y="65" width="393" height="50"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Prepare" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TZ0-zJ-h0i">
-                                        <rect key="frame" x="16.000000000000007" y="5.3333333333333286" width="118.66666666666669" height="39.666666666666664"/>
+                                        <rect key="frame" x="16" y="4.3333333333333286" width="140.33333333333334" height="41.666666666666664"/>
                                         <fontDescription key="fontDescription" name="Montserrat-Bold" family="Montserrat" pointSize="34"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6cy-NZ-kwg">
-                                        <rect key="frame" x="134.66666666666663" y="4.3333333333333286" width="242.33333333333337" height="41.333333333333336"/>
+                                        <rect key="frame" x="156.33333333333337" y="4.3333333333333286" width="220.66666666666663" height="41.333333333333336"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                 </subviews>
@@ -137,7 +137,7 @@
                                 <action selector="cancelTapped:" destination="pKe-bS-aIb" id="y1s-9v-jzg"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="5kJ-sh-hg1">
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="done" id="5kJ-sh-hg1">
                             <connections>
                                 <action selector="doneTapped:" destination="pKe-bS-aIb" id="fbq-ns-2Hm"/>
                             </connections>
@@ -148,7 +148,7 @@
             </objects>
             <point key="canvasLocation" x="4512.2137404580153" y="-145.07042253521126"/>
         </scene>
-        <!--Records-->
+        <!--Prepare-->
         <scene sceneID="pjI-yD-ypq">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" toolbarHidden="NO" id="r4g-4g-uYX" sceneMemberID="viewController">
@@ -173,7 +173,7 @@
         <!--Navigation Controller-->
         <scene sceneID="6Qs-Xn-Xlp">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="w14-Vl-wmp" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="PrepareConsultationNav" automaticallyAdjustsScrollViewInsets="NO" id="w14-Vl-wmp" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="rsL-C0-ziT">
                         <rect key="frame" x="0.0" y="16" width="393" height="54"/>

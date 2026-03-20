@@ -27,13 +27,13 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RV6-Sh-nf4">
-                                <rect key="frame" x="20" y="51.333333333333336" width="314" height="21.666666666666664"/>
+                                <rect key="frame" x="20" y="49.333333333333336" width="314" height="21.666666666666664"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Upi-Pm-KL1">
-                                <rect key="frame" x="0.0" y="79" width="354" height="40"/>
+                                <rect key="frame" x="0.0" y="77" width="354" height="40"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="calendar" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="3sO-VI-111">
                                         <rect key="frame" x="20" y="13.666666666666663" width="16" height="13.000000000000002"/>
@@ -115,22 +115,22 @@
                             <constraint firstItem="ndO-Sb-yd8" firstAttribute="top" secondItem="rlo-zF-UiK" secondAttribute="top" constant="20" id="dnG-AC-VgP"/>
                             <constraint firstItem="Upi-Pm-KL1" firstAttribute="leading" secondItem="rlo-zF-UiK" secondAttribute="leading" id="f7Z-S6-koe"/>
                             <constraint firstAttribute="trailing" secondItem="Upi-Pm-KL1" secondAttribute="trailing" id="mzI-XE-lNV"/>
-                            <constraint firstAttribute="bottom" secondItem="Upi-Pm-KL1" secondAttribute="bottom" id="sxF-6F-sgO"/>
-                            <constraint firstItem="RV6-Sh-nf4" firstAttribute="top" secondItem="ndO-Sb-yd8" secondAttribute="bottom" constant="6" id="zZN-Bf-ZmE"/>
+                            <constraint firstAttribute="bottom" secondItem="Upi-Pm-KL1" secondAttribute="bottom" constant="2" id="sxF-6F-sgO"/>
+                            <constraint firstItem="RV6-Sh-nf4" firstAttribute="top" secondItem="ndO-Sb-yd8" secondAttribute="bottom" constant="4" id="zZN-Bf-ZmE"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                <integer key="value" value="14"/>
+                                <integer key="value" value="24"/>
                             </userDefinedRuntimeAttribute>
                             <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBound" value="YES"/>
                         </userDefinedRuntimeAttributes>
                     </view>
                     <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wna-Vt-LbA" userLabel="StatusView">
-                        <rect key="frame" x="259" y="20" width="75" height="20"/>
+                        <rect key="frame" x="251" y="20" width="83" height="20"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aXp-hL-M4K">
-                                <rect key="frame" x="20.666666666666682" y="3.333333333333333" width="33.666666666666657" height="13.333333333333336"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="11"/>
+                                <rect key="frame" x="23" y="3.0000000000000009" width="37" height="14.333333333333336"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="12"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -138,7 +138,7 @@
                         <color key="backgroundColor" systemColor="systemGray3Color"/>
                         <constraints>
                             <constraint firstItem="aXp-hL-M4K" firstAttribute="centerY" secondItem="wna-Vt-LbA" secondAttribute="centerY" id="2u2-lf-ZPp"/>
-                            <constraint firstAttribute="width" constant="75" id="4EN-QR-4kA"/>
+                            <constraint firstAttribute="width" constant="83" id="4EN-QR-4kA"/>
                             <constraint firstItem="aXp-hL-M4K" firstAttribute="centerX" secondItem="wna-Vt-LbA" secondAttribute="centerX" id="ZRl-PD-sIz"/>
                             <constraint firstAttribute="height" constant="20" id="lFe-5Y-L58"/>
                         </constraints>
@@ -183,10 +183,10 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray3Color">
-            <color red="0.7803921568627451" green="0.7803921568627451" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.78039215689999997" green="0.78039215689999997" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
-            <color red="0.0" green="0.53333333333333333" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

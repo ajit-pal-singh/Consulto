@@ -179,7 +179,7 @@ struct SampleData {
         )
     ]
     
-    static func getSampleRecords() -> [HealthRecord] {
+    static let allSampleRecords: [HealthRecord] = {
         var records: [HealthRecord] = []
 
         let titles = [
@@ -238,6 +238,10 @@ struct SampleData {
         }
 
         return records
+    }()
+    
+    static func getSampleRecords() -> [HealthRecord] {
+        return allSampleRecords
     }
 
 }

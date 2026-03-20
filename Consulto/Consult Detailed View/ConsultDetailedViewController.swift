@@ -21,45 +21,56 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     }
     var visibleSections: [DetailSection] = []
 
+    @IBAction func editTapped(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Consult-Screen", bundle: nil)
+        if let navVC = storyboard.instantiateViewController(withIdentifier: "PrepareConsultationNav") as? UINavigationController,
+           let prepareVC = navVC.topViewController as? PrepareConsultationTableViewController {
+            
+            let session = consultSession ?? SampleData.consultSessions.first!
+            
+            prepareVC.sessionTitle = self.sessionTitle
+            prepareVC.doctorName = session.doctorName
+            prepareVC.sessionDate = session.date
+            prepareVC.symptoms = self.symptoms
+            prepareVC.medications = self.medications
+            prepareVC.records = self.records
+            prepareVC.questions = self.questions
+            prepareVC.notes = session.notes ?? ""
+            
+            prepareVC.existingSessionID = session.id
+            prepareVC.existingUserID = session.userID
+            prepareVC.existingCreatedAt = session.createdAt
+            
+            self.present(navVC, animated: true, completion: nil)
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(hex: "F5F5F5")
         collectionView.backgroundColor = .clear
+        collectionView.showsVerticalScrollIndicator = false
 
-    
-        if let doneBtn = navigationItem.rightBarButtonItem {
-            doneBtn.target = self
-            doneBtn.action = #selector(doneTapped)
-        } else {
-
-            let doneBtn = UIBarButtonItem(
-                barButtonSystemItem: .done, target: self, action: #selector(doneTapped))
-            navigationItem.rightBarButtonItem = doneBtn
-        }
 
         loadSessionData()
 
         setupCollectionView()
         collectionView.reloadData()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleSessionUpdate(_:)), name: NSNotification.Name("ConsultSessionUpdated"), object: nil)
     }
-
-    @objc private func doneTapped() {
-        if var session = consultSession {
-            session.status = .completed
-            session.questions = self.questions
-            session.symptoms = self.symptoms
-
-            consultSession = session  
-
-            NotificationCenter.default.post(
-                name: NSNotification.Name("ConsultSessionUpdated"),
-                object: nil,
-                userInfo: ["session": session]
-            )
+    
+    @objc private func handleSessionUpdate(_ notification: Notification) {
+        if let userInfo = notification.userInfo,
+           let updatedSession = userInfo["session"] as? ConsultSession {
+            if self.consultSession == nil || self.consultSession?.id == updatedSession.id {
+                self.consultSession = updatedSession
+                self.loadSessionData()
+                self.collectionView.reloadData()
+            }
         }
-
-        self.navigationController?.popViewController(animated: true)
     }
+
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
