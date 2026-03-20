@@ -69,7 +69,7 @@ struct SampleData {
             id: UUID(),
             userID: user.id,
             doctorName: "Dr. Sandeep Gupta",
-            title: "Initial GP Visit",
+            title: "Follow up Consultation",
             date: Calendar.current.date(byAdding: .day, value: -30, to: Date())!,
             symptoms: [
                 Symptom(name: "Headache", description: "Persistent pain in the head, especially in the morning. Continuous for at least one week. Not able to sleep properly at night.", isExpanded: false),
@@ -87,14 +87,14 @@ struct SampleData {
             ],
             records: records,
             notes: "Hydration plan and 20-20-20 rule advised.",
-            status: .completed,
+            status: .pending,
             createdAt: Calendar.current.date(byAdding: .day, value: -30, to: Date())!
         ),
         ConsultSession(
             id: UUID(),
             userID: user.id,
             doctorName: "Dr. Vijay Sinha",
-            title: "Dietary Review",
+            title: "Follow up Consultation",
             date: Calendar.current.date(byAdding: .day, value: -20, to: Date())!,
             symptoms: [
                 Symptom(name: "Fatigue", description: "Low energy through the afternoon.", isExpanded: false),
@@ -139,7 +139,7 @@ struct SampleData {
             id: UUID(),
             userID: user.id,
             doctorName: "Dr. Sandeep Gupta",
-            title: "Follow-up: Headache Control",
+            title: "High Blood Pressure",
             date: Calendar.current.date(byAdding: .day, value: -5, to: Date())!,
             symptoms: [
                 Symptom(name: "Headache", description: "Less frequent, intensity 3/10.", isExpanded: false),
@@ -158,8 +158,8 @@ struct SampleData {
         ConsultSession(
             id: UUID(),
             userID: user.id,
-            doctorName: "Dr. Rohan Verma",
-            title: "Current Session: Wellness Review",
+            doctorName: "Dr. Vijay Sinha",
+            title: "High Sugar level",
             date: Date(),
             symptoms: [
                 Symptom(name: "Fatigue", description: "Mild slump after 3 PM.", isExpanded: false),
@@ -174,7 +174,7 @@ struct SampleData {
             medications: medications,
             records: records,
             notes: "Introduce micro-breaks and short walks.",
-            status: .pending,
+            status: .completed,
             createdAt: Date()
         )
     ]

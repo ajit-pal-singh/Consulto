@@ -27,11 +27,6 @@ class ConsultViewController: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("[ConsultVC] viewDidLoad")
-
-        self.title = "Prepare"
-        self.tabBarItem.title = "Prepare"
-        self.navigationController?.tabBarItem.title = "Prepare"
 
         navigationController?.delegate = self
         consultCollectionView.delegate = self

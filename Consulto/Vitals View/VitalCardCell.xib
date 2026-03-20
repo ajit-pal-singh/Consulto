@@ -10,7 +10,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="VitalCardCell" customModule="Vital_Screen" customModuleProvider="target">
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="VitalCardCell" customModule="Consulto" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="350" height="150"/>
             <autoresizingMask key="autoresizingMask"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -59,9 +59,12 @@
                                     <constraint firstAttribute="width" constant="14" id="rLL-PA-EuH"/>
                                 </constraints>
                             </imageView>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MlS-lZ-T6z" userLabel="graphView">
-                                <rect key="frame" x="151" y="40" width="194" height="105"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MlS-lZ-T6z" userLabel="graphView">
+                                <rect key="frame" x="146" y="30" width="194" height="105"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="105" id="bYz-uY-4oW"/>
+                                    <constraint firstAttribute="width" constant="194" id="kEr-r0-8jg"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -76,7 +79,9 @@
                             <constraint firstItem="p82-jH-Ctl" firstAttribute="top" secondItem="lTP-b2-Skc" secondAttribute="bottom" constant="2" id="dmR-ux-0V9"/>
                             <constraint firstAttribute="trailing" secondItem="Wb4-b8-xMf" secondAttribute="trailing" constant="14" id="gjx-WC-ndt"/>
                             <constraint firstItem="lTP-b2-Skc" firstAttribute="top" secondItem="ktX-RC-sCq" secondAttribute="bottom" constant="55" id="hhs-qu-gkc"/>
+                            <constraint firstAttribute="trailing" secondItem="MlS-lZ-T6z" secondAttribute="trailing" constant="10" id="ipy-jJ-8Q5"/>
                             <constraint firstItem="ktX-RC-sCq" firstAttribute="leading" secondItem="B6j-ge-gKn" secondAttribute="leading" constant="18" id="sZj-7N-hzd"/>
+                            <constraint firstAttribute="bottom" secondItem="MlS-lZ-T6z" secondAttribute="bottom" constant="15" id="vUr-jS-7nM"/>
                             <constraint firstItem="Ovz-x4-KHj" firstAttribute="top" secondItem="u6E-hf-ny5" secondAttribute="bottom" constant="67" id="z7d-Ha-nOX"/>
                         </constraints>
                     </view>

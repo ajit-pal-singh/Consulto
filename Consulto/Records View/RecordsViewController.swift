@@ -41,15 +41,13 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
         super.viewDidLoad()
         navigationController?.delegate = self
         
-        // Ensure container ignores touches when empty
         platterContainerView?.isUserInteractionEnabled = false
         
         setupCollectionView()
         setupChipsView()
-        setupHeaderActions() // Initialize Header Buttons
+        setupHeaderActions() 
         loadData()
         
-        // Subscribe to Filter Changes
         filterViewModel.$selectedFilter
             .receive(on: RunLoop.main)
             .sink { [weak self] newFilter in
@@ -117,16 +115,15 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     func setupChipsView() {
         guard let container = chipsContainerView else { return }
         
-        // Clear any existing subviews if needed
         container.subviews.forEach { $0.removeFromSuperview() }
         container.backgroundColor = .clear 
-        container.clipsToBounds = false // Allow shadows to flow out
+        container.clipsToBounds = false
         
         // Create SwiftUI View with ViewModel
         let swiftUIView = ChipsView(viewModel: filterViewModel)
         let hostingController = UIHostingController(rootView: swiftUIView)
         hostingController.view.backgroundColor = .clear
-        hostingController.view.clipsToBounds = false // Allow shadows to flow out
+        hostingController.view.clipsToBounds = false
         
         // Add as Child ViewController
         addChild(hostingController)
@@ -152,10 +149,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
         let nib = UINib(nibName: "RecordCardCollectionViewCell", bundle: nil)
         recordsCollectionView.register(nib, forCellWithReuseIdentifier: "RecordCardCollectionViewCell")
         
-        // Transparent background for collection view
         recordsCollectionView.backgroundColor = .clear
-        
-        // Disable automatic estimation to fix spacing issues
         if let layout = recordsCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.estimatedItemSize = .zero
             layout.minimumInteritemSpacing = 16
@@ -194,38 +188,28 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     }
     
     // Gradient Generation
-
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        // Re-apply mask when layout changes (e.g., rotation)
         if blurEffectView != nil {
            setupBlurGradientMask()
         }
     }
     
     func setupBlurGradientMask() {
-        // Create a gradient layer that goes from opaque to transparent
         let gradientMask = CAGradientLayer()
         gradientMask.frame = blurEffectView.bounds
         
-        // Colors for the mask: 
-        // solid black = full blur, clear = no blur
         gradientMask.colors = [
-            UIColor.black.cgColor,      // Top (Full Blur)
-            UIColor.black.cgColor,      // Middle (Full Blur)
-            UIColor.clear.cgColor       // Bottom (No Blur)
+            UIColor.black.cgColor,      
+            UIColor.black.cgColor,     
+            UIColor.clear.cgColor      
         ]
         
-        // Locations: Keep it blury until the very bottom edge where it fades out
         gradientMask.locations = [0.0, 0.8, 1.0] 
         
-        // Apply the mask to the blur view's layer
         blurEffectView.layer.mask = gradientMask
         
-        // Add solid overlay
-        // Check if overlay already exists to avoid duplicates
         if let existingOverlay = blurEffectView.layer.sublayers?.first(where: { $0.name == "SolidOverlay" }) {
             existingOverlay.frame = blurEffectView.bounds
         } else {
@@ -234,7 +218,6 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             overlayLayer.frame = blurEffectView.bounds
             overlayLayer.backgroundColor = UIColor(hex: "#f5f5f5").withAlphaComponent(0.5).cgColor
             
-            // Important: We need to mask the overlay too so it fades out with the blur
             let overlayMask = CAGradientLayer()
             overlayMask.frame = overlayLayer.bounds
             overlayMask.colors = gradientMask.colors
@@ -268,7 +251,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     
     func openGallery() {
         var config = PHPickerConfiguration()
-        config.selectionLimit = 0 // 0 means multiple selection
+        config.selectionLimit = 0 
         config.filter = .images
         let picker = PHPickerViewController(configuration: config)
         picker.delegate = self
@@ -315,7 +298,6 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
     func showAttachmentPlatter() {
         guard let container = platterContainerView else {
              print("Error: platterContainerView not connected!")
-             // Fallback to view if needed, or just return
              return
         }
         
@@ -342,7 +324,7 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         self.overlayDimmingView = dimmingView
         
         // 2. Instantiate View Controller from Storyboard
-        let storyboard = UIStoryboard(name: "Main", bundle: nil) // Update "Main" if your storyboard has a different name
+        let storyboard = UIStoryboard(name: "Main", bundle: nil) 
         guard let platterVC = storyboard.instantiateViewController(withIdentifier: "AttachmentPlatterVC") as? AttachmentPlatterViewController else {
             print("Could not instantiate AttachmentPlatterVC")
             return
@@ -366,8 +348,7 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         
         self.platterViewController = platterVC
         
-        // 3. Constraints (Start Off-Screen)
-        // Adjust the height constant internally inside PlatterContainerView in Storyboard, or here:
+        // 3. Constraints 
         let bottomConstraint = platterVC.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 400) // Start below screen
         self.platterBottomConstraint = bottomConstraint
         
@@ -375,19 +356,17 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
             platterVC.view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 5),
             platterVC.view.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -5),
             bottomConstraint,
-            // Height to match the internal subview bounds if not constrained by the container.
-            // If dragging doesn't feel right, add a fixed height constraint here. e.g.
             platterVC.view.heightAnchor.constraint(equalToConstant: 280) 
         ])
         
-        container.layoutIfNeeded() // Set initial state
+        container.layoutIfNeeded() 
         
         // 4. Animate In
-        self.platterBottomConstraint?.constant = -5 // Float 5pt from bottom
+        self.platterBottomConstraint?.constant = -5 
         
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
             dimmingView.alpha = 1
-            self.tabBarController?.tabBar.alpha = 0 // Hide Tab Bar
+            self.tabBarController?.tabBar.alpha = 0 
             self.view.layoutIfNeeded()
         }
     }
@@ -396,14 +375,13 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         guard let vc = platterViewController else { return }
         
         // Animate Out
-        self.platterBottomConstraint?.constant = 400 // Move down
+        self.platterBottomConstraint?.constant = 400
         
         UIView.animate(withDuration: 0.3, animations: {
             self.overlayDimmingView?.alpha = 0
-            self.tabBarController?.tabBar.alpha = 1 // Show Tab Bar
+            self.tabBarController?.tabBar.alpha = 1 
             self.view.layoutIfNeeded()
         }) { _ in
-            // Clean up
             self.overlayDimmingView?.removeFromSuperview()
             vc.willMove(toParent: nil)
             vc.view.removeFromSuperview()
@@ -413,7 +391,6 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
             self.platterViewController = nil
             self.platterBottomConstraint = nil
             
-            // Disable interaction on the container so it doesn't block touches
             self.platterContainerView?.isUserInteractionEnabled = false
         }
     }
@@ -425,21 +402,16 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         
         switch gesture.state {
         case .changed:
-            // Only allow dragging down
             if translation.y > 0 {
-                // Adjust for start position (-5) so it doesn't jump
                 self.platterBottomConstraint?.constant = translation.y - 5
-                // Fade out dimming view slightly as we drag down
                 let progress = min(translation.y / 200, 1.0)
                 self.overlayDimmingView?.alpha = 1 - progress
             }
             
         case .ended, .cancelled:
-            // Threshold to dismiss: dragged down 150pt OR fast velocity down
             if translation.y > 150 || velocity.y > 1000 {
                 dismissPlatter()
             } else {
-                // Snap back to floating position
                 self.platterBottomConstraint?.constant = -5
                 UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
                     self.overlayDimmingView?.alpha = 1
@@ -474,8 +446,7 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         
         return cell
     }
-    
-    // Layout Logic
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let padding: CGFloat = 16
         let interItemSpacing: CGFloat = 16

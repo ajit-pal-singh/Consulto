@@ -20,9 +20,9 @@ struct ChipsView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 15) // Increased to prevent shadow clipping
+            .padding(.vertical, 15)
         }
-        .scrollClipDisabled() // iOS 17+ Feature to allow shadows outside scroll area
+        .scrollClipDisabled()
     }
 }
 

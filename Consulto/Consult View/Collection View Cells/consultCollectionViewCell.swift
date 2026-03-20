@@ -16,6 +16,8 @@ class consultCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var symptomsLabel: UILabel?
     @IBOutlet weak var questionsLabel: UILabel?
     @IBOutlet weak var bottomBarView: UIView?
+    @IBOutlet weak var statusView: UIView?
+    @IBOutlet weak var statusLabel: UILabel?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -47,18 +49,27 @@ class consultCollectionViewCell: UICollectionViewCell {
 
         doctorNameLabel!.text = consult.doctorName
         titleLabel!.text = consult.title
-           let formatter = DateFormatter()
-           formatter.dateFormat = "dd MMM yyyy"
-           let formattedDate = formatter.string(from: consult.date)
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMM yyyy"
+        let formattedDate = formatter.string(from: consult.date)
 
-           let symptomsCount = consult.symptomsCount
-           let questionsCount = consult.questionsCount
+        let symptomsCount = consult.symptomsCount
+        let questionsCount = consult.questionsCount
 
         dateLabel!.text = "\(formattedDate)"
 
         symptomsLabel!.text = "\(symptomsCount) Symptoms"
         questionsLabel!.text = "\(questionsCount) Questions"
+        
+        switch consult.status {
+        case .pending:
+            statusLabel?.text = "Pending"
+            statusLabel?.textColor = UIColor(hex: "#7959A7")
+            statusView?.backgroundColor = UIColor(hex: "#E3D7F4")
+        case .completed:
+            statusLabel?.text = "Completed"
+            statusLabel?.textColor = .systemGreen
+            statusView?.backgroundColor = UIColor(hex: "#E4F1E4")
+        }
     }
-    
-
 }

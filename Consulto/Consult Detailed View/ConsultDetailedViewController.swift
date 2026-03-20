@@ -23,16 +23,15 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        let bgColor = UIColor(red: 245 / 255, green: 245 / 255, blue: 245 / 255, alpha: 1.0)
         view.backgroundColor = UIColor(hex: "F5F5F5")
         collectionView.backgroundColor = .clear
 
-        // Add action to the Done button defined in Storyboard
+    
         if let doneBtn = navigationItem.rightBarButtonItem {
             doneBtn.target = self
             doneBtn.action = #selector(doneTapped)
         } else {
-            // Fallback if not hooked up in storyboard properly
+
             let doneBtn = UIBarButtonItem(
                 barButtonSystemItem: .done, target: self, action: #selector(doneTapped))
             navigationItem.rightBarButtonItem = doneBtn
@@ -41,20 +40,17 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         loadSessionData()
 
         setupCollectionView()
-        // applyScreenBackgroundGradient()
         collectionView.reloadData()
     }
 
     @objc private func doneTapped() {
-        // Mark session as completed
         if var session = consultSession {
             session.status = .completed
             session.questions = self.questions
             session.symptoms = self.symptoms
 
-            consultSession = session  // Update local copy just in case
+            consultSession = session  
 
-            // Post notification to inform Main Consult Screen to reload
             NotificationCenter.default.post(
                 name: NSNotification.Name("ConsultSessionUpdated"),
                 object: nil,
@@ -62,7 +58,6 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
             )
         }
 
-        // Pop back to the previous screen
         self.navigationController?.popViewController(animated: true)
     }
 
@@ -90,7 +85,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     }
     
     private func buildVisibleSections() {
-        visibleSections = [.header, .symptoms]  // Always visible
+        visibleSections = [.header, .symptoms]  
         if !medications.isEmpty { visibleSections.append(.medications) }
         if !records.isEmpty { visibleSections.append(.records) }
         if !questions.isEmpty { visibleSections.append(.questions) }
@@ -129,24 +124,24 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         collectionView.collectionViewLayout = generateLayout()
     }
 
-    private func applyScreenBackgroundGradient() {
-        if screenGradientLayer != nil { return }
+    // private func applyScreenBackgroundGradient() {
+    //     if screenGradientLayer != nil { return }
 
-        let gradient = CAGradientLayer()
-        gradient.colors = [
-            UIColor(hex: "D9EBFF").cgColor,
-            UIColor(hex: "F7F9FC").cgColor,
-        ]
+    //     let gradient = CAGradientLayer()
+    //     gradient.colors = [
+    //         UIColor(hex: "D9EBFF").cgColor,
+    //         UIColor(hex: "F7F9FC").cgColor,
+    //     ]
 
-        gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
-        gradient.endPoint = CGPoint(x: 0.5, y: 1.0)
-        gradient.locations = [0.0, 1.0]
+    //     gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
+    //     gradient.endPoint = CGPoint(x: 0.5, y: 1.0)
+    //     gradient.locations = [0.0, 1.0]
 
-        gradient.frame = view.bounds
-        view.layer.insertSublayer(gradient, at: 0)
+    //     gradient.frame = view.bounds
+    //     view.layer.insertSublayer(gradient, at: 0)
 
-        screenGradientLayer = gradient
-    }
+    //     screenGradientLayer = gradient
+    // }
 
     private func generateLayout() -> UICollectionViewCompositionalLayout {
         UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in

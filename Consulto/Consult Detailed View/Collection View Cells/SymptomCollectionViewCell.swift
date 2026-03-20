@@ -35,7 +35,6 @@ class SymptomCollectionViewCell: UICollectionViewCell {
         descriptionLabel.lineBreakMode = .byTruncatingTail
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapChevron))
-        chevronImageView.isUserInteractionEnabled = true
         chevronImageView.addGestureRecognizer(tap)
     }
 

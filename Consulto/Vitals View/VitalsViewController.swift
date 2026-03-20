@@ -33,10 +33,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "Vitals"
-        self.tabBarItem.title = "Vitals"
-        self.navigationController?.tabBarItem.title = "Vitals"
-        
         navigationController?.delegate = self
         
         vitalsData = VitalData.generateMockData()
@@ -46,7 +42,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     }
     
     func setupCollectionView() {
-        // Safe to check if it's connected first, in case you build before connecting the outlet!
         guard let cv = vitalsCollectionView else { return }
         
         let nib = UINib(nibName: "VitalCardCell", bundle: nil)
@@ -60,10 +55,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     func setupHeaderActions() {
         guard let container = headerActionsContainerView else { return }
         
-        // Clear any existing subviews
         container.subviews.forEach { $0.removeFromSuperview() }
         container.backgroundColor = .clear
-        container.clipsToBounds = false // Allow shadows to flow out
+        container.clipsToBounds = false 
         
         let swiftUIView = VitalsHeaderActionsView(
             onAddAction: { [weak self] in
@@ -73,7 +67,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         let hostingController = UIHostingController(rootView: swiftUIView)
         hostingController.view.backgroundColor = .clear
-        hostingController.view.clipsToBounds = false // Allow shadows to flow out
+        hostingController.view.clipsToBounds = false 
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         
         addChild(hostingController)
@@ -92,7 +86,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     // MARK: - Platter Presentation
     
     func showAddReadingPlatter() {
-        let container = self.view! // Attach directly to the main view so its full screen!
+        let container = self.view! 
         
         // 1. Create Dimming View
         let dimmingView = UIView()
@@ -114,7 +108,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         self.overlayDimmingView = dimmingView
         
         // 2. Instantiate View Controller from Storyboard
-        let storyboard = UIStoryboard(name: "Vital", bundle: nil) // Update "Main" if your storyboard has a different name
+        let storyboard = UIStoryboard(name: "Vital", bundle: nil) 
         guard let platterVC = storyboard.instantiateViewController(withIdentifier: "AddReadingViewController") as? AddReadingViewController else {
             print("Could not instantiate AddReadingViewController")
             return
@@ -175,13 +169,13 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         container.addSubview(platterVC.view)
         platterVC.didMove(toParent: self)
         
-        // Add Pan Gesture for Swipe Down to dismiss
+        // Add Pan Gesture for Swipe Down 
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePlatterPan(_:)))
         platterVC.view.addGestureRecognizer(panGesture)
         
         self.platterViewController = platterVC
         
-        // 3. Constraints (Start Off-Screen)
+        // 3. Constraints 
         let bottomConstraint = platterVC.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 500) // Start below screen
         self.platterBottomConstraint = bottomConstraint
         
@@ -189,17 +183,16 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             platterVC.view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 5),
             platterVC.view.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -5),
             bottomConstraint,
-            // Height logic: We let the storyboard components size it naturally, but ensure it doesn't compress
         ])
         
-        container.layoutIfNeeded() // Set initial state
+        container.layoutIfNeeded() 
         
         // 4. Animate In
-        self.platterBottomConstraint?.constant = -5 // Float 5pt from bottom
+        self.platterBottomConstraint?.constant = -5
         
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
             dimmingView.alpha = 1
-            self.tabBarController?.tabBar.alpha = 0 // Hide Tab Bar if exists
+            self.tabBarController?.tabBar.alpha = 0 
             self.view.layoutIfNeeded()
         }
     }
@@ -207,15 +200,13 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     @objc func dismissPlatter() {
         guard let vc = platterViewController else { return }
         
-        // Animate Out
-        self.platterBottomConstraint?.constant = 500 // Move down
+        self.platterBottomConstraint?.constant = 500 
         
         UIView.animate(withDuration: 0.3, animations: {
             self.overlayDimmingView?.alpha = 0
-            self.tabBarController?.tabBar.alpha = 1 // Show Tab Bar
+            self.tabBarController?.tabBar.alpha = 1 
             self.view.layoutIfNeeded()
         }) { _ in
-            // Clean up
             self.overlayDimmingView?.removeFromSuperview()
             vc.willMove(toParent: nil)
             vc.view.removeFromSuperview()
@@ -234,21 +225,16 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         switch gesture.state {
         case .changed:
-            // Only allow dragging down
             if translation.y > 0 {
-                // Adjust for start position (-5) so it doesn't jump
                 self.platterBottomConstraint?.constant = translation.y - 5
-                // Fade out dimming view slightly as we drag down
                 let progress = min(translation.y / 200, 1.0)
                 self.overlayDimmingView?.alpha = 1 - progress
             }
             
         case .ended, .cancelled:
-            // Threshold to dismiss: dragged down 150pt OR fast velocity down
             if translation.y > 150 || velocity.y > 1000 {
                 dismissPlatter()
             } else {
-                // Snap back to floating position
                 self.platterBottomConstraint?.constant = -5
                 UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
                     self.overlayDimmingView?.alpha = 1
@@ -266,11 +252,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     private func presentAddReadingAlert(title: String, message: String, placeholders: [String], units: [String]) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
-        // Add text fields for values
         for (index, placeholder) in placeholders.enumerated() {
             alertController.addTextField { textField in
                 textField.placeholder = placeholder
-                // Set appropriate keyboard type
                 if placeholder.contains("Systolic") || placeholder.contains("Diastolic") {
                     textField.keyboardType = .numberPad
                 } else if title.contains("Heart Rate") {
@@ -279,14 +263,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
                     textField.keyboardType = .decimalPad
                 }
                 
-                // Add unit label to the right side if provided
                 if index < units.count {
                     let unitLabel = UILabel()
                     unitLabel.text = units[index]
                     unitLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
                     unitLabel.textColor = .black
                     
-                    // Create padding view
                     unitLabel.sizeToFit()
                     let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: unitLabel.frame.width + 10, height: unitLabel.frame.height))
                     unitLabel.center = CGPoint(x: paddingView.frame.width / 2 - 5, y: paddingView.frame.height / 2)
@@ -298,13 +280,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             }
         }
         
-        // Add Date Picker Field
+        // Date Picker Field
         alertController.addTextField { textField in
             let formatter = DateFormatter()
             formatter.dateFormat = "dd-MM-yyyy"
             textField.text = formatter.string(from: Date())
             
-            // Add a calendar icon to the right side!
             let iconImage = UIImage(systemName: "calendar")
             let iconView = UIImageView(image: iconImage)
             iconView.tintColor = .black
@@ -314,7 +295,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
             paddingView.addSubview(iconView)
             
-            // Critical setup: Ignore touches so tapping the calendar image falls through to the text field underneath to open the DatePicker!
             paddingView.isUserInteractionEnabled = false
             iconView.isUserInteractionEnabled = false
             
@@ -328,7 +308,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
                 datePicker.preferredDatePickerStyle = .wheels
             }
             
-            // Update text field when date changes!
             datePicker.addAction(UIAction { _ in
                 textField.text = formatter.string(from: datePicker.date)
             }, for: .valueChanged)
@@ -376,20 +355,18 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
             return UICollectionViewCell()
         }
         
-        // Pass data and host chart
         cell.configure(with: vitalsData[indexPath.item])
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        // Full width minus 20 margin on both sides
         let width = collectionView.bounds.width - 40
         return CGSize(width: width, height: 160)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 10, left: 20, bottom: 90, right: 20) // Bottom inset clear for the tab bar
+        return UIEdgeInsets(top: 10, left: 20, bottom: 90, right: 20) 
     }
     
 

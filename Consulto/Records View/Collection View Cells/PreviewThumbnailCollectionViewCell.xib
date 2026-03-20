@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="PreviewThumbnailCollectionViewCell" customModule="Consulto" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="300" height="400"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="300" height="400"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="KYx-J1-Wck">
+                        <rect key="frame" x="0.0" y="0.0" width="300" height="400"/>
+                    </imageView>
+                    <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0VC-Pn-cl8" userLabel="Expand View">
+                        <rect key="frame" x="260" y="12" width="28" height="28"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tAE-J2-kTX">
+                                <rect key="frame" x="0.0" y="0.0" width="28" height="28"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="28" id="8oj-gW-yTz"/>
+                                    <constraint firstAttribute="height" constant="28" id="Tgy-ok-2js"/>
+                                </constraints>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain">
+                                    <imageReference key="image" image="arrow.up.left.and.arrow.down.right" catalog="system" symbolScale="medium"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="expandButtonTapped:" destination="gTV-IL-0wX" eventType="touchUpInside" id="ZlZ-JR-kOL"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="28" id="FVz-cv-Qc6"/>
+                            <constraint firstItem="tAE-J2-kTX" firstAttribute="centerX" secondItem="0VC-Pn-cl8" secondAttribute="centerX" id="N5h-bj-aFO"/>
+                            <constraint firstAttribute="height" constant="28" id="Qsr-im-zlW"/>
+                            <constraint firstItem="tAE-J2-kTX" firstAttribute="centerY" secondItem="0VC-Pn-cl8" secondAttribute="centerY" id="sRf-V7-gka"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                <integer key="value" value="12"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstItem="KYx-J1-Wck" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="TRf-Ux-1Ht"/>
+                <constraint firstAttribute="trailing" secondItem="0VC-Pn-cl8" secondAttribute="trailing" constant="12" id="ZBV-fW-sfM"/>
+                <constraint firstAttribute="bottom" secondItem="KYx-J1-Wck" secondAttribute="bottom" id="efO-6T-5Fw"/>
+                <constraint firstItem="KYx-J1-Wck" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="geg-ds-NlC"/>
+                <constraint firstAttribute="trailing" secondItem="KYx-J1-Wck" secondAttribute="trailing" id="rcO-9w-fhM"/>
+                <constraint firstItem="0VC-Pn-cl8" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="12" id="uGK-Un-bzd"/>
+            </constraints>
+            <size key="customSize" width="254" height="338"/>
+            <connections>
+                <outlet property="expandView" destination="0VC-Pn-cl8" id="g2f-FD-Jo0"/>
+                <outlet property="thumbnailImageView" destination="KYx-J1-Wck" id="sSx-a9-ANk"/>
+            </connections>
+            <point key="canvasLocation" x="131.29770992366412" y="190.14084507042256"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="arrow.up.left.and.arrow.down.right" catalog="system" width="128" height="115"/>
+    </resources>
+</document>

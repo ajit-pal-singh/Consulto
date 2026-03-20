@@ -353,10 +353,7 @@ class PrepareConsultationTableViewController: UITableViewController {
 
             tableView.reloadData()
 
-        // Optionally, we could scroll to the newly inserted text field so the user can type immediately
-        // let newSectionIndex = getSectionIndex(for: .symptom(index: symptoms.count - 1))
-        // tableView.scrollToRow(at: IndexPath(row: 0, section: newSectionIndex), at: .bottom, animated: true)
-
+    
         case .symptom(let index):
             if indexPath.row == 0 {
                 symptoms.remove(at: index)
