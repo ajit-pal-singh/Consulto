@@ -1,0 +1,204 @@
+import Foundation
+import PDFKit
+import UIKit
+
+final class HealthRecordStore {
+    static let shared = HealthRecordStore()
+
+    private let fileManager = FileManager.default
+    private let decoder: JSONDecoder
+    private let encoder: JSONEncoder
+    private let seededUserID = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
+
+    private init() {
+        decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    }
+
+    func loadRecords() throws -> [HealthRecord] {
+        try ensureWritableStoreExists()
+
+        do {
+            let data = try Data(contentsOf: recordsFileURL())
+            return try decoder.decode([HealthRecord].self, from: data)
+        } catch {
+            let seedRecords = try loadSeedRecords()
+            try persist(seedRecords)
+            return seedRecords
+        }
+    }
+
+    @discardableResult
+    func addRecord(
+        title: String,
+        recordType: RecordType,
+        healthFacilityName: String?,
+        summary: String?,
+        documentDate: Date?,
+        attachments: [RecordAttachmentDraft]
+    ) throws -> HealthRecord {
+        let recordID = UUID()
+        let files = try saveAttachments(attachments, for: recordID)
+
+        var records = try loadRecords()
+        let newRecord = HealthRecord(
+            id: recordID,
+            userID: seededUserID,
+            title: title,
+            recordType: recordType,
+            healthFacilityName: healthFacilityName,
+            summary: summary,
+            dateAdded: Date(),
+            documentDate: documentDate,
+            files: files,
+            extractedData: nil
+        )
+        records.insert(newRecord, at: 0)
+        try persist(records)
+        return newRecord
+    }
+
+    func deleteRecord(id: UUID) throws {
+        var records = try loadRecords()
+        guard let index = records.firstIndex(where: { $0.id == id }) else { return }
+
+        records.remove(at: index)
+        try persist(records)
+
+        let recordFolder = recordFilesDirectory().appendingPathComponent(id.uuidString, isDirectory: true)
+        if fileManager.fileExists(atPath: recordFolder.path) {
+            try fileManager.removeItem(at: recordFolder)
+        }
+    }
+
+    func previewImage(for record: HealthRecord) -> UIImage? {
+        if let imageFile = record.files.first(where: { $0.fileType == .image }),
+           let url = try? absoluteURL(forRelativePath: imageFile.filePath),
+           let image = UIImage(contentsOfFile: url.path) {
+            return image
+        }
+
+        if let pdfFile = record.files.first(where: { $0.fileType == .pdf }),
+           let url = try? absoluteURL(forRelativePath: pdfFile.filePath) {
+            return previewImage(forPDFAt: url)
+        }
+
+        return nil
+    }
+
+    private func loadSeedRecords() throws -> [HealthRecord] {
+        guard let url = Bundle.main.url(forResource: "seed_records", withExtension: "json") else {
+            throw NSError(domain: "HealthRecordStore", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing seed_records.json"])
+        }
+        let data = try Data(contentsOf: url)
+        return try decoder.decode([HealthRecord].self, from: data)
+    }
+
+    private func persist(_ records: [HealthRecord]) throws {
+        try ensureDirectoriesExist()
+        let data = try encoder.encode(records)
+        try data.write(to: recordsFileURL(), options: .atomic)
+    }
+
+    private func ensureWritableStoreExists() throws {
+        try ensureDirectoriesExist()
+        let recordsURL = recordsFileURL()
+        guard !fileManager.fileExists(atPath: recordsURL.path) else { return }
+
+        guard let seedURL = Bundle.main.url(forResource: "seed_records", withExtension: "json") else {
+            throw NSError(domain: "HealthRecordStore", code: 2, userInfo: [NSLocalizedDescriptionKey: "Missing seed_records.json"])
+        }
+        try fileManager.copyItem(at: seedURL, to: recordsURL)
+    }
+
+    private func ensureDirectoriesExist() throws {
+        try fileManager.createDirectory(at: applicationSupportDirectory(), withIntermediateDirectories: true, attributes: nil)
+        try fileManager.createDirectory(at: recordFilesDirectory(), withIntermediateDirectories: true, attributes: nil)
+    }
+
+    private func saveAttachments(_ attachments: [RecordAttachmentDraft], for recordID: UUID) throws -> [RecordFile] {
+        guard !attachments.isEmpty else { return [] }
+
+        let recordFolder = recordFilesDirectory().appendingPathComponent(recordID.uuidString, isDirectory: true)
+        try fileManager.createDirectory(at: recordFolder, withIntermediateDirectories: true, attributes: nil)
+
+        var savedFiles: [RecordFile] = []
+
+        for (index, attachment) in attachments.enumerated() {
+            switch attachment.fileType {
+            case .image:
+                if let sourceURL = attachment.fileURL {
+                    let rawExtension = sourceURL.pathExtension.trimmingCharacters(in: .whitespacesAndNewlines)
+                    let fileExtension = rawExtension.isEmpty ? "jpg" : rawExtension.lowercased()
+                    let fileName = "page-\(index + 1).\(fileExtension)"
+                    let destinationURL = recordFolder.appendingPathComponent(fileName)
+                    try fileManager.copyItem(at: sourceURL, to: destinationURL)
+                    let relativePath = "RecordFiles/\(recordID.uuidString)/\(fileName)"
+                    savedFiles.append(RecordFile(filePath: relativePath, fileType: .image))
+                    continue
+                }
+
+                let image = attachment.image ?? attachment.thumbnail
+                let fileExtension: String
+                let imageData: Data
+                if let jpegData = image.jpegData(compressionQuality: 0.9) {
+                    fileExtension = "jpg"
+                    imageData = jpegData
+                } else if let pngData = image.pngData() {
+                    fileExtension = "png"
+                    imageData = pngData
+                } else {
+                    throw NSError(domain: "HealthRecordStore", code: 3, userInfo: [NSLocalizedDescriptionKey: "Unable to encode image"])
+                }
+
+                let fileName = "page-\(index + 1).\(fileExtension)"
+                let fileURL = recordFolder.appendingPathComponent(fileName)
+
+                try imageData.write(to: fileURL, options: .atomic)
+                let relativePath = "RecordFiles/\(recordID.uuidString)/\(fileName)"
+                savedFiles.append(RecordFile(filePath: relativePath, fileType: .image))
+            case .pdf:
+                guard let sourceURL = attachment.fileURL else {
+                    throw NSError(domain: "HealthRecordStore", code: 4, userInfo: [NSLocalizedDescriptionKey: "Missing PDF file URL"])
+                }
+
+                let fileName = "page-\(index + 1).pdf"
+                let destinationURL = recordFolder.appendingPathComponent(fileName)
+                try fileManager.copyItem(at: sourceURL, to: destinationURL)
+                let relativePath = "RecordFiles/\(recordID.uuidString)/\(fileName)"
+                savedFiles.append(RecordFile(filePath: relativePath, fileType: .pdf))
+            }
+        }
+
+        return savedFiles
+    }
+
+    private func previewImage(forPDFAt url: URL) -> UIImage? {
+        guard let document = PDFDocument(url: url),
+              let firstPage = document.page(at: 0) else {
+            return nil
+        }
+        return firstPage.thumbnail(of: CGSize(width: 900, height: 1200), for: .mediaBox)
+    }
+
+    private func recordsFileURL() -> URL {
+        ((try? applicationSupportDirectory()) ?? fileManager.temporaryDirectory).appendingPathComponent("records.json")
+    }
+
+    private func recordFilesDirectory() -> URL {
+        ((try? applicationSupportDirectory()) ?? fileManager.temporaryDirectory).appendingPathComponent("RecordFiles", isDirectory: true)
+    }
+
+    private func applicationSupportDirectory() throws -> URL {
+        try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+    }
+
+    private func absoluteURL(forRelativePath path: String) throws -> URL {
+        let baseURL = try applicationSupportDirectory()
+        return baseURL.appendingPathComponent(path)
+    }
+}

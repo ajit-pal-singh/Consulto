@@ -1,0 +1,310 @@
+# Text extraction
+
+1. **The Trigger:** User hits `"Confirm"` on any chaotic bundle of images/PDFs.
+2. **The Selector:** Our engine immediately flags the **first 2** items (or PDF pages) and the **last 1** item. The middle chunk is completely ignored.
+3. **The Extractor:**
+    - If Image → **Direct Vision OCR**.
+    - If PDF → Try pulling pure Native Text first. If it's a scanned/photographed PDF with no text → Fallback to **Vision OCR**.
+4. **The Safety Net:** All extracted words are stitched together and brutally sliced at exactly **12,000 characters** to protect our LLM context limit.
+5. **The Brain:** We inject the sliced raw text into our JSON Prompt, feed it to the `LanguageModelSession`, and effortlessly decode the structured response!
+
+# Foundation Model
+
+### **1. The `@Generable` Strict Schema**
+
+We define the exact structure iOS will natively parse. Notice the incredibly specific `@Guide` instructions injected into the `title` field to handle your rules effortlessly:
+```swift
+@Generable
+struct FormDataExtraction {
+    @Guide(description: "True strictly if the provided text appears to be a real health document. False if irrelevant text.")
+    var isMedicalRecord: Bool
+    
+    @Guide(description: """
+    The title of the document, dictated strictly by its recordType:
+    - Prescription: Return Doctor's name (e.g., 'Dr. Jane Doe').
+    - Lab Report: Return a descriptive test name (e.g., 'Blood test').
+    - Discharge Summary: Return the main medical issue.
+    - Scan: Return the type of scan (e.g., 'X-ray', 'CT Scan').
+    - Other: Decide an appropriate short title.
+    """)
+    var title: String?
+    
+    @Guide(description: "The name of the hospital, clinic, lab, or facility.")
+    var facilityName: String?
+    
+    var date: String? 
+    
+    var recordType: RecordType? 
+    
+    @Guide(description: "A paragraph summarizing the notes, diagnosis, or findings.")
+    var summary: String?
+}
+
+```
+
+### **2. Handling Device & Model Availability**
+
+As you pointed out, Apple Intelligence has extremely specific states determining if the device is eligible, if the user toggled it on in Settings, or if the multi-GB model simply isn't downloaded yet.
+
+We will proactively check `LanguageModel.availability` (or `LanguageModelSession.availability`) before doing any Vision OCR work. If it's unavailable, we instantly bail and present the blank form so the user isn't left hanging:
+```swift
+swift
+let availability= LanguageModel.availability
+switch availability {
+case .available:
+// The device has the assets, is eligible, and AI is turned on!
+// We proceed to extract the JSON natively.
+print("Apple Intelligence is armed and ready.")
+
+case .unavailable(let reason):
+switch reason {
+case .appleIntelligenceNotEnabled:
+print("User has toggled off Apple Intelligence in Settings.")
+case .deviceNotEligible:
+print("This iPhone/iPad does not have the Neural Engine required for on-device GenAI.")
+case .modelNotReady:
+print("The foundational language model assets are currently downloading or unavailable on disk.")
+case .unsupportedLanguageOrLocale:
+print("The device's region/language restricts the use of the Foundation Model.")
+@unknowndefault:
+print("Unknown unavailability reason.")
+    }
+// For ALL unavailable states, we gracefully skip extraction and let the user type manually.
+// No crashes, no infinite loading.
+}
+```
+
+## 3. BulletProof Error Handling
+
+Because the execution is completely off-device inference running on the NPU (Neural Processing Unit), it can fail for a multitude of unique reasons. If we write a raw `try await`, the app could crash. We need a `do-catch` block that specifically catches the native `LanguageModelError` cases to fail gracefully:
+```swift
+do {
+    let session = LanguageModelSession()
+    let extractedData = try await session.generate(from: prompt, returning: MedicalExtractionData.self)
+    // Success! Pre-fill our form.
+} catch let error as LanguageModelError {
+    switch error {
+    case .exceededContextWindowSize:
+        print("Text was too large for the context limit.")
+    case .guardrailViolation, .refusal:
+        print("Model refused to parse the input due to safety/privacy guardrails.")
+    case .assetsUnavailable, .unsupportedLanguageOrLocale:
+        print("The device doesn't comfortably support the language or the model assets are busy/missing.")
+    case .concurrentRequests, .rateLimited:
+        print("The NPU is currently completely tied up by another OS process.")
+    case .decodingFailure, .unsupportedGuide:
+        print("The @Generable strict struct mapping failed natively.")
+    @unknown default:
+        print("Unknown AI error.")
+    }
+    // For ALL of these failures, we simply swallow the error and present an empty form perfectly to the user.
+}
+do {
+    let session = LanguageModelSession()
+    let extractedData = try await session.generate(from: prompt, returning: MedicalExtractionData.self)
+    // Success! Pre-fill our form.
+} catch let error as LanguageModelError {
+    switch error {
+    case .exceededContextWindowSize:
+        print("Text was too large for the context limit.")
+    case .guardrailViolation, .refusal:
+        print("Model refused to parse the input due to safety/privacy guardrails.")
+    case .assetsUnavailable, .unsupportedLanguageOrLocale:
+        print("The device doesn't comfortably support the language or the model assets are busy/missing.")
+    case .concurrentRequests, .rateLimited:
+        print("The NPU is currently completely tied up by another OS process.")
+    case .decodingFailure, .unsupportedGuide:
+        print("The @Generable strict struct mapping failed natively.")
+    @unknown default:
+        print("Unknown AI error.")
+    }
+    // For ALL of these failures, we simply swallow the error and present an empty form perfectly to the user.
+}
+```
+Prompt
+```swift
+// 1. Give the Session its permanent persona at creation
+let session = LanguageModelSession(
+    instruction: """
+    You are a highly capable medical parsing assistant.
+    Analyze the raw text extracted from a user's document upload and synthesize the clinical data strictly according to the requested schema. Pay careful attention to building the 'title' based precisely on the 'recordType'.
+    
+    CRITICAL: If the text contains no valid clinical or medical information, return 'false' for the medical record check and make all remaining fields nil.
+    """
+)
+
+// 2. The Prompt becomes purely the raw data payload!
+let prompt = """
+Transcript Data:
+\"\"\"
+\(rawOCRText)
+\"\"\"
+"""
+
+// 3. Native Extraction
+let extractedData = try await session.respond(to: prompt, generating: FormDataExtraction.self)
+```
+
+
+
+// FoundationModelService.swift
+import Foundation
+import UIKit
+import Vision
+import FoundationModels
+import PDFKit
+
+@Generable
+struct FormDataExtraction {
+    @Guide(description: "True strictly if the provided text appears to be a real health document. False if it is a screenshot or irrelevant.")
+    var isMedicalRecord: Bool
+    
+    @Guide(description: """
+    The title of the document, dictated strictly by its recordType:
+    - Prescription: Return Doctor's name (e.g., 'Dr. Jane Doe').
+    - Lab Report: Return a descriptive test name (e.g., 'Blood test').
+    - Discharge Summary: Return the main medical issue.
+    - Scan: Return the type of scan (e.g., 'X-ray', 'CT Scan').
+    - Other: Decide an appropriate short title.
+    """)
+    var title: String?
+    
+    @Guide(description: "The name of the hospital, clinic, lab, or facility.")
+    var facilityName: String?
+    
+    @Guide(description: "The date the record was issued in dd-MM-yyyy format. Nil if not found.")
+    var dateString: String? 
+    var recordType: RecordType? 
+    
+    @Guide(description: "A 1-sentence paragraph summarizing the notes, diagnosis, or findings.")
+    var summary: String?
+}
+
+class MedicalIntelligenceService {
+    static let shared = MedicalIntelligenceService()
+    
+    private init() {}
+    
+    /// Parses the priority queue of documents (PDF first, images last) ensuring it stays under 12,000 characters to fit flawlessly inside the Apple Foundation Model limits.
+    func extractData(from imageUploads: [UIImage], pdfUploads: [URL] = []) async -> FormDataExtraction? {
+        do {
+            // 2. Safely extract raw text from up to 3 prioritized assets
+            let rawTranscript = await extractSafeTranscript(images: imageUploads, pdfs: pdfUploads)
+            
+            // Limit to roughly 12,000 chars for extreme safety margin to ensure no context window crashes
+            let safeString = String(rawTranscript.prefix(12000))
+            
+            // 3. Prepare the Foundation Model
+            let session = LanguageModelSession(
+                instructions: """
+                You are a highly capable medical parsing assistant.
+                Analyze the raw text extracted from a user's document upload and synthesize the clinical data strictly according to the requested schema. Pay careful attention to building the 'title' based precisely on the 'recordType'.
+                
+                CRITICAL: If the text contains no valid clinical or medical information, return 'false' for the medical record check and make all remaining fields nil.
+                """
+            )
+            
+            let prompt = """
+            Transcript Data:
+            \"\"\"
+            \(safeString)
+            \"\"\"
+            """
+            
+            // 4. Guided Generation Execution On-Device!
+            let response = try await session.respond(to: prompt, generating: FormDataExtraction.self)
+            
+            let extraction = response.content
+            
+            if extraction.isMedicalRecord {
+                return extraction
+            } else {
+                return nil // Model safely detected irrelevant content (e.g., dogs/screenshots)
+            }
+            
+        } catch {
+            let errorText = String(describing: error)
+            print("LanguageModelSession Error: \(errorText)")
+            
+            // 5. General Error Sandbox Catching based on description!
+            if errorText.contains("exceededContextWindowSize") { print("Text too large.") }
+            else if errorText.contains("guardrailViolation") || errorText.contains("refusal") { print("Safety guardrails hit.") }
+            else if errorText.contains("assetsUnavailable") || errorText.contains("unsupportedLanguageOrLocale") { print("Assets offline.") }
+            else if errorText.contains("concurrentRequests") || errorText.contains("rateLimited") { print("NPU busy.") }
+            else if errorText.contains("decodingFailure") { print("Failed schema mapping.") }
+            
+            return nil // Safely rollback to manual form filling!
+        }
+    }
+    
+    /// Strictly limits the total extractions to 3 files, prioritizing PDFs dynamically
+    private func extractSafeTranscript(images: [UIImage], pdfs: [URL]) async -> String {
+        var transcript = ""
+        var itemsParsed = 0
+        let parsingLimit = 3
+        
+        // --- 1. ALWAYS EXAMINE THE PDF FIRST ---
+        for url in pdfs {
+            if itemsParsed >= parsingLimit { break }
+            guard let document = PDFDocument(url: url) else { continue }
+            
+            let totalPages = document.pageCount
+            let pagesToScan = [0, 1, totalPages - 1].filter { $0 < totalPages && $0 >= 0 } // Safely grab page 1, 2, and the Last Page
+            let uniquePages = Array(Set(pagesToScan)).sorted() // Remove duplicates if it's a 1-page PDF
+            
+            for pageIndex in uniquePages {
+                if itemsParsed >= parsingLimit { break }
+                guard let page = document.page(at: pageIndex) else { continue }
+                
+                // Attempt native text extraction
+                if let text = page.string, text.trimmingCharacters(in: .whitespacesAndNewlines).count > 50 {
+                    transcript += " [PDF Page \(pageIndex + 1)]: \(text) "
+                } else {
+                    // Fallback to Image Vision OCR if the PDF page is actually just a scanned photo
+                    let thumbnail = page.thumbnail(of: CGSize(width: 1000, height: 1000), for: .mediaBox)
+                    let text = extractText(from: thumbnail)
+                    transcript += " [PDF Scanned Page \(pageIndex + 1)]: \(text) "
+                }
+                itemsParsed += 1
+            }
+        }
+        
+        // --- 2. EXAMINE IMAGES NEXT IF QUOTA NOT MET ---
+        for image in images {
+            if itemsParsed >= parsingLimit { break }
+            
+            let text = extractText(from: image)
+            transcript += " [Attached Image]: \(text) "
+            
+            itemsParsed += 1
+        }
+        
+        return transcript
+    }
+    
+    /// Standard Vision processing pipeline
+    private func extractText(from image: UIImage) -> String {
+        guard let cgImage = image.cgImage else { return "" }
+        var recognizedText = ""
+        
+        let request = VNRecognizeTextRequest { request, error in
+            guard error == nil, let observations = request.results as? [VNRecognizedTextObservation] else { return }
+            for observation in observations {
+                if let candidate = observation.topCandidates(1).first {
+                    recognizedText += candidate.string + " "
+                }
+            }
+        }
+        request.recognitionLevel = .accurate
+        
+        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+        do {
+            try handler.perform([request])
+        } catch {
+            print("Vision OCR failed.")
+        }
+        
+        return recognizedText
+    }
+}
+
