@@ -148,10 +148,10 @@ class RecordDetailedViewController: UIViewController {
     }
 
     private func configureData() {
-        // Ensure image is set before calculating constraints
-        updateImageConstraints()
-
         guard let record = record else { return }
+
+        recordImageView.image = HealthRecordStore.shared.previewImage(for: record) ?? UIImage(named: "sample")
+        updateImageConstraints()
 
         // Populate Text
         titleLabel.text = record.title
@@ -187,7 +187,6 @@ class RecordDetailedViewController: UIViewController {
             themeColor = .darkGray
         }
 
-        typeLabel.text = typeText
         typeLabel.text = typeText
         typeLabel.textColor = themeColor
     }

@@ -135,24 +135,6 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         collectionView.collectionViewLayout = generateLayout()
     }
 
-    // private func applyScreenBackgroundGradient() {
-    //     if screenGradientLayer != nil { return }
-
-    //     let gradient = CAGradientLayer()
-    //     gradient.colors = [
-    //         UIColor(hex: "D9EBFF").cgColor,
-    //         UIColor(hex: "F7F9FC").cgColor,
-    //     ]
-
-    //     gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
-    //     gradient.endPoint = CGPoint(x: 0.5, y: 1.0)
-    //     gradient.locations = [0.0, 1.0]
-
-    //     gradient.frame = view.bounds
-    //     view.layer.insertSublayer(gradient, at: 0)
-
-    //     screenGradientLayer = gradient
-    // }
 
     private func generateLayout() -> UICollectionViewCompositionalLayout {
         UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in

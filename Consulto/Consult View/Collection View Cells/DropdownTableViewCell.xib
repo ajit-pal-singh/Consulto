@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="81" id="KGk-i7-Jjw" customClass="DropdownTableViewCell" customModule="Consulto" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="321" height="81"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="321" height="81"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZoF-4w-jRR">
+                        <rect key="frame" x="0.0" y="0.0" width="321" height="81"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Select Record Type" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ObP-BQ-3fE">
+                                <rect key="frame" x="16" y="16" width="289" height="49"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.down" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="MGm-HR-NsD">
+                                <rect key="frame" x="282.33333333333331" y="35.666666666666657" width="18.666666666666686" height="10.333333333333329"/>
+                                <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="ObP-BQ-3fE" secondAttribute="bottom" constant="16" id="CH2-nj-95Z"/>
+                            <constraint firstItem="ObP-BQ-3fE" firstAttribute="leading" secondItem="ZoF-4w-jRR" secondAttribute="leading" constant="16" id="Kkw-M1-Cxy"/>
+                            <constraint firstAttribute="trailing" secondItem="MGm-HR-NsD" secondAttribute="trailing" constant="20" id="LrS-4W-O4g"/>
+                            <constraint firstItem="MGm-HR-NsD" firstAttribute="centerY" secondItem="ZoF-4w-jRR" secondAttribute="centerY" id="ReQ-1R-ZXW"/>
+                            <constraint firstItem="ObP-BQ-3fE" firstAttribute="top" secondItem="ZoF-4w-jRR" secondAttribute="top" constant="16" id="cht-qL-aRq"/>
+                            <constraint firstAttribute="trailing" secondItem="ObP-BQ-3fE" secondAttribute="trailing" constant="16" id="gzL-25-YP8"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="ZoF-4w-jRR" secondAttribute="trailing" id="FJR-Vm-PkM"/>
+                    <constraint firstItem="ZoF-4w-jRR" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="VZV-yG-eFZ"/>
+                    <constraint firstAttribute="bottom" secondItem="ZoF-4w-jRR" secondAttribute="bottom" id="bYD-fp-d78"/>
+                    <constraint firstItem="ZoF-4w-jRR" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="gXk-SK-PxD"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <connections>
+                <outlet property="containerView" destination="ZoF-4w-jRR" id="SYk-fk-Sl8"/>
+                <outlet property="dropdownTextField" destination="ObP-BQ-3fE" id="AHy-uR-PDa"/>
+            </connections>
+            <point key="canvasLocation" x="-144.27480916030532" y="113.02816901408451"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="chevron.down" catalog="system" width="128" height="70"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

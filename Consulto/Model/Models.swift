@@ -1,4 +1,5 @@
 import Foundation
+import FoundationModels
 
 // MARK: - User
 
@@ -21,7 +22,7 @@ enum Gender: String {
 
 // MARK: - Health Records
 
-struct HealthRecord {
+struct HealthRecord: Codable {
     let id: UUID
     var userID: UUID
 
@@ -37,17 +38,18 @@ struct HealthRecord {
     let extractedData: ExtractedMedicalData?
 }
 
-struct RecordFile {
+struct RecordFile: Codable {
     let filePath: String
     let fileType: FileType
 }
 
-struct ExtractedMedicalData {
+struct ExtractedMedicalData: Codable {
     let medications: [Medication]?
     let followUpDate: Date?
 }
 
-enum RecordType: String {
+@Generable
+enum RecordType: String, Codable {
     case prescription
     case labReport
     case scan
@@ -55,16 +57,45 @@ enum RecordType: String {
     case other
 }
 
-enum FileType: String {
+enum FileType: String, Codable {
     case image
     case pdf
 }
 
+extension RecordType {
+    var displayName: String {
+        switch self {
+        case .prescription: return "Prescription"
+        case .labReport: return "Lab Report"
+        case .scan: return "Scan"
+        case .dischargeSummary: return "Discharge Summary"
+        case .other: return "Other"
+        }
+    }
+
+    static func fromDisplayName(_ value: String) -> RecordType? {
+        switch value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "prescription":
+            return .prescription
+        case "lab report":
+            return .labReport
+        case "scan":
+            return .scan
+        case "discharge summary", "discharge":
+            return .dischargeSummary
+        case "other":
+            return .other
+        default:
+            return nil
+        }
+    }
+}
+
 // MARK: - Medication
 
-struct Medication {
+struct Medication: Codable {
     let id: UUID
-    let recordID: UUID
+    let recordID: UUID?
     var name: String
     var dosage: String?
     var frequency: MedicationFrequency?
@@ -72,7 +103,7 @@ struct Medication {
     var notes: String?
 }
 
-enum MedicationFrequency: String {
+enum MedicationFrequency: String, Codable {
     case onceDaily
     case twiceDaily
     case thriceDaily

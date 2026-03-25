@@ -25,10 +25,12 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     
     @IBOutlet weak var platterContainerView: UIView!
 
+    @IBOutlet weak var dimmingOverlayView: UIView!
+
     // Platter Properties
     var platterViewController: AttachmentPlatterViewController?
-    var overlayDimmingView: UIView?
     var platterBottomConstraint: NSLayoutConstraint?
+    var platterHeightConstraint: NSLayoutConstraint?
     
     // Segue Identifier
     let detailSegueIdentifier = "Card-Details"
@@ -43,10 +45,14 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
         
         platterContainerView?.isUserInteractionEnabled = false
         
+        // Dimming overlay: hidden and non-interactive until the platter is shown
+        dimmingOverlayView?.alpha = 0
+        dimmingOverlayView?.isHidden = true
+        dimmingOverlayView?.isUserInteractionEnabled = false
+        
         setupCollectionView()
         setupChipsView()
-        setupHeaderActions() 
-        loadData()
+        setupHeaderActions()
         
         filterViewModel.$selectedFilter
             .receive(on: RunLoop.main)
@@ -67,6 +73,11 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             headerActionsContainerView?.superview?.isHidden = true
             blurEffectView?.isHidden = true
         }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadData()
     }
     
     @objc private func doneSelectingTapped() {
@@ -158,7 +169,12 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     }
     
     func loadData() {
-        allRecords = SampleData.getSampleRecords()
+        do {
+            allRecords = try HealthRecordStore.shared.loadRecords()
+        } catch {
+            allRecords = []
+            print("Failed to load records: \(error)")
+        }
         filterRecords(by: filterViewModel.selectedFilter)
     }
     
@@ -178,6 +194,57 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             }
         }
         recordsCollectionView.reloadData()
+    }
+
+    private func presentDeleteConfirmation(for record: HealthRecord) {
+        let alert = UIAlertController(
+            title: "Delete Record?",
+            message: "This will remove the record from your saved records.",
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+            self?.deleteRecord(record)
+        })
+
+        present(alert, animated: true)
+    }
+
+    private func deleteRecord(_ record: HealthRecord) {
+        do {
+            try HealthRecordStore.shared.deleteRecord(id: record.id)
+            allRecords.removeAll { $0.id == record.id }
+            selectedRecords.removeAll { $0.id == record.id }
+            filterRecords(by: filterViewModel.selectedFilter)
+        } catch {
+            let alert = UIAlertController(
+                title: "Unable to Delete",
+                message: "Please try again.",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        }
+    }
+
+    private func indexPath(forContextMenuConfiguration configuration: UIContextMenuConfiguration) -> IndexPath? {
+        guard let identifier = configuration.identifier as? NSUUID else { return nil }
+        let recordID = identifier as UUID
+        guard let itemIndex = records.firstIndex(where: { $0.id == recordID }) else { return nil }
+        return IndexPath(item: itemIndex, section: 0)
+    }
+
+    private func targetedPreview(for configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard let indexPath = indexPath(forContextMenuConfiguration: configuration),
+              let cell = recordsCollectionView.cellForItem(at: indexPath) as? RecordCardCollectionViewCell else {
+            return nil
+        }
+
+        let parameters = UIPreviewParameters()
+        parameters.backgroundColor = .clear
+        parameters.visiblePath = UIBezierPath(roundedRect: cell.contentView.bounds, cornerRadius: 12)
+        return UITargetedPreview(view: cell.contentView, parameters: parameters)
     }
     
     // Navigation Handler
@@ -234,6 +301,13 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
            let destinationVC = segue.destination as? RecordDetailedViewController,
            let record = sender as? HealthRecord {
             destinationVC.record = record
+        } else if segue.identifier == "ShowPreview",
+           let destinationVC = segue.destination as? PreviewViewController {
+            if let attachments = sender as? [RecordAttachmentDraft] {
+                destinationVC.attachments = attachments
+            } else if let images = sender as? [UIImage] {
+                destinationVC.images = images
+            }
         }
     }
     
@@ -267,20 +341,107 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     
     // MARK: - Picker Delegates
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
-        print("Selected \(results.count) photos from Gallery")
-        // TODO: Handle imported photos
+        let group = DispatchGroup()
+        var fetchedAttachments: [RecordAttachmentDraft?] = Array(repeating: nil, count: results.count)
+        
+        for (index, result) in results.enumerated() {
+            group.enter()
+            result.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
+                if let image = object as? UIImage {
+                    fetchedAttachments[index] = .image(image)
+                }
+                group.leave()
+            }
+        }
+        
+        picker.dismiss(animated: true) {
+            group.notify(queue: .main) {
+                let attachments = fetchedAttachments.compactMap { $0 }
+                if !attachments.isEmpty {
+                    self.performSegue(withIdentifier: "ShowPreview", sender: attachments)
+                }
+            }
+        }
     }
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        print("Selected \(urls.count) documents")
-        // TODO: Handle imported files
+        var fetchedAttachments: [RecordAttachmentDraft] = []
+        for url in urls {
+            // Since we initialized UIDocumentPickerViewController with `asCopy: true`,
+            // iOS creates a copy in our app's tmp directory. We do NOT need security-scoped access!
+            
+            if url.pathExtension.lowercased() == "pdf" {
+                if let pdfImage = pdfToImage(url: url) {
+                    fetchedAttachments.append(.pdf(url: url, thumbnail: pdfImage))
+                }
+            } else if let data = try? Data(contentsOf: url), let img = UIImage(data: data) {
+                 fetchedAttachments.append(.image(img, fileURL: url))
+            }
+        }
+        
+        if !fetchedAttachments.isEmpty {
+            self.performSegue(withIdentifier: "ShowPreview", sender: fetchedAttachments)
+        }
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        picker.dismiss(animated: true)
-        print("Captured an image from Camera")
-        // TODO: Handle captured camera image
+        if let image = info[.originalImage] as? UIImage {
+            picker.dismiss(animated: true) {
+                self.performSegue(withIdentifier: "ShowPreview", sender: [RecordAttachmentDraft.image(image)])
+            }
+        } else {
+            picker.dismiss(animated: true)
+        }
+    }
+    
+    // MARK: - Image Processing Helpers
+    private func processPlatterAssets(_ assets: [PHAsset]) {
+        let manager = PHImageManager.default()
+        let options = PHImageRequestOptions()
+        options.isSynchronous = false
+        options.deliveryMode = .highQualityFormat
+        options.isNetworkAccessAllowed = true
+        
+        var fetchedAttachments: [RecordAttachmentDraft?] = Array(repeating: nil, count: assets.count)
+        let group = DispatchGroup()
+        
+        for (index, asset) in assets.enumerated() {
+            group.enter()
+            // We request a large enough size for preview.
+            // Using a specific target size (e.g. 1500x1500px) is typically safer/faster than MaximumSize
+            let targetSize = CGSize(width: 1500, height: 1500)
+            manager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFit, options: options) { image, _ in
+                if let img = image {
+                    fetchedAttachments[index] = .image(img)
+                }
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main) {
+            let attachments = fetchedAttachments.compactMap { $0 }
+            if !attachments.isEmpty {
+                self.performSegue(withIdentifier: "ShowPreview", sender: attachments)
+            }
+        }
+    }
+    
+    private func pdfToImage(url: URL) -> UIImage? {
+        guard let document = CGPDFDocument(url as CFURL),
+              let page = document.page(at: 1) else { return nil }
+        
+        let pageRect = page.getBoxRect(.mediaBox)
+        let renderer = UIGraphicsImageRenderer(size: pageRect.size)
+        
+        return renderer.image { ctx in
+            UIColor.white.set()
+            ctx.fill(pageRect)
+            
+            ctx.cgContext.translateBy(x: 0.0, y: pageRect.size.height)
+            ctx.cgContext.scaleBy(x: 1.0, y: -1.0)
+            
+            ctx.cgContext.drawPDFPage(page)
+        }
     }
 }
 
@@ -301,40 +462,47 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
              return
         }
         
-        // 0. Enable interaction on the container so taps register
+        // Enable interaction on the container so taps register
         container.isUserInteractionEnabled = true
         
-        // 1. Create Dimming View
-        let dimmingView = UIView()
-        dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-        dimmingView.alpha = 0
-        dimmingView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Add Tap Gesture to Dismiss
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissPlatter))
-        dimmingView.addGestureRecognizer(tap)
-        
-        container.addSubview(dimmingView)
-        NSLayoutConstraint.activate([
-            dimmingView.topAnchor.constraint(equalTo: container.topAnchor),
-            dimmingView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            dimmingView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            dimmingView.bottomAnchor.constraint(equalTo: container.bottomAnchor)
-        ])
-        self.overlayDimmingView = dimmingView
-        
-        // 2. Instantiate View Controller from Storyboard
-        let storyboard = UIStoryboard(name: "Main", bundle: nil) 
+        // Instantiate View Controller from Storyboard
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let platterVC = storyboard.instantiateViewController(withIdentifier: "AttachmentPlatterVC") as? AttachmentPlatterViewController else {
             print("Could not instantiate AttachmentPlatterVC")
             return
         }
         
         // Setup Callbacks
-        platterVC.onCameraTap = { [weak self] in self?.openCamera() }
-        platterVC.onGalleryTap = { [weak self] in self?.openGallery() }
-        platterVC.onDocumentTap = { [weak self] in self?.openDocumentPicker() }
+        platterVC.onCameraTap = { [weak self] in 
+            self?.dismissPlatter()
+            self?.openCamera() 
+        }
+        platterVC.onGalleryTap = { [weak self] in 
+            self?.dismissPlatter()
+            self?.openGallery() 
+        }
+        platterVC.onDocumentTap = { [weak self] in 
+            self?.dismissPlatter()
+            self?.openDocumentPicker() 
+        }
         platterVC.onDismiss = { [weak self] in self?.dismissPlatter() }
+        platterVC.onAddPhotosTapped = { [weak self] assets in
+            self?.dismissPlatter()
+            self?.processPlatterAssets(assets)
+        }
+        platterVC.onSelectionChange = { [weak self] hasSelection in
+            guard let self = self else { return }
+            let targetHeight: CGFloat = hasSelection ? 310 : 280
+            let duration: TimeInterval = 0.3
+            
+            // Animate the mask path in sync with the height constraint change
+            self.platterViewController?.animateMaskPath(toHeight: targetHeight, duration: duration)
+            
+            self.platterHeightConstraint?.constant = targetHeight
+            UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut) {
+                self.view.layoutIfNeeded()
+            }
+        }
         
         platterVC.view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -346,27 +514,39 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePlatterPan(_:)))
         platterVC.view.addGestureRecognizer(panGesture)
         
+        // Tap in the transparent area ABOVE the platter card to dismiss.
+        // This gesture lives on platterContainerView (the true top-level interceptor),
+        // so it catches taps that miss platterVC.view entirely.
+        let containerTap = UITapGestureRecognizer(target: self, action: #selector(containerBackgroundTapped(_:)))
+        containerTap.cancelsTouchesInView = false
+        container.addGestureRecognizer(containerTap)
+        
         self.platterViewController = platterVC
         
-        // 3. Constraints 
-        let bottomConstraint = platterVC.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 400) // Start below screen
+        // Constraints — start below screen, then animate in
+        let bottomConstraint = platterVC.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 400)
         self.platterBottomConstraint = bottomConstraint
+        
+        let heightConstraint = platterVC.view.heightAnchor.constraint(equalToConstant: 280)
+        self.platterHeightConstraint = heightConstraint
         
         NSLayoutConstraint.activate([
             platterVC.view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 5),
             platterVC.view.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -5),
             bottomConstraint,
-            platterVC.view.heightAnchor.constraint(equalToConstant: 280) 
+            heightConstraint
         ])
         
-        container.layoutIfNeeded() 
+        container.layoutIfNeeded()
         
-        // 4. Animate In
-        self.platterBottomConstraint?.constant = -5 
+        // Animate In — also reveal the dimming overlay
+        self.platterBottomConstraint?.constant = -5
+        dimmingOverlayView?.isHidden = false
+        dimmingOverlayView?.isUserInteractionEnabled = true
         
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
-            dimmingView.alpha = 1
-            self.tabBarController?.tabBar.alpha = 0 
+            self.tabBarController?.tabBar.alpha = 0
+            self.dimmingOverlayView?.alpha = 0.3
             self.view.layoutIfNeeded()
         }
     }
@@ -374,24 +554,49 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
     @objc func dismissPlatter() {
         guard let vc = platterViewController else { return }
         
+        // Silently reset height to collapsed before sliding down,
+        // so there's no competing height animation during dismiss.
+        platterHeightConstraint?.constant = 280
+        platterViewController?.animateMaskPath(toHeight: 280, duration: 0)
+        view.layoutIfNeeded()
+        
         // Animate Out
         self.platterBottomConstraint?.constant = 400
         
         UIView.animate(withDuration: 0.3, animations: {
-            self.overlayDimmingView?.alpha = 0
-            self.tabBarController?.tabBar.alpha = 1 
+            self.tabBarController?.tabBar.alpha = 1
+            self.dimmingOverlayView?.alpha = 0
             self.view.layoutIfNeeded()
         }) { _ in
-            self.overlayDimmingView?.removeFromSuperview()
+            // Hide and disable interaction once fully faded out
+            self.dimmingOverlayView?.isHidden = true
+            self.dimmingOverlayView?.isUserInteractionEnabled = false
+            
             vc.willMove(toParent: nil)
             vc.view.removeFromSuperview()
             vc.removeFromParent()
             
-            self.overlayDimmingView = nil
+            // Remove the tap gesture from the container so it doesn't accumulate
+            if let gestures = self.platterContainerView?.gestureRecognizers {
+                gestures.forEach { self.platterContainerView?.removeGestureRecognizer($0) }
+            }
+            
             self.platterViewController = nil
             self.platterBottomConstraint = nil
+            self.platterHeightConstraint = nil
             
             self.platterContainerView?.isUserInteractionEnabled = false
+        }
+    }
+    
+    /// Dismisses the platter when the user taps in the transparent
+    /// area of platterContainerView above the platter card.
+    @objc private func containerBackgroundTapped(_ gesture: UITapGestureRecognizer) {
+        guard let platterView = platterViewController?.view else { return }
+        let location = gesture.location(in: platterContainerView)
+        // platterView.frame is relative to platterContainerView (its superview)
+        if !platterView.frame.contains(location) {
+            dismissPlatter()
         }
     }
     
@@ -404,17 +609,20 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         case .changed:
             if translation.y > 0 {
                 self.platterBottomConstraint?.constant = translation.y - 5
+                // Fade dimming proportionally as user drags down
                 let progress = min(translation.y / 200, 1.0)
-                self.overlayDimmingView?.alpha = 1 - progress
+                self.dimmingOverlayView?.alpha = 0.3 * (1 - progress)
+                self.view.layoutIfNeeded()
             }
             
         case .ended, .cancelled:
             if translation.y > 150 || velocity.y > 1000 {
                 dismissPlatter()
             } else {
+                // Snap back — restore dimming to full visible
                 self.platterBottomConstraint?.constant = -5
                 UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
-                    self.overlayDimmingView?.alpha = 1
+                    self.dimmingOverlayView?.alpha = 0.3
                     self.view.layoutIfNeeded()
                 }
             }
@@ -492,7 +700,41 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
             performSegue(withIdentifier: detailSegueIdentifier, sender: tappedRecord)
         }
     }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        guard !selectionMode, indexPath.item < records.count else { return nil }
+
+        let record = records[indexPath.item]
+        return UIContextMenuConfiguration(identifier: record.id as NSUUID, previewProvider: nil) { [weak self] _ in
+            guard let self else { return nil }
+
+            let deleteAction = UIAction(
+                title: "Delete",
+                image: UIImage(systemName: "trash"),
+                attributes: .destructive
+            ) { [weak self] _ in
+                self?.presentDeleteConfirmation(for: record)
+            }
+
+            return UIMenu(title: "", children: [deleteAction])
+        }
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
+    ) -> UITargetedPreview? {
+        targetedPreview(for: configuration)
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
+    ) -> UITargetedPreview? {
+        targetedPreview(for: configuration)
+    }
 }
-
-
-

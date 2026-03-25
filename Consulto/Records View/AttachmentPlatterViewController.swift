@@ -15,6 +15,7 @@ class AttachmentPlatterViewController: UIViewController {
     var onGalleryTap: (() -> Void)?
     var onDocumentTap: (() -> Void)?
     var onDismiss: (() -> Void)?
+    var onAddPhotosTapped: (([PHAsset]) -> Void)?
     
     // MARK: - Properties
     private var recentAssets: [PHAsset] = []
@@ -64,41 +65,66 @@ class AttachmentPlatterViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        applyUnevenCorners()
+        // Update mask path without animation during normal layout passes
+        // (animated updates are driven explicitly via animateMaskPath)
+        let newPath = buildPlatterPath(for: platterContainerView.bounds)
+        if let existingMask = platterContainerView.layer.mask as? CAShapeLayer {
+            existingMask.path = newPath.cgPath
+        } else {
+            let maskLayer = CAShapeLayer()
+            maskLayer.path = newPath.cgPath
+            platterContainerView.layer.mask = maskLayer
+        }
     }
     
     // MARK: - Layout Logic
-    private func applyUnevenCorners() {
-        let rect = platterContainerView.bounds
+    
+    /// Builds the platter bezier path for a given rect.
+    private func buildPlatterPath(for rect: CGRect) -> UIBezierPath {
         let topRadius: CGFloat = 24
         let bottomRadius: CGFloat = 55
-        
-        let path = UIBezierPath()
         let width = rect.width
         let height = rect.height
         
+        let path = UIBezierPath()
         // Top left
         path.move(to: CGPoint(x: 0, y: topRadius))
         path.addArc(withCenter: CGPoint(x: topRadius, y: topRadius), radius: topRadius, startAngle: .pi, endAngle: 3 * .pi / 2, clockwise: true)
-        
         // Top right
         path.addLine(to: CGPoint(x: width - topRadius, y: 0))
         path.addArc(withCenter: CGPoint(x: width - topRadius, y: topRadius), radius: topRadius, startAngle: 3 * .pi / 2, endAngle: 0, clockwise: true)
-        
         // Bottom right
         path.addLine(to: CGPoint(x: width, y: height - bottomRadius))
         path.addArc(withCenter: CGPoint(x: width - bottomRadius, y: height - bottomRadius), radius: bottomRadius, startAngle: 0, endAngle: .pi / 2, clockwise: true)
-        
         // Bottom left
         path.addLine(to: CGPoint(x: bottomRadius, y: height))
         path.addArc(withCenter: CGPoint(x: bottomRadius, y: height - bottomRadius), radius: bottomRadius, startAngle: .pi / 2, endAngle: .pi, clockwise: true)
-        
         path.close()
+        return path
+    }
+    
+    /// Animates the mask shape layer path to match a new target height.
+    /// Call this alongside any height constraint animation to keep corners in sync.
+    func animateMaskPath(toHeight targetHeight: CGFloat, duration: TimeInterval) {
+        guard let maskLayer = platterContainerView.layer.mask as? CAShapeLayer else { return }
         
-        let maskLayer = CAShapeLayer()
-        maskLayer.path = path.cgPath
+        let targetRect = CGRect(x: 0, y: 0, width: platterContainerView.bounds.width, height: targetHeight)
+        let newPath = buildPlatterPath(for: targetRect).cgPath
         
-        platterContainerView.layer.mask = maskLayer
+        let animation = CABasicAnimation(keyPath: "path")
+        animation.fromValue = maskLayer.path
+        animation.toValue = newPath
+        animation.duration = duration
+        animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        animation.fillMode = .forwards
+        animation.isRemovedOnCompletion = false
+        
+        maskLayer.add(animation, forKey: "pathAnimation")
+        // Set the model value so it stays after animation completes
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        maskLayer.path = newPath
+        CATransaction.commit()
     }
     
     private func setupCollectionView() {
@@ -119,14 +145,14 @@ class AttachmentPlatterViewController: UIViewController {
     }
     
     @IBAction func addPhotosTapped(_ sender: UIButton) {
-        // Use selectedAssets here when implementing the pass back to parent
-        // For example: onAddPhotos?(selectedAssets)
-        print("Add \(selectedAssets.count) photos tapped")
+        onAddPhotosTapped?(selectedAssets)
     }
     
     @objc private func documentRowTapped() {
         onDocumentTap?()
     }
+    
+    var onSelectionChange: ((Bool) -> Void)?
     
     private func updateBottomActions() {
         let count = selectedAssets.count
@@ -142,15 +168,17 @@ class AttachmentPlatterViewController: UIViewController {
             addPhotosButton.configuration?.attributedTitle = AttributedString(titleText, attributes: container)
         }
         
-        // Animate swap between document row and add photos button
+        // Notify parent controller to expand/collapse height
+        onSelectionChange?(hasSelection)
+        
+        // Animate fade in/out for add photos button
         UIView.animate(withDuration: 0.3) {
             self.addPhotosButton.alpha = hasSelection ? 1.0 : 0.0
-            self.documentRowContainer.alpha = hasSelection ? 0.0 : 1.0
         }
         
         // Update interaction so invisible views don't steal touches
         self.addPhotosButton.isUserInteractionEnabled = hasSelection
-        self.documentRowContainer.isUserInteractionEnabled = !hasSelection
+        self.documentRowContainer.isUserInteractionEnabled = true
     }
     
     // MARK: - Photo Fetching
