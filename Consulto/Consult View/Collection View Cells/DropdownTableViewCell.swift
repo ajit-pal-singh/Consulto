@@ -20,60 +20,59 @@ class DropdownTableViewCell: UITableViewCell {
         "Discharge Summary", // mapped to RecordType.dischargeSummary
         "Other"         // mapped to RecordType.other
     ]
-    
-    let pickerView = UIPickerView()
+    private let menuButton = UIButton(type: .system)
 
     override func awakeFromNib() {
         super.awakeFromNib()
         selectionStyle = .none
-        
-        setupPickerView()
-    }
-    
-    private func setupPickerView() {
-        pickerView.delegate = self
-        pickerView.dataSource = self
-        
-        // Hide the blinking typing cursor! This makes it act purely like a dropdown
+
         dropdownTextField.tintColor = .clear
-        
-        // Connect the spinning picker to intercept the standard keyboard
-        dropdownTextField.inputView = pickerView
-    }
-    
-    @objc private func closePicker() {
-        dropdownTextField.resignFirstResponder()
+        dropdownTextField.isUserInteractionEnabled = false
+        setupMenuButton()
+        reloadMenu()
     }
 
     func setSelectedOption(_ option: String) {
         dropdownTextField.text = option
-        if let idx = recordOptions.firstIndex(of: option) {
-            pickerView.selectRow(idx, inComponent: 0, animated: false)
+        reloadMenu()
+    }
+
+    func clearSelection() {
+        dropdownTextField.text = nil
+        reloadMenu()
+    }
+
+    private func setupMenuButton() {
+        menuButton.translatesAutoresizingMaskIntoConstraints = false
+        menuButton.backgroundColor = .clear
+        menuButton.showsMenuAsPrimaryAction = true
+
+        contentView.addSubview(menuButton)
+
+        NSLayoutConstraint.activate([
+            menuButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            menuButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            menuButton.topAnchor.constraint(equalTo: contentView.topAnchor),
+            menuButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+    }
+
+    private func reloadMenu() {
+        let actions = recordOptions.map { option in
+            UIAction(
+                title: option,
+                state: dropdownTextField.text == option ? .on : .off
+            ) { [weak self] _ in
+                self?.dropdownTextField.text = option
+                self?.didChangeSelection?(option)
+                self?.reloadMenu()
+            }
         }
+
+        menuButton.menu = UIMenu(title: "", options: .displayInline, children: actions)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-    }
-}
-
-// MARK: - Picker View Controls
-extension DropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataSource {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return recordOptions.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return recordOptions[row]
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        // Automatically place the selected name into the text box and notify
-        dropdownTextField.text = recordOptions[row]
-        didChangeSelection?(recordOptions[row])
     }
 }

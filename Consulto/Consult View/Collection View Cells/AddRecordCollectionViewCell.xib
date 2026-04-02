@@ -29,7 +29,7 @@
                                 </constraints>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="plus.circle.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="jS1-dD-aT5">
-                                <rect key="frame" x="86.666666666666671" y="69.333333333333343" width="26" height="24.666666666666671"/>
+                                <rect key="frame" x="86.666666666666671" y="61.666666666666664" width="26" height="24.666666666666679"/>
                                 <color key="tintColor" systemColor="systemGrayColor"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="26" id="3N2-Xe-ec3"/>
@@ -37,7 +37,7 @@
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="add record" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Boc-Jl-YNB">
-                                <rect key="frame" x="58" y="94.666666666666671" width="83" height="21"/>
+                                <rect key="frame" x="58" y="87" width="83" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" systemColor="systemGrayColor"/>
                                 <nil key="highlightedColor"/>
@@ -47,7 +47,7 @@
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="fQ5-Y1-D2Q" secondAttribute="trailing" id="1bl-PI-Qhx"/>
                             <constraint firstItem="fQ5-Y1-D2Q" firstAttribute="top" secondItem="q2R-ch-759" secondAttribute="top" id="7SC-Zj-UYb"/>
-                            <constraint firstItem="jS1-dD-aT5" firstAttribute="centerY" secondItem="q2R-ch-759" secondAttribute="centerY" id="ZoJ-c1-OdK"/>
+                            <constraint firstItem="jS1-dD-aT5" firstAttribute="top" secondItem="q2R-ch-759" secondAttribute="top" constant="61" id="Tcp-WG-MUk"/>
                             <constraint firstItem="jS1-dD-aT5" firstAttribute="centerX" secondItem="q2R-ch-759" secondAttribute="centerX" id="c2m-Rg-rbF"/>
                             <constraint firstItem="Boc-Jl-YNB" firstAttribute="centerX" secondItem="q2R-ch-759" secondAttribute="centerX" id="jSM-UR-fLm"/>
                             <constraint firstItem="Boc-Jl-YNB" firstAttribute="top" secondItem="jS1-dD-aT5" secondAttribute="bottom" id="loY-FV-OVH"/>
@@ -78,7 +78,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGrayColor">
-            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

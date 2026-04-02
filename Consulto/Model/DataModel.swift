@@ -1,6 +1,5 @@
 import Foundation
 
-// Consult View -  Sample Data
 struct SampleData {
     static let user = UserProfile(
         id: UUID(),
@@ -10,7 +9,90 @@ struct SampleData {
         createdAt: Date(),
         lastModifiedAt: Date()
     )
+    
+    static let reminders: [Medication] = [
+        Medication(
+                id: UUID(),
+                recordID: UUID(),
+                name: "Glimepiride",
+                times: [
+                    Calendar.current.date(from: DateComponents(hour: 8, minute: 0))!,
+                    Calendar.current.date(from: DateComponents(hour: 13, minute: 0))!
+                ],
+                mealTiming: .beforeMeal,
+                inactiveTimes: []
+            ),
+            Medication(
+                id: UUID(),
+                recordID: UUID(),
+                name: "Paracetamol",
+                times: [
+                    Calendar.current.date(from: DateComponents(hour: 9, minute: 0))!
+                ],
+                mealTiming: .beforeMeal,
+                inactiveTimes: []
+            ),
+            Medication(
+                id: UUID(),
+                recordID: UUID(),
+                name: "Ibuprofen",
+                times: [
+                    Calendar.current.date(from: DateComponents(hour: 8, minute: 0))!
+                ],
+                mealTiming: .beforeMeal,
+                inactiveTimes: []
+            ),
+            Medication(
+                id: UUID(),
+                recordID: UUID(),
+                name: "Combiflam",
+                times: [
+                    Calendar.current.date(from: DateComponents(hour: 13, minute: 0))!,
+                    Calendar.current.date(from: DateComponents(hour: 8, minute: 0))!
+                ],
+                mealTiming: .afterMeal,
+                inactiveTimes: [
+                    Calendar.current.date(from: DateComponents(hour: 8, minute: 0))!
+                ]
+            )
+        ]
 
+    static let consultationReminders: [ConsultationReminder] = [
+        ConsultationReminder(
+            id: UUID(),
+            doctorName: "Dr. Sandeep Gupta",
+            purpose: "Follow up consultation",
+            date: Calendar.current.date(byAdding: .day, value: 1, to: Date())!,
+            time: Calendar.current.date(bySettingHour: 9, minute: 30, second: 0, of: Date())!,
+            repeatDays: [],
+            isSnoozeOn: false,
+            snoozeTime: nil,
+            isPaused: false
+        ),
+        ConsultationReminder(
+            id: UUID(),
+            doctorName: "Dr. Vijay Sinha",
+            purpose: "Blood sugar review",
+            date: Calendar.current.date(byAdding: .day, value: 3, to: Date())!,
+            time: Calendar.current.date(bySettingHour: 11, minute: 0, second: 0, of: Date())!,
+            repeatDays: [],
+            isSnoozeOn: true,
+            snoozeTime: "10 mins",
+            isPaused: false
+        ),
+        ConsultationReminder(
+            id: UUID(),
+            doctorName: "Dr. Anupam Jain",
+            purpose: "Sleep assessment",
+            date: Calendar.current.date(byAdding: .day, value: 5, to: Date())!,
+            time: Calendar.current.date(bySettingHour: 8, minute: 15, second: 0, of: Date())!,
+            repeatDays: [],
+            isSnoozeOn: false,
+            snoozeTime: nil,
+            isPaused: true
+        )
+    ]
+    
     static let medications: [Medication] = [
         Medication(
             id: UUID(),

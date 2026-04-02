@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DosageUnitCell" rowHeight="58" id="KGk-i7-Jjw" customClass="DosageUnitTableViewCell" customModule="Consulto">
+            <rect key="frame" x="0.0" y="0.0" width="352" height="51"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="352" height="51"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Unit" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="awC-dm-BtQ">
+                        <rect key="frame" x="16" y="16" width="284" height="22"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <textInputTraits key="textInputTraits"/>
+                    </textField>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.down" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ORP-Yg-94q">
+                        <rect key="frame" x="316" y="21.333333333333332" width="20" height="9.9999999999999964"/>
+                        <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="20" id="rRw-Ar-AvC"/>
+                            <constraint firstAttribute="height" constant="20" id="zd0-jS-MTm"/>
+                        </constraints>
+                    </imageView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="awC-dm-BtQ" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="4Xl-RF-blh"/>
+                    <constraint firstAttribute="trailing" secondItem="ORP-Yg-94q" secondAttribute="trailing" constant="16" id="Ttx-8Q-CIA"/>
+                    <constraint firstAttribute="bottom" secondItem="ORP-Yg-94q" secondAttribute="bottom" constant="16" id="Vwt-bt-gaH"/>
+                    <constraint firstItem="ORP-Yg-94q" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="cKS-Xk-AZz"/>
+                    <constraint firstItem="ORP-Yg-94q" firstAttribute="leading" secondItem="awC-dm-BtQ" secondAttribute="trailing" constant="16" id="egR-Sd-bRG"/>
+                    <constraint firstAttribute="bottom" secondItem="awC-dm-BtQ" secondAttribute="bottom" constant="16" id="obz-cn-FYR"/>
+                    <constraint firstItem="awC-dm-BtQ" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="vVh-BV-4s0"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="chevronImageView" destination="ORP-Yg-94q" id="0Ui-p1-GMu"/>
+                <outlet property="dosageUnitField" destination="awC-dm-BtQ" id="bEm-9T-bmb"/>
+            </connections>
+            <point key="canvasLocation" x="106.87022900763358" y="115.14084507042254"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="chevron.down" catalog="system" width="128" height="70"/>
+    </resources>
+</document>

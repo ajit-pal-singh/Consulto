@@ -436,14 +436,10 @@ extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
         else if indexPath.section == 4 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "DateInputCell", for: indexPath) as! DateInputTableViewCell
             cell.selectionStyle = .none
-            cell.dateTextField.placeholder = "Select Date"
-            if let date = parsedDocumentDate(from: self.dateString) {
-                cell.setDate(date)
-            } else if !self.dateString.isEmpty {
-                cell.dateTextField.text = self.dateString
-            } else {
-                cell.dateTextField.text = nil
-            }
+            cell.configure(
+                placeholder: "Select Date",
+                date: parsedDocumentDate(from: self.dateString)
+            )
             cell.didChangeDate = { [weak self] date in
                 let formatter = DateFormatter()
                 formatter.dateFormat = "dd-MM-yyyy"
@@ -458,8 +454,7 @@ extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
             if !self.extractionRecordType.isEmpty {
                 cell.setSelectedOption(self.extractionRecordType)
             } else {
-                cell.dropdownTextField?.text = nil
-                cell.pickerView.selectRow(0, inComponent: 0, animated: false)
+                cell.clearSelection()
             }
             cell.didChangeSelection = { [weak self] value in
                 self?.extractionRecordType = value

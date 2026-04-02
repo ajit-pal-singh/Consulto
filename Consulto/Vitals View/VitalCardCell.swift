@@ -1,10 +1,3 @@
-//
-//  VitalCardCell.swift
-//  Vital_Screen
-//
-//  Created by GEU on 16/03/26.
-//
-
 import UIKit
 import SwiftUI
 import DGCharts
@@ -22,29 +15,23 @@ class VitalCardCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        // Clear background for the cell itself
         self.backgroundColor = .clear
         self.contentView.backgroundColor = .clear
         
-        // Apply SF Pro Rounded fonts (you can tweak weights/sizes here)
         nameLabel.font = roundedFont(ofSize: 16, weight: .medium)
         dataLabel.font = roundedFont(ofSize: 28, weight: .bold)
         unitLabel.font = roundedFont(ofSize: 16, weight: .semibold)
         typeLabel.font = roundedFont(ofSize: 14, weight: .regular)
         
-        // Critical for shadows: Prevent the cell or its content view
-        // from clipping anything that draws outside their bounds (like a heavy shadow)
         self.clipsToBounds = false
         self.layer.masksToBounds = false
         self.contentView.clipsToBounds = false
         self.contentView.layer.masksToBounds = false
         
-        // Style the card container view (the one you pinned to 4 edges)
         if let cardView = cardBackgroundView {
             cardView.layer.cornerRadius = 24
             cardView.backgroundColor = .white
             
-            // Allow shadow to spill outside the cardView
             cardView.clipsToBounds = false
             cardView.layer.masksToBounds = false
             
@@ -55,7 +42,6 @@ class VitalCardCell: UICollectionViewCell {
         }
     }
     
-    // Helper function to easily generate rounded system fonts
     private func roundedFont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
         let systemFont = UIFont.systemFont(ofSize: size, weight: weight)
         if let descriptor = systemFont.fontDescriptor.withDesign(.rounded) {
@@ -106,10 +92,9 @@ class VitalCardCell: UICollectionViewCell {
         dataSet.colors = [color]
         dataSet.drawCirclesEnabled = false
         dataSet.lineWidth = 2.0
-        dataSet.mode = .cubicBezier // Makes the line curvy!
+        dataSet.mode = .cubicBezier
         dataSet.drawValuesEnabled = false
         
-        // Add a smooth looking gradient fill below the line
         let gradientColors = [color.withAlphaComponent(0.3).cgColor, UIColor.clear.cgColor] as CFArray
         let colorLocations:[CGFloat] = [1.0, 0.0]
         if let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: gradientColors, locations: colorLocations) {
@@ -120,7 +105,6 @@ class VitalCardCell: UICollectionViewCell {
         let data = LineChartData(dataSet: dataSet)
         lineChartView.data = data
         
-        // Configure X Axis
         let days = dataPoints.map { $0.day }
         lineChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: days)
         lineChartView.xAxis.labelPosition = .bottom
@@ -130,14 +114,9 @@ class VitalCardCell: UICollectionViewCell {
         lineChartView.xAxis.drawAxisLineEnabled = false
         lineChartView.xAxis.drawLabelsEnabled = true
         
-        // Setup Y Axis Padding (20% empty above, 20% empty below)
         if globalMin != .greatestFiniteMagnitude {
-            // Guard against the data points being perfectly flat or variance being too tiny
             let totalRange = max(globalMax - globalMin, 10.0)
-            
-            // To make the padding equal exactly to 20% of the screen height, we need the
-            // chart itself to occupy the remaining 60%.
-            let padding = totalRange * 0.333 // (20 / 60 = 0.333)
+            let padding = totalRange * 0.333
             
             lineChartView.leftAxis.axisMinimum = globalMin - padding
             lineChartView.leftAxis.axisMaximum = globalMax + padding
@@ -173,7 +152,6 @@ class VitalCardCell: UICollectionViewCell {
         }
         
         let totalRange = globalMax - globalMin
-        // Let's add padding so the grey bars extend beyond the highest/lowest red points.
         let bgMin = max(0, globalMin - (totalRange * 0.25))
         let bgMax = globalMax + (totalRange * 0.25)
         
@@ -182,7 +160,7 @@ class VitalCardCell: UICollectionViewCell {
             bgEntries.append(BarChartDataEntry(x: Double(i), yValues: [bgMin, bgMax]))
         }
         let bgDataSet = BarChartDataSet(entries: bgEntries, label: "")
-        bgDataSet.colors = [UIColor(hex: "#F8DDDD")] // Light grey background
+        bgDataSet.colors = [UIColor(hex: "#F8DDDD")]
         bgDataSet.drawValuesEnabled = false
         
         let fgDataSet = BarChartDataSet(entries: fgEntries, label: "")
@@ -193,7 +171,6 @@ class VitalCardCell: UICollectionViewCell {
         data.barWidth = 0.25 
         barChartView.data = data
         
-        // Configure X Axis
         let days = dataPoints.map { $0.day }
         barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: days)
         barChartView.xAxis.labelPosition = .bottom
@@ -203,7 +180,7 @@ class VitalCardCell: UICollectionViewCell {
         barChartView.xAxis.drawAxisLineEnabled = false
         barChartView.xAxis.drawLabelsEnabled = true
         
-        barChartView.leftAxis.axisMinimum = bgMin - (totalRange * 0.1) // Extra padding for view bounds
+        barChartView.leftAxis.axisMinimum = bgMin - (totalRange * 0.1)
         barChartView.leftAxis.axisMaximum = bgMax + (totalRange * 0.1)
         barChartView.leftAxis.enabled = false
         barChartView.rightAxis.enabled = false
@@ -216,8 +193,7 @@ class VitalCardCell: UICollectionViewCell {
     private func setupBaselineBarChart(in container: UIView, color: UIColor, dataPoints: [ChartDataPoint], baseline: Double) {
         let barChartView = BarChartView(frame: container.bounds)
         barChartView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
-        // Inject our custom rounded caps renderer!
+    
         barChartView.renderer = RoundedBarChartRenderer(dataProvider: barChartView, animator: barChartView.chartAnimator, viewPortHandler: barChartView.viewPortHandler)
         
         // Find the highest difference from the baseline so the grey background bars stretch uniformly
@@ -226,7 +202,7 @@ class VitalCardCell: UICollectionViewCell {
             return abs(v - baseline)
         }.max() ?? 1.0
         
-        let bgPadding = maxAbsDiff * 0.2 // Make the background pill slightly taller than the max possible value
+        let bgPadding = maxAbsDiff * 0.2
         let bgY = maxAbsDiff + bgPadding
         
         // DataSet 1: Background Light Grey Bars (Stretch from -max to +max)
@@ -258,12 +234,10 @@ class VitalCardCell: UICollectionViewCell {
         fgDataSet.colors = fgColors
         fgDataSet.drawValuesEnabled = false
         
-        // Combine them!
         let data = BarChartData(dataSets: [bgDataSet, fgDataSet])
-        data.barWidth = 0.25 // Nice thin pills
+        data.barWidth = 0.25
         barChartView.data = data
         
-        // Configure X Axis
         let days = dataPoints.map { $0.day }
         barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: days)
         barChartView.xAxis.labelPosition = .bottom
@@ -311,7 +285,6 @@ class RoundedBarChartRenderer: BarChartRenderer {
             var bottomVal: Double = 0
             var topVal: Double = 0
             
-            // Allow passing [bottom, top] explicitly via yValues
             if let yVals = e.yValues, yVals.count == 2 {
                 bottomVal = yVals[0] * phaseY
                 topVal = yVals[1] * phaseY
@@ -322,12 +295,11 @@ class RoundedBarChartRenderer: BarChartRenderer {
             
             var rect = CGRect(x: x - barWidthHalf, y: bottomVal, width: barWidth, height: topVal - bottomVal)
             trans.rectValueToPixel(&rect)
-            rect = rect.standardized // Standardize fixes any negative heights so minY is visually the top
+            rect = rect.standardized
             
             var path: UIBezierPath
             
             if e.yValues == nil {
-                // Baseline bar (Foreground Green/Red Pill connecting to 0)
                 var corners: UIRectCorner = []
                 if y > 0 {
                     corners = [.topLeft, .topRight]
@@ -338,7 +310,6 @@ class RoundedBarChartRenderer: BarChartRenderer {
                 }
                 path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: rect.width / 2.0, height: rect.width / 2.0))
             } else {
-                // Foreground/Background fully rounded Range Pill
                 path = UIBezierPath(roundedRect: rect, cornerRadius: rect.width / 2.0)
             }
             

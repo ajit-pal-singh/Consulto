@@ -5,6 +5,8 @@ class PrepareConsultationTableViewController: UITableViewController {
     var sessionTitle: String = ""
     var doctorName: String = ""
     var sessionDate: Date = Date()
+    var reminderTime: Date?
+    var isConsultationReminderOn = false
     var symptoms: [Symptom] = []
     var medications: [Medication] = []
     var records: [HealthRecord] = []
@@ -26,6 +28,12 @@ class PrepareConsultationTableViewController: UITableViewController {
         tableView.register(
             UINib(nibName: "DateInputTableViewCell", bundle: nil),
             forCellReuseIdentifier: "DateInputCell")
+        tableView.register(
+            UINib(nibName: "TimeInputTableViewCell", bundle: nil),
+            forCellReuseIdentifier: "TimeCell")
+        tableView.register(
+            UINib(nibName: "SnoozeTableViewCell", bundle: nil),
+            forCellReuseIdentifier: "SnoozeCell")
         tableView.register(
             UINib(nibName: "SymptomNameTableViewCell", bundle: nil),
             forCellReuseIdentifier: "SymptomNameCell")
@@ -54,6 +62,16 @@ class PrepareConsultationTableViewController: UITableViewController {
     }
 
     @IBAction func doneTapped(_ sender: Any) {
+        if isConsultationReminderOn && reminderTime == nil {
+            let alert = UIAlertController(
+                title: "Select Reminder Time",
+                message: "Choose a time before enabling this consultation as a reminder.",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+            return
+        }
         
         // Filter out empty symptoms/questions
         let validSymptoms = symptoms.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -83,13 +101,59 @@ class PrepareConsultationTableViewController: UITableViewController {
             object: nil,
             userInfo: ["session": newSession]
         )
+
+        if isConsultationReminderOn, let reminderTime {
+            let reminderDateTime = combine(date: sessionDate, withTime: reminderTime)
+            let reminderData = AddConsultationFormData(
+                doctorName: doctorName,
+                purpose: sessionTitle,
+                consultationDate: sessionDate,
+                time: reminderDateTime,
+                isPaused: false,
+                repeatDays: [],
+                isSnoozeOn: false,
+                snoozeTime: nil
+            )
+
+            ConsultationReminderStore.shared.addReminder(
+                doctorName: reminderData.doctorName,
+                purpose: reminderData.purpose,
+                consultationDate: reminderData.consultationDate,
+                time: reminderData.time,
+                repeatDays: reminderData.repeatDays,
+                isSnoozeOn: reminderData.isSnoozeOn,
+                snoozeTime: reminderData.snoozeTime,
+                isPaused: reminderData.isPaused
+            )
+
+            NotificationCenter.default.post(
+                name: NSNotification.Name("NewConsultationReminderCreated"),
+                object: nil,
+                userInfo: ["reminder": reminderData]
+            )
+        }
         
         dismiss(animated: true, completion: nil)
     }
 
+    private func combine(date: Date, withTime time: Date) -> Date {
+        let calendar = Calendar.current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
+
+        var merged = DateComponents()
+        merged.year = dateComponents.year
+        merged.month = dateComponents.month
+        merged.day = dateComponents.day
+        merged.hour = timeComponents.hour
+        merged.minute = timeComponents.minute
+
+        return calendar.date(from: merged) ?? date
+    }
+
     enum FormSection {
         case inputs
-        case date
+        case reminder
         case symptom(index: Int)
         case addSymptom
         case medication(index: Int)
@@ -103,7 +167,7 @@ class PrepareConsultationTableViewController: UITableViewController {
         var current = 0
         if section == current { return .inputs }
         current += 1
-        if section == current { return .date }
+        if section == current { return .reminder }
         current += 1
 
         let symptomsCount = symptoms.count
@@ -140,7 +204,7 @@ class PrepareConsultationTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch getFormSection(for: section) {
         case .inputs: return 2
-        case .date: return 1
+        case .reminder: return 3
         case .symptom: return 2
         case .addSymptom: return 1
         case .medication: return 2
@@ -177,14 +241,44 @@ class PrepareConsultationTableViewController: UITableViewController {
             }
             return cell
 
-        case .date:
-            let cell =
-                tableView.dequeueReusableCell(withIdentifier: "DateInputCell", for: indexPath)
-                as! DateInputTableViewCell
+        case .reminder:
+            if indexPath.row == 0 {
+                let cell =
+                    tableView.dequeueReusableCell(withIdentifier: "DateInputCell", for: indexPath)
+                    as! DateInputTableViewCell
+                cell.selectionStyle = .none
+                cell.showsShadow = false
+                cell.configure(
+                    placeholder: "Select Date",
+                    date: existingSessionID != nil ? sessionDate : nil
+                )
+                cell.didChangeDate = { [weak self] selectedDate in self?.sessionDate = selectedDate }
+                return cell
+            }
+
+            if indexPath.row == 1 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "TimeCell", for: indexPath) as! TimeInputTableViewCell
+                cell.selectionStyle = .none
+                cell.showsShadow = false
+                cell.configure(
+                    placeholder: "Select Time",
+                    time: reminderTime
+                )
+                cell.didChangeTime = { [weak self] selectedTime in
+                    self?.reminderTime = selectedTime
+                }
+                return cell
+            }
+
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SnoozeCell", for: indexPath) as! SnoozeTableViewCell
             cell.selectionStyle = .none
-            cell.dateTextField.placeholder = "Select Date"
-            cell.setDate(self.sessionDate)
-            cell.didChangeDate = { [weak self] selectedDate in self?.sessionDate = selectedDate }
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            cell.titleLabel.text = "Set the time as reminder"
+            cell.titleLabel.font = .systemFont(ofSize: 16, weight: .regular)
+            cell.switchControl.isOn = isConsultationReminderOn
+            cell.onSwitchChanged = { [weak self] isOn in
+                self?.isConsultationReminderOn = isOn
+            }
             return cell
 
         case .symptom(let index):
@@ -233,6 +327,13 @@ class PrepareConsultationTableViewController: UITableViewController {
                 as! AddActionTableViewCell
             cell.selectionStyle = .none
             cell.actionLabel?.text = "add symptoms"
+            cell.didTapAction = { [weak self] in
+                guard let self = self else { return }
+                let newSymptom = Symptom(name: "", description: "", isExpanded: false)
+                self.symptoms.append(newSymptom)
+                self.tableView.reloadData()
+                self.validateForm()
+            }
             return cell
 
         case .medication(let index):
@@ -246,6 +347,9 @@ class PrepareConsultationTableViewController: UITableViewController {
                 as! AddActionTableViewCell
             cell.selectionStyle = .none
             cell.actionLabel?.text = "add medicine"
+            cell.didTapAction = {
+                print("Add medicine tapped")
+            }
             return cell
 
         case .records:
@@ -313,6 +417,12 @@ class PrepareConsultationTableViewController: UITableViewController {
                     as! AddActionTableViewCell
                 cell.selectionStyle = .none
                 cell.actionLabel?.text = "add questions"
+                cell.didTapAction = { [weak self] in
+                    guard let self = self else { return }
+                    let newQuestion = Question(text: "", isSelected: false)
+                    self.questions.append(newQuestion)
+                    self.tableView.reloadData()
+                }
                 return cell
             }
 
@@ -394,97 +504,4 @@ class PrepareConsultationTableViewController: UITableViewController {
         default: break
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-    
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-    
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

@@ -20,15 +20,11 @@ class MedicationCollectionViewCell: UICollectionViewCell {
         medicationCardView.layer.cornerRadius = 12
         medicationCardView.backgroundColor = .white
         
-        // Shadow for the cell
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOffset = CGSize(width: 0, height: 2)
         self.layer.shadowOpacity = 0.08
         self.layer.shadowRadius = 10
         self.layer.masksToBounds = false
-        
-        dotLabel.text = "•"
-        dotLabel.textColor = .gray
         
         nameLabel.font = .systemFont(ofSize: nameLabel.font.pointSize, weight: .semibold).rounded
         dosageLabel.font = .systemFont(ofSize: dosageLabel.font.pointSize, weight: .medium).rounded

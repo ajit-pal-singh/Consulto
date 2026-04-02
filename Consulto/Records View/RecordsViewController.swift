@@ -73,6 +73,27 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             headerActionsContainerView?.superview?.isHidden = true
             blurEffectView?.isHidden = true
         }
+        
+        //Temporary Reminder section as tab
+        if let tabBarController = self.tabBarController,
+               !(tabBarController.viewControllers?.contains(where: { $0.tabBarItem.title == "Reminders" }) ?? false) {
+
+                var viewControllers = tabBarController.viewControllers ?? []
+
+                let storyboard = UIStoryboard(name: "RemindersScreen", bundle: nil)
+                let remindersVC = storyboard.instantiateViewController(withIdentifier: "RemindersVC")
+
+                let nav = UINavigationController(rootViewController: remindersVC)
+
+                nav.tabBarItem = UITabBarItem(
+                    title: "Reminders",
+                    image: UIImage(systemName: "bell"),
+                    selectedImage: UIImage(systemName: "bell.fill")
+                )
+
+                viewControllers.append(nav)
+                tabBarController.viewControllers = viewControllers
+            }
     }
 
     override func viewWillAppear(_ animated: Bool) {

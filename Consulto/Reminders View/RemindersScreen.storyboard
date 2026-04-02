@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Reminders-->
+        <scene sceneID="LeG-TK-amq">
+            <objects>
+                <viewController storyboardIdentifier="RemindersVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="EHd-ES-33v" customClass="RemindersViewController" customModule="Consulto" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="bxS-uY-ncP">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="cek-0o-bld">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="bji-Wd-frk"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="cek-0o-bld" firstAttribute="leading" secondItem="bji-Wd-frk" secondAttribute="leading" id="8No-2I-bfx"/>
+                            <constraint firstItem="cek-0o-bld" firstAttribute="top" secondItem="bxS-uY-ncP" secondAttribute="top" id="NBh-jG-FVB"/>
+                            <constraint firstAttribute="bottom" secondItem="cek-0o-bld" secondAttribute="bottom" id="NRF-aU-nMh"/>
+                            <constraint firstItem="cek-0o-bld" firstAttribute="trailing" secondItem="bji-Wd-frk" secondAttribute="trailing" id="kJC-kU-5aC"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Reminders" id="2nR-Dl-gHP">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="RFx-Le-s25">
+                            <connections>
+                                <segue destination="Mx3-7C-iJg" kind="presentation" identifier="showAddMedicineReminder" id="kas-7f-tMQ"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="tableView" destination="cek-0o-bld" id="jfl-g2-1HP"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="noN-83-lhb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1886.2595419847328" y="-190.14084507042256"/>
+        </scene>
+        <!--Add Medicine Reminder-->
+        <scene sceneID="Ifd-Ve-ACY">
+            <objects>
+                <tableViewController storyboardIdentifier="AddMedicineTableViewController" id="Bbc-eq-oZd" customClass="AddMedicineTableViewController" customModule="Consulto" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="7En-Fa-YbH">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="793"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="51" id="zNL-pf-PHg">
+                                <rect key="frame" x="20" y="55.333332061767578" width="353" height="51"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zNL-pf-PHg" id="rlC-QE-0YW">
+                                    <rect key="frame" x="0.0" y="0.0" width="353" height="51"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Bbc-eq-oZd" id="hk9-Yf-3NC"/>
+                            <outlet property="delegate" destination="Bbc-eq-oZd" id="oEN-6O-dwj"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Add Medicine Reminder" id="45d-sp-EWx">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="YVB-wj-ebm"/>
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="done" id="PRl-VK-Sd8"/>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xHM-gv-g9O" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4365.6488549618316" y="-190.14084507042256"/>
+        </scene>
+        <!--Add Consultation Reminder-->
+        <scene sceneID="2Qb-eE-Nsb">
+            <objects>
+                <tableViewController storyboardIdentifier="AddConsultationTableViewController" id="hs5-Ut-afu" customClass="AddConsultationTableViewController" customModule="Consulto" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="70Y-X2-2gD">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="6hT-ta-YLC">
+                                <rect key="frame" x="20" y="55.333332061767578" width="353" height="51"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="6hT-ta-YLC" id="9hS-wG-Wyo">
+                                    <rect key="frame" x="0.0" y="0.0" width="353" height="51"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="hs5-Ut-afu" id="9i7-bx-una"/>
+                            <outlet property="delegate" destination="hs5-Ut-afu" id="354-73-iTW"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Add Consultation Reminder" id="0PA-dd-ZHp">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="UCC-UW-3G8"/>
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="done" id="TNR-mg-thu"/>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9eB-Km-Qeg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4366" y="730"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="eul-Xv-Aoe">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="PUX-Vq-hCy" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ykN-43-QyV">
+                        <rect key="frame" x="0.0" y="118" width="393" height="54"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="EHd-ES-33v" kind="relationship" relationship="rootViewController" id="4TA-GA-SRX"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Edw-xx-6OX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="959.5419847328244" y="-190.14084507042256"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Vlk-vb-Tgn">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Mx3-7C-iJg" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="sZU-as-9pY">
+                        <rect key="frame" x="0.0" y="16" width="393" height="54"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Bbc-eq-oZd" kind="relationship" relationship="rootViewController" id="fX5-oh-TtX"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gUP-Gf-nJC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3438.9312977099235" y="-190.14084507042256"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="rbz-RN-IVG">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="pHc-Yu-N2g" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="4t6-Rp-vwB">
+                        <rect key="frame" x="0.0" y="118" width="393" height="54"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="hs5-Ut-afu" kind="relationship" relationship="rootViewController" id="WrX-ms-V5u"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xCI-Rz-llU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3439" y="730"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

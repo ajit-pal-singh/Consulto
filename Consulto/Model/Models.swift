@@ -101,6 +101,14 @@ struct Medication: Codable {
     var frequency: MedicationFrequency?
     var duration: String?
     var notes: String?
+    
+    //For reminders
+    var times: [Date] = []
+    var mealTiming: MealTiming = .none
+    var repeatDays: Set<String> = []
+    var isSnoozeOn: Bool = false
+    var snoozeTime: String?
+    var inactiveTimes: [Date] = []
 }
 
 enum MedicationFrequency: String, Codable {
@@ -108,6 +116,20 @@ enum MedicationFrequency: String, Codable {
     case twiceDaily
     case thriceDaily
     case asNeeded
+}
+
+enum MealTiming: String, Codable {
+    case beforeMeal
+    case afterMeal
+    case emptyStomach
+    case none
+}
+
+enum SnoozeTime: String, CaseIterable, Codable {
+    case five = "5 mins"
+    case ten = "10 mins"
+    case fifteen = "15 mins"
+    case thirty = "30 mins"
 }
 
 // MARK: - Consult
@@ -148,7 +170,19 @@ struct Symptom {
     var isExpanded: Bool
 }
 
-enum ConsultStatus: String {
+enum ConsultStatus: String, Codable {
     case pending
     case completed
+}
+
+struct ConsultationReminder {
+    let id: UUID
+    var doctorName: String
+    var purpose: String
+    var date: Date
+    var time: Date
+    var repeatDays: Set<String>
+    var isSnoozeOn: Bool
+    var snoozeTime: String?
+    var isPaused: Bool
 }
