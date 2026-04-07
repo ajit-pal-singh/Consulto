@@ -21,12 +21,6 @@ class DateInputTableViewCell: UITableViewCell {
         dateTextField.isEnabled = false
         contentView.sendSubviewToBack(compactDatePicker)
         compactDatePicker?.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
-        
-        // Prevent selecting past dates
-        compactDatePicker?.minimumDate = Calendar.current.startOfDay(for: Date())
-        if #available(iOS 13.4, *) {
-            compactDatePicker?.preferredDatePickerStyle = .compact
-        }
     }
 
     @objc func dateChanged(_ sender: UIDatePicker) {

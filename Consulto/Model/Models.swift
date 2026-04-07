@@ -5,13 +5,11 @@ import FoundationModels
 
 struct UserProfile {
     let id: UUID
-
-    var fullName: String
+    var firstName: String
+    var lastName: String
     var dateOfBirth: Date
     var gender: Gender
-
     var createdAt: Date
-    var lastModifiedAt: Date
 }
 
 enum Gender: String {

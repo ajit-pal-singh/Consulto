@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="OnboardingCell" id="gTV-IL-0wX" customClass="OnboardingCollectionViewCell" customModule="Consulto" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="672"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="393" height="672"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Uht-KM-C4a">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="672"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Record-icon" translatesAutoresizingMaskIntoConstraints="NO" id="5Q1-3d-tts">
+                                <rect key="frame" x="21" y="459" width="41" height="41"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="41" id="Qef-1A-T23"/>
+                                    <constraint firstAttribute="width" constant="41" id="ReW-hx-bLO"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Record-illustration" translatesAutoresizingMaskIntoConstraints="NO" id="NeO-q6-t7c">
+                                <rect key="frame" x="55.666666666666657" y="81" width="282" height="282"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="282" id="TAg-ou-ijB"/>
+                                    <constraint firstAttribute="height" constant="282" id="dy6-NX-kLI"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kt7-Nh-O3n">
+                                <rect key="frame" x="22" y="509" width="44" height="26"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jVH-R7-zSr">
+                                <rect key="frame" x="22" y="542" width="349" height="120"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="120" id="jNt-4S-0Du"/>
+                                </constraints>
+                                <string key="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad </string>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="jVH-R7-zSr" firstAttribute="top" secondItem="Kt7-Nh-O3n" secondAttribute="bottom" constant="7" id="1xE-Us-cnw"/>
+                            <constraint firstAttribute="trailing" secondItem="jVH-R7-zSr" secondAttribute="trailing" constant="22" id="25K-DB-UQi"/>
+                            <constraint firstItem="NeO-q6-t7c" firstAttribute="centerX" secondItem="Uht-KM-C4a" secondAttribute="centerX" id="3zD-PM-Y52"/>
+                            <constraint firstItem="jVH-R7-zSr" firstAttribute="leading" secondItem="Uht-KM-C4a" secondAttribute="leading" constant="22" id="HU0-JE-W3h"/>
+                            <constraint firstItem="5Q1-3d-tts" firstAttribute="top" secondItem="NeO-q6-t7c" secondAttribute="bottom" constant="96" id="JM6-oS-i01"/>
+                            <constraint firstItem="Kt7-Nh-O3n" firstAttribute="top" secondItem="5Q1-3d-tts" secondAttribute="bottom" constant="9" id="KdO-Wc-wtj"/>
+                            <constraint firstItem="Kt7-Nh-O3n" firstAttribute="leading" secondItem="Uht-KM-C4a" secondAttribute="leading" constant="22" id="iK8-Vx-bAr"/>
+                            <constraint firstItem="5Q1-3d-tts" firstAttribute="leading" secondItem="Uht-KM-C4a" secondAttribute="leading" constant="21" id="jZO-Jw-AJW"/>
+                            <constraint firstItem="NeO-q6-t7c" firstAttribute="top" secondItem="Uht-KM-C4a" secondAttribute="top" constant="81" id="u3c-8Y-7zj"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstItem="Uht-KM-C4a" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="4Vu-vN-jEx"/>
+                <constraint firstAttribute="trailing" secondItem="Uht-KM-C4a" secondAttribute="trailing" id="IUv-E4-pI4"/>
+                <constraint firstItem="Uht-KM-C4a" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="Idx-cC-VTp"/>
+                <constraint firstAttribute="bottom" secondItem="Uht-KM-C4a" secondAttribute="bottom" id="nxp-fS-UQh"/>
+            </constraints>
+            <connections>
+                <outlet property="bodyLabel" destination="jVH-R7-zSr" id="Wuf-am-Tjg"/>
+                <outlet property="flatIconImageView" destination="5Q1-3d-tts" id="9ld-ag-ZHz"/>
+                <outlet property="illustrationImageView" destination="NeO-q6-t7c" id="cZx-AO-kwY"/>
+                <outlet property="titleLabel" destination="Kt7-Nh-O3n" id="ZWk-B4-0cv"/>
+            </connections>
+            <point key="canvasLocation" x="138.1679389312977" y="153.52112676056339"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="Record-icon" width="512" height="512"/>
+        <image name="Record-illustration" width="580" height="608"/>
+    </resources>
+</document>

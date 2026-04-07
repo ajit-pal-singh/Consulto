@@ -12,13 +12,13 @@ class DropdownTableViewCell: UITableViewCell {
     @IBOutlet weak var dropdownTextField: UITextField!
     var didChangeSelection: ((String) -> Void)?
 
-    // Map of display names dynamically tied to your actual existing Model Enums!
-    let recordOptions = [
-        "Prescription", // mapped to RecordType.prescription
-        "Lab Report",   // mapped to RecordType.labReport
-        "Scan",         // mapped to RecordType.scan
-        "Discharge Summary", // mapped to RecordType.dischargeSummary
-        "Other"         // mapped to RecordType.other
+    // Make options flexible so it can be used for Gender or anything else!
+    var options: [String] = [
+        "Prescription",
+        "Lab Report",
+        "Scan",
+        "Discharge Summary",
+        "Other"
     ]
     private let menuButton = UIButton(type: .system)
 
@@ -58,7 +58,7 @@ class DropdownTableViewCell: UITableViewCell {
     }
 
     private func reloadMenu() {
-        let actions = recordOptions.map { option in
+        let actions = options.map { option in
             UIAction(
                 title: option,
                 state: dropdownTextField.text == option ? .on : .off

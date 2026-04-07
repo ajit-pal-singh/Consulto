@@ -3,11 +3,11 @@ import Foundation
 struct SampleData {
     static let user = UserProfile(
         id: UUID(),
-        fullName: "Harsh Mittal",
+        firstName: "Harsh",
+        lastName: "Mittal",
         dateOfBirth: Calendar.current.date(from: DateComponents(year: 1998, month: 11, day: 3))!,
         gender: .male,
         createdAt: Date(),
-        lastModifiedAt: Date()
     )
     
     static let reminders: [Medication] = [

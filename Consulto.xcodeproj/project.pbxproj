@@ -158,7 +158,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Consulto/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to capture new medical documents.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to let you attach recent medical records.\"";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photos to attach them as records.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -193,7 +193,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Consulto/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to capture new medical documents.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to let you attach recent medical records.\"";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photos to attach them as records.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
