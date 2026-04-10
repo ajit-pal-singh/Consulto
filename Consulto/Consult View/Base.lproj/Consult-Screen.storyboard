@@ -58,12 +58,14 @@
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Visits" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TZ0-zJ-h0i">
                                         <rect key="frame" x="16.000000000000007" y="4.3333333333333286" width="96.666666666666686" height="41.666666666666664"/>
+
                                         <fontDescription key="fontDescription" name="Montserrat-Bold" family="Montserrat" pointSize="34"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6cy-NZ-kwg">
                                         <rect key="frame" x="112.66666666666666" y="4.3333333333333286" width="264.33333333333337" height="41.333333333333336"/>
+
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                 </subviews>

@@ -16,7 +16,7 @@ class AddMedicineTableViewController: UITableViewController {
     var medicationToEdit: Medication?
     var times: [Date] = []
     var inactiveTimes: [Date] = []
-    var mealTiming: MealTiming = .none
+    var mealTiming: MealTiming? = .afterMeal
     var repeatDays: Set<String> = []
     var isSnoozeOn: Bool = false
     var snoozeTime: String = "10 mins"
@@ -92,6 +92,10 @@ class AddMedicineTableViewController: UITableViewController {
 
         let trimmedName = medicineName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard isFormValid else {
+            return
+        }
+        
+        guard let mealTiming = mealTiming else {
             return
         }
 
@@ -234,7 +238,7 @@ class AddMedicineTableViewController: UITableViewController {
                     if indexPath.row == 0 {
                         cell.configure(
                             title: "Meal Time",
-                            value: mealText(mealTiming),
+                            value: mealText(mealTiming ?? .afterMeal),
                             actions: mealActions()
                         )
                     } else {
@@ -297,7 +301,7 @@ class AddMedicineTableViewController: UITableViewController {
 
     private var isFormValid: Bool {
         let trimmedName = medicineName.trimmingCharacters(in: .whitespacesAndNewlines)
-        return !trimmedName.isEmpty && !times.isEmpty && mealTiming != .none
+        return !trimmedName.isEmpty && !times.isEmpty && mealTiming != nil
     }
 
     private func updateDoneButtonState() {
@@ -354,9 +358,6 @@ class AddMedicineTableViewController: UITableViewController {
             },
             menuAction(title: "Empty Stomach", isSelected: mealTiming == .emptyStomach) { [weak self] in
                 self?.mealTiming = .emptyStomach
-            },
-            menuAction(title: "None", isSelected: mealTiming == .none) { [weak self] in
-                self?.mealTiming = .none
             }
         ]
     }
@@ -385,16 +386,14 @@ class AddMedicineTableViewController: UITableViewController {
             return "After Meal"
         case .emptyStomach:
             return "Empty Stomach"
-        case .none:
-            return "None"
         }
     }
 
     private func repeatText() -> String {
-        if repeatDays.count == 7 { return "Daily" }
+        if repeatDays.count == 7 { return "Every Day" }
         if repeatDays.isEmpty { return "Select Days" }
 
-        let orderedDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        let orderedDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         return orderedDays.filter { repeatDays.contains($0) }.joined(separator: ", ")
     }
 

@@ -40,7 +40,7 @@ class AddConsultationTableViewController: UITableViewController {
         doctorName = consultationToEdit.doctorName
         purpose = consultationToEdit.purpose
         consultationDate = consultationToEdit.consultationDate
-        time = consultationToEdit.time
+        time = combine(date: consultationToEdit.consultationDate, withTime: consultationToEdit.time)
         isPaused = consultationToEdit.isPaused
         repeatDays = consultationToEdit.repeatDays
         isSnoozeOn = consultationToEdit.isSnoozeOn
@@ -126,10 +126,10 @@ class AddConsultationTableViewController: UITableViewController {
     }
 
     private func repeatText() -> String {
-        if repeatDays.count == 7 { return "Daily" }
+        if repeatDays.count == 7 { return "Every Day" }
         if repeatDays.isEmpty { return "Select Days" }
 
-        let orderedDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        let orderedDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         return orderedDays.filter { repeatDays.contains($0) }.joined(separator: ", ")
     }
 
@@ -155,6 +155,21 @@ class AddConsultationTableViewController: UITableViewController {
             self?.tableView.reloadRows(at: [IndexPath(row: 0, section: 3)], with: .none)
         }
         present(pickerVC, animated: true)
+    }
+
+    private func combine(date: Date, withTime time: Date) -> Date {
+        let calendar = Calendar.current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
+
+        var merged = DateComponents()
+        merged.year = dateComponents.year
+        merged.month = dateComponents.month
+        merged.day = dateComponents.day
+        merged.hour = timeComponents.hour
+        merged.minute = timeComponents.minute
+
+        return calendar.date(from: merged) ?? date
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -207,7 +222,11 @@ class AddConsultationTableViewController: UITableViewController {
                 date: consultationToEdit != nil ? consultationDate : nil
             )
             cell.didChangeDate = { [weak self] selectedDate in
-                self?.consultationDate = selectedDate
+                guard let self = self else { return }
+                self.consultationDate = selectedDate
+                if let existingTime = self.time {
+                    self.time = self.combine(date: selectedDate, withTime: existingTime)
+                }
             }
             return cell
 
@@ -220,7 +239,7 @@ class AddConsultationTableViewController: UITableViewController {
             )
             cell.didChangeTime = { [weak self] selectedTime in
                 guard let self = self else { return }
-                self.time = selectedTime
+                self.time = self.combine(date: self.consultationDate, withTime: selectedTime)
                 self.updateDoneButtonState()
             }
             return cell

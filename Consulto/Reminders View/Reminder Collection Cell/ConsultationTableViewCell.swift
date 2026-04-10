@@ -7,8 +7,6 @@ class ConsultationTableViewCell: UITableViewCell {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var dotLabel: UILabel!
     @IBOutlet weak var timeLabel: UILabel!
-    @IBOutlet weak var dot2Label: UILabel!
-    @IBOutlet weak var purposeLabel: UILabel!
     @IBOutlet weak var toggleSwitch: UISwitch!
     
     var onToggleChanged: ((Bool) -> Void)?
@@ -29,7 +27,6 @@ class ConsultationTableViewCell: UITableViewCell {
         nameLabel.font = .systemFont(ofSize: nameLabel.font.pointSize, weight: .semibold).rounded
         dateLabel.font = .systemFont(ofSize: dateLabel.font.pointSize, weight: .medium).rounded
         timeLabel.font = .systemFont(ofSize: timeLabel.font.pointSize, weight: .medium).rounded
-        purposeLabel.font = .systemFont(ofSize: purposeLabel.font.pointSize, weight: .medium).rounded
     }
     
     @IBAction func switchChanged(_ sender: UISwitch) {

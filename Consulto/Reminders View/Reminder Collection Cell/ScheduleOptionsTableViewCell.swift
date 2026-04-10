@@ -18,6 +18,10 @@ class ScheduleOptionsTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        valueLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        valueLabel.textAlignment = .right
+
         menuButton.translatesAutoresizingMaskIntoConstraints = false
         menuButton.backgroundColor = .clear
         menuButton.showsMenuAsPrimaryAction = true

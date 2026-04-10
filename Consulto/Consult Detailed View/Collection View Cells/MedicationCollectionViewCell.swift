@@ -3,22 +3,23 @@ import UIKit
 class MedicationCollectionViewCell: UICollectionViewCell {
 
     @IBOutlet weak var medicationCardView: UIView!
-    @IBOutlet weak var iconImageView: UIImageView!
+    @IBOutlet weak var view: UIView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var dosageLabel: UILabel!
     @IBOutlet weak var dotLabel: UILabel!
     @IBOutlet weak var frequencyLabel: UILabel!
-    @IBOutlet weak var durationContainerView: UIView!
+    @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var durationLabel: UILabel!
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         setupUI()
     }
     
     private func setupUI() {
-        medicationCardView.layer.cornerRadius = 12
-        medicationCardView.backgroundColor = .white
+        
+        medicationCardView.layer.cornerRadius = 20
+        view.layer.cornerRadius = 15
         
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOffset = CGSize(width: 0, height: 2)
@@ -31,20 +32,23 @@ class MedicationCollectionViewCell: UICollectionViewCell {
         frequencyLabel.font = .systemFont(ofSize: frequencyLabel.font.pointSize, weight: .medium).rounded
         durationLabel.font = .systemFont(ofSize: durationLabel.font.pointSize, weight: .medium).rounded
 
-        durationContainerView.backgroundColor = UIColor(hex: "F0F9FF")
+        containerView.backgroundColor = UIColor(hex: "F0F9FF")
+        frequencyLabel.textColor = UIColor(hex: "0679C6")
+        dotLabel.textColor = UIColor(hex: "0679C6")
         durationLabel.textColor = UIColor(hex: "0679C6")
-        durationContainerView.layer.cornerRadius = 4
-        durationContainerView.clipsToBounds = true
+        containerView.layer.cornerRadius = 4
+        containerView.clipsToBounds = true
     }
 
-    func configure(name: String, dosage: String, frequency: String, duration: String) {
+    func configure(name: String, dosage: String, frequency: String, duration: String, isSelectable: Bool = false, isMarkedSelected: Bool = false) {
         nameLabel.text = name
         dosageLabel.text = dosage
         frequencyLabel.text = frequency
         durationLabel.text = duration
 
-        // hide dot if any value missing
-        dotLabel.isHidden = dosage.isEmpty || frequency.isEmpty
+        dotLabel.isHidden = frequency.isEmpty || duration.isEmpty
+        medicationCardView.layer.borderWidth = 0
+        medicationCardView.layer.borderColor = UIColor.clear.cgColor
+        medicationCardView.alpha = 1.0
     }
 }
-

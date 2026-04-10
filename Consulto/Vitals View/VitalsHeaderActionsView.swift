@@ -1,16 +1,12 @@
 import SwiftUI
 
 struct VitalsHeaderActionsView: View {
-    // Add closure or binding for action handling if needed later
     var onAddAction: (() -> Void)?
 
-    
     var body: some View {
         HStack(spacing: 12) {
-         
-            // Add Button
+    
             Button(action: {
-                // Action
                 onAddAction?()
             }) {
                 Image(systemName: "plus")
@@ -18,16 +14,15 @@ struct VitalsHeaderActionsView: View {
                     .foregroundStyle(.primary)
                     .frame(width: 44, height: 44)
             }
-            .buttonStyle(.plain) // Remove default button tap style
-            .glassEffect(.regular.interactive()) // The requested modifier
+            .buttonStyle(.plain)
+            .glassEffect(.regular.interactive())
         }
-        .frame(maxWidth: .infinity, alignment: .trailing) // Align content to the right
-        .padding(.vertical, 4) // Breathing room
-        .ignoresSafeArea() // Prevent UIHostingController from adding safe area margin
+        .frame(maxWidth: .infinity, alignment: .trailing)
+        .padding(.vertical, 4)
+        .ignoresSafeArea()
     }
 }
 
-// Preview to verify design
 #Preview {
     ZStack {
         Color.blue.edgesIgnoringSafeArea(.all)

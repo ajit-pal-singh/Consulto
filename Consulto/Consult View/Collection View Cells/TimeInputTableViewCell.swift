@@ -14,6 +14,7 @@ class TimeInputTableViewCell: UITableViewCell {
 
     var didChangeTime: ((Date) -> Void)?
     private var displayFormat = "h:mm a"
+    private lazy var fullCellTapGesture = UITapGestureRecognizer(target: self, action: #selector(openPickerFromCellTap))
     var showsShadow: Bool = true {
         didSet { updateShadowAppearance() }
     }
@@ -29,9 +30,14 @@ class TimeInputTableViewCell: UITableViewCell {
 
         contentView.sendSubviewToBack(compactTimePicker)
         compactTimePicker.addTarget(self, action: #selector(timeChanged), for: .valueChanged)
+        contentView.addGestureRecognizer(fullCellTapGesture)
         if #available(iOS 13.4, *) {
             compactTimePicker.preferredDatePickerStyle = .compact
         }
+    }
+
+    @objc private func openPickerFromCellTap() {
+        compactTimePicker.becomeFirstResponder()
     }
 
     @objc private func timeChanged(_ sender: UIDatePicker) {

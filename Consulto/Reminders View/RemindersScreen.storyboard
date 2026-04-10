@@ -31,14 +31,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Reminders" id="2nR-Dl-gHP">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="RFx-Le-s25">
-                            <connections>
-                                <segue destination="Mx3-7C-iJg" kind="presentation" identifier="showAddMedicineReminder" id="kas-7f-tMQ"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="RFx-Le-s25"/>
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="cek-0o-bld" id="jfl-g2-1HP"/>
+                        <segue destination="Mx3-7C-iJg" kind="presentation" identifier="showAddMedicineReminder" id="kas-7f-tMQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="noN-83-lhb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

@@ -17,7 +17,9 @@ class PrepareConsultationTableViewController: UITableViewController {
     var existingSessionID: UUID?
     var existingUserID: UUID?
     var existingCreatedAt: Date?
-    
+    private var linkedConsultationReminderID: UUID?
+    private var hasReviewedMedicationSelection = false
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -25,7 +27,19 @@ class PrepareConsultationTableViewController: UITableViewController {
         
         view.backgroundColor = UIColor(hex: "F5F5F5")
         tableView.showsVerticalScrollIndicator = false
-        
+
+        if let existingSessionID {
+            if let linkedReminder = ConsultationReminderStore.shared.reminder(forSessionID: existingSessionID) {
+                linkedConsultationReminderID = linkedReminder.id
+                isConsultationReminderOn = true
+                reminderTime = linkedReminder.time
+            } else if reminderTime == nil {
+                reminderTime = sessionDate
+            }
+        }
+
+        hasReviewedMedicationSelection = !medications.isEmpty
+
         tableView.register(
             UINib(nibName: "InputTextFieldTableViewCell", bundle: nil),
             forCellReuseIdentifier: "InputTextFieldCell")
@@ -47,6 +61,7 @@ class PrepareConsultationTableViewController: UITableViewController {
         tableView.register(UINib(nibName: "AddActionTableViewCell", bundle: nil), forCellReuseIdentifier: "AddActionCell")
         tableView.register(UINib(nibName: "QuestionTableViewCell", bundle: nil), forCellReuseIdentifier: "QuestionCell")
         tableView.register(UINib(nibName: "AddRecordTableViewCell", bundle: nil), forCellReuseIdentifier: "AddRecordCell")
+        tableView.register(MedicationCardTableViewCell.self, forCellReuseIdentifier: "MedicationCardTableViewCell")
         
         validateForm()
     }
@@ -94,12 +109,15 @@ class PrepareConsultationTableViewController: UITableViewController {
         
         let isEditing = existingSessionID != nil
         
+        let baseDate = sessionDate
+        let consultationDateTime = reminderTime.map { combine(date: baseDate, withTime: $0) } ?? baseDate
+
         let newSession = ConsultSession(
             id: existingSessionID ?? UUID(),
             userID: existingUserID ?? UUID(),
             doctorName: doctorName,
             title: sessionTitle,
-            date: sessionDate,
+            date: consultationDateTime,
             symptoms: validSymptoms,
             questions: validQuestions,
             medications: medications,
@@ -118,11 +136,11 @@ class PrepareConsultationTableViewController: UITableViewController {
         )
 
         if isConsultationReminderOn, let reminderTime {
-            let reminderDateTime = combine(date: sessionDate, withTime: reminderTime)
+            let reminderDateTime = combine(date: baseDate, withTime: reminderTime)
             let reminderData = AddConsultationFormData(
                 doctorName: doctorName,
                 purpose: sessionTitle,
-                consultationDate: sessionDate,
+                consultationDate: consultationDateTime,
                 time: reminderDateTime,
                 isPaused: false,
                 repeatDays: [],
@@ -130,22 +148,54 @@ class PrepareConsultationTableViewController: UITableViewController {
                 snoozeTime: nil
             )
 
-            ConsultationReminderStore.shared.addReminder(
-                doctorName: reminderData.doctorName,
-                purpose: reminderData.purpose,
-                consultationDate: reminderData.consultationDate,
-                time: reminderData.time,
-                repeatDays: reminderData.repeatDays,
-                isSnoozeOn: reminderData.isSnoozeOn,
-                snoozeTime: reminderData.snoozeTime,
-                isPaused: reminderData.isPaused
-            )
+            if let linkedConsultationReminderID {
+                _ = ConsultationReminderStore.shared.updateReminder(
+                    id: linkedConsultationReminderID,
+                    consultSessionID: newSession.id,
+                    doctorName: reminderData.doctorName,
+                    purpose: reminderData.purpose,
+                    consultationDate: reminderData.consultationDate,
+                    time: reminderData.time,
+                    repeatDays: reminderData.repeatDays,
+                    isSnoozeOn: reminderData.isSnoozeOn,
+                    snoozeTime: reminderData.snoozeTime,
+                    isPaused: reminderData.isPaused
+                )
 
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("ConsultationReminderUpdated"),
+                    object: nil,
+                    userInfo: ["reminderID": linkedConsultationReminderID]
+                )
+            } else {
+                let reminder = ConsultationReminderStore.shared.addReminder(
+                    consultSessionID: newSession.id,
+                    doctorName: reminderData.doctorName,
+                    purpose: reminderData.purpose,
+                    consultationDate: reminderData.consultationDate,
+                    time: reminderData.time,
+                    repeatDays: reminderData.repeatDays,
+                    isSnoozeOn: reminderData.isSnoozeOn,
+                    snoozeTime: reminderData.snoozeTime,
+                    isPaused: reminderData.isPaused
+                )
+
+                linkedConsultationReminderID = reminder.id
+
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("NewConsultationReminderCreated"),
+                    object: nil,
+                    userInfo: ["reminder": reminderData]
+                )
+            }
+        } else if let linkedConsultationReminderID {
+            ConsultationReminderStore.shared.removeReminder(id: linkedConsultationReminderID)
             NotificationCenter.default.post(
-                name: NSNotification.Name("NewConsultationReminderCreated"),
+                name: NSNotification.Name("ConsultationReminderUpdated"),
                 object: nil,
-                userInfo: ["reminder": reminderData]
+                userInfo: ["reminderID": linkedConsultationReminderID]
             )
+            self.linkedConsultationReminderID = nil
         }
         
         dismiss(animated: true, completion: nil)
@@ -222,7 +272,7 @@ class PrepareConsultationTableViewController: UITableViewController {
         case .reminder: return 3
         case .symptom: return 2
         case .addSymptom: return 1
-        case .medication: return 2
+        case .medication: return 1
         case .addMedication: return 1
         case .records: return 1
         case .questions: return questions.count + 1
@@ -267,12 +317,16 @@ class PrepareConsultationTableViewController: UITableViewController {
                 cell.showsShadow = false
                 cell.configure(
                     placeholder: "Select Date",
-                    date: (existingSessionID != nil || hasSelectedDate) ? sessionDate : nil,
-                    minimumDate: Date()
+                    date: (existingSessionID != nil || hasSelectedDate) ? sessionDate : nil
                 )
-                cell.didChangeDate = { [weak self] selectedDate in 
-                    self?.sessionDate = selectedDate 
-                    self?.hasSelectedDate = true
+                cell.didChangeDate = { [weak self] selectedDate in
+                    guard let self = self else { return }
+                    self.hasSelectedDate = true
+                    if let selectedTime = self.reminderTime {
+                        self.sessionDate = self.combine(date: selectedDate, withTime: selectedTime)
+                    } else {
+                        self.sessionDate = selectedDate
+                    }
                 }
                 return cell
             }
@@ -283,10 +337,12 @@ class PrepareConsultationTableViewController: UITableViewController {
                 cell.showsShadow = false
                 cell.configure(
                     placeholder: "Select Time",
-                    time: reminderTime
+                    time: reminderTime ?? sessionDate
                 )
                 cell.didChangeTime = { [weak self] selectedTime in
-                    self?.reminderTime = selectedTime
+                    guard let self = self else { return }
+                    self.reminderTime = selectedTime
+                    self.sessionDate = self.combine(date: self.sessionDate, withTime: selectedTime)
                 }
                 return cell
             }
@@ -358,8 +414,15 @@ class PrepareConsultationTableViewController: UITableViewController {
             return cell
             
         case .medication(let index):
-            let cell = UITableViewCell(style: .default, reuseIdentifier: "Fallback")
-            cell.textLabel?.text = medications[index].name
+            let medication = medications[index]
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MedicationCardTableViewCell", for: indexPath) as! MedicationCardTableViewCell
+            cell.selectionStyle = .none
+            cell.configure(
+                name: medication.name,
+                dosage: dosageText(for: medication.dosage),
+                frequency: frequencyText(for: medication),
+                duration: derivedDurationText(for: medication)
+            )
             return cell
             
         case .addMedication:
@@ -368,8 +431,8 @@ class PrepareConsultationTableViewController: UITableViewController {
             as! AddActionTableViewCell
             cell.selectionStyle = .none
             cell.actionLabel?.text = "add medicine"
-            cell.didTapAction = {
-                print("Add medicine tapped")
+            cell.didTapAction = { [weak self] in
+                self?.presentMedicationSelection()
             }
             return cell
             
@@ -474,12 +537,24 @@ class PrepareConsultationTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int)
     -> CGFloat
     {
+        switch getFormSection(for: section) {
+        case .medication, .addMedication:
+            return 8
+        default:
+            break
+        }
         return 7
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int)
     -> CGFloat
     {
+        switch getFormSection(for: section) {
+        case .medication, .addMedication:
+            return 8
+        default:
+            break
+        }
         return 7
     }
     
@@ -489,6 +564,9 @@ class PrepareConsultationTableViewController: UITableViewController {
             let rows = ceil(Double(totalItems) / 2.0)
             let height = (rows * 140) + ((rows - 1) * 12) + 2
             return CGFloat(height)
+        }
+        if case .medication = getFormSection(for: indexPath.section) {
+            return 91
         }
         return UITableView.automaticDimension
     }
@@ -513,8 +591,8 @@ class PrepareConsultationTableViewController: UITableViewController {
             }
             
         case .addMedication:
-            print("Add medicine tapped")
-            
+            presentMedicationSelection()
+
         case .questions:
             if indexPath.row == questions.count {
                 let newQuestion = Question(text: "", isSelected: false)
@@ -524,6 +602,85 @@ class PrepareConsultationTableViewController: UITableViewController {
             
         default: break
         }
+    }
+
+    private func presentMedicationSelection() {
+        let selectionVC = MedicationSelectionViewController()
+        selectionVC.initiallySelectedMedicationIDs = Set(medications.map(\.id))
+        selectionVC.preselectAllIfSelectionEmpty = !hasReviewedMedicationSelection && medications.isEmpty
+        selectionVC.onDone = { [weak self] selectedMedications in
+            guard let self = self else { return }
+            self.medications = selectedMedications
+            self.hasReviewedMedicationSelection = true
+            self.tableView.reloadData()
+        }
+        let navVC = UINavigationController(rootViewController: selectionVC)
+        navVC.modalPresentationStyle = .fullScreen
+        present(navVC, animated: true)
+    }
+
+    private func dosageText(for dosage: String?) -> String {
+        guard let dosage,
+              !dosage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return ""
+        }
+        return dosage
+    }
+
+    private func derivedFrequency(for medication: Medication) -> MedicationFrequency {
+        let hasCustomRepeatDays = !medication.repeatDays.isEmpty && medication.repeatDays.count != 7
+        guard !hasCustomRepeatDays else {
+            return .asNeeded
+        }
+
+        switch medication.times.count {
+        case 1:
+            return .onceDaily
+        case 2:
+            return .twiceDaily
+        case 3:
+            return .thriceDaily
+        default:
+            return medication.frequency ?? .asNeeded
+        }
+    }
+
+    private func frequencyText(for medication: Medication) -> String {
+        switch derivedFrequency(for: medication) {
+        case .onceDaily:
+            return "Once Daily"
+        case .twiceDaily:
+            return "Twice Daily"
+        case .thriceDaily:
+            return "Thrice Daily"
+        case .asNeeded:
+            return "As Needed"
+        }
+    }
+
+    private func derivedDurationText(for medication: Medication, relativeTo now: Date = Date()) -> String {
+        if let reminderCreatedAt = medication.reminderCreatedAt {
+            let calendar = Calendar.current
+            let start = calendar.startOfDay(for: reminderCreatedAt)
+            let end = calendar.startOfDay(for: now)
+            let components = calendar.dateComponents([.year, .month, .weekOfYear, .day], from: start, to: end)
+
+            if let years = components.year, years > 0 {
+                return "From last \(years) year" + (years == 1 ? "" : "s")
+            }
+            if let months = components.month, months > 0 {
+                return "From last \(months) month" + (months == 1 ? "" : "s")
+            }
+            if let weeks = components.weekOfYear, weeks > 0 {
+                return "From last \(weeks) week" + (weeks == 1 ? "" : "s")
+            }
+            if let days = components.day, days > 0 {
+                return "From last \(days) day" + (days == 1 ? "" : "s")
+            }
+            return "From today"
+        }
+
+        return medication.duration ?? ""
     }
 }
 

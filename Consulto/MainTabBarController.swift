@@ -7,34 +7,32 @@ class MainTabBarController: UITabBarController {
 
         guard let existingVCs = viewControllers, existingVCs.count >= 3 else { return }
 
-        // Wrap each existing storyboard VC into the new UITab API
-        let recordsTab = UITab(
-            title: existingVCs[0].tabBarItem.title ?? "Records",
+        // Wrap each storyboard VC into the UITab API.
+        // Title and image are read from each VC's tabBarItem (set in their init(coder:)).
+        let homeTab = UITab(
+            title: existingVCs[0].tabBarItem.title ?? "Home",
             image: existingVCs[0].tabBarItem.image,
-            identifier: "com.consulto.records"
+            identifier: "com.consulto.home"
         ) { _ in existingVCs[0] }
 
-        let prepareTab = UITab(
-            title: existingVCs[1].tabBarItem.title ?? "Prepare",
+        let recordsTab = UITab(
+            title: existingVCs[1].tabBarItem.title ?? "Records",
             image: existingVCs[1].tabBarItem.image,
-            identifier: "com.consulto.prepare"
+            identifier: "com.consulto.records"
         ) { _ in existingVCs[1] }
 
-        let vitalsTab = UITab(
-            title: existingVCs[2].tabBarItem.title ?? "Vitals",
+        let visitsTab = UITab(
+            title: existingVCs[2].tabBarItem.title ?? "Visits",
             image: existingVCs[2].tabBarItem.image,
-            identifier: "com.consulto.vitals"
+            identifier: "com.consulto.visits"
         ) { _ in existingVCs[2] }
 
-        // UISearchTab — this is a SEPARATE tab that expands the search field
-        // directly inside the tab bar (like Apple Health), not in the navigation bar.
+        // UISearchTab expands inline in the tab bar (like Apple Health).
         let searchVC = SearchViewController()
         let searchNavVC = UINavigationController(rootViewController: searchVC)
+        let searchTab = UISearchTab { _ in searchNavVC }
 
-        let searchTab = UISearchTab(viewControllerProvider: { _ in
-            return searchNavVC
-        })
-
-        self.tabs = [recordsTab, prepareTab, vitalsTab, searchTab]
+        self.tabs = [homeTab, recordsTab, visitsTab, searchTab]
     }
 }
+

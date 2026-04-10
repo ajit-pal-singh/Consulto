@@ -43,7 +43,7 @@ class VitalData {
         return [
             VitalReading(
                 title: "Heart Rate", value: "72", unit: "bpm", subtitle: "Resting Rate",
-                iconImage: UIImage(named: "heart Symbol"), iconTint: UIColor(hex: "#CC1111"), chartType: .line, chartColor: .red,
+                iconImage: UIImage(named: "HeartSymbol"), iconTint: UIColor(hex: "#CC1111"), chartType: .line, chartColor: .red,
                 chartData: [
                     ChartDataPoint(day: "M", value: 71), ChartDataPoint(day: "T", value: 72),
                     ChartDataPoint(day: "W", value: 70), ChartDataPoint(day: "T", value: 72),
@@ -79,17 +79,16 @@ class VitalData {
                     ChartDataPoint(day: "T", value: 81.2),
                     ChartDataPoint(day: "W", value: 80.8),
                     ChartDataPoint(day: "T", value: 80.2),
-                    ChartDataPoint(day: "F", value: 79.7), // below 80
-                    ChartDataPoint(day: "S", value: 79.5), // below 80
+                    ChartDataPoint(day: "F", value: 79.7),
+                    ChartDataPoint(day: "S", value: 79.5),
                     ChartDataPoint(day: "S", value: 80.6)
                 ],
-                baselineValue: 80.0 // Last Sunday's Data
+                baselineValue: 80.0
             )
         ]
     }
 }
 
-// MARK: - UIColor Hex Extension
 extension UIColor {
     convenience init(hex: String) {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)

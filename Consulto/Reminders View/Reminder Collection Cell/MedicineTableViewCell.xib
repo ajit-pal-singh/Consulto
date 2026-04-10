@@ -50,7 +50,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unit" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gOh-l3-dWg">
-                                <rect key="frame" x="205.66666666666666" y="15" width="120.33333333333334" height="23"/>
+                                <rect key="frame" x="205.66666666666666" y="17" width="120.33333333333334" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -93,7 +93,7 @@
                             <constraint firstItem="Nvb-FV-UI4" firstAttribute="top" secondItem="gOh-l3-dWg" secondAttribute="bottom" constant="9" id="2Cx-pj-bLd"/>
                             <constraint firstItem="Nvb-FV-UI4" firstAttribute="leading" secondItem="cIq-ph-Lom" secondAttribute="trailing" constant="10" id="4Bu-zw-uhm"/>
                             <constraint firstItem="gOh-l3-dWg" firstAttribute="leading" secondItem="3X0-vK-3pc" secondAttribute="trailing" constant="6" id="CK2-Og-Hld"/>
-                            <constraint firstItem="gOh-l3-dWg" firstAttribute="top" secondItem="vbD-iQ-G2h" secondAttribute="top" constant="15" id="F6N-PS-GEs"/>
+                            <constraint firstItem="gOh-l3-dWg" firstAttribute="top" secondItem="vbD-iQ-G2h" secondAttribute="top" constant="17" id="F6N-PS-GEs"/>
                             <constraint firstAttribute="bottom" secondItem="cIq-ph-Lom" secondAttribute="bottom" constant="10" id="Lff-XW-eW4"/>
                             <constraint firstItem="3X0-vK-3pc" firstAttribute="top" secondItem="vbD-iQ-G2h" secondAttribute="top" constant="16" id="M5g-RU-ocx"/>
                             <constraint firstItem="Grd-7A-ruX" firstAttribute="leading" secondItem="Nvb-FV-UI4" secondAttribute="trailing" constant="8" id="Qx5-zP-skC"/>
@@ -122,7 +122,7 @@
                 <outlet property="mealTimeLabel" destination="Elb-CE-IW9" id="Hih-4N-KIe"/>
                 <outlet property="nameLabel" destination="3X0-vK-3pc" id="b4T-uX-ONf"/>
                 <outlet property="timeLabel" destination="IdZ-AQ-Ktc" id="qEA-KY-rIh"/>
-                <outlet property="toggleSwitch" destination="Grd-7A-ruX" id="87a-z7-uhb"/>
+                <outlet property="toggleSwitch" destination="Grd-7A-ruX" id="tSw-tg-8uX"/>
                 <outlet property="unitLabel" destination="gOh-l3-dWg" id="Jun-ce-XXZ"/>
                 <outlet property="view" destination="cIq-ph-Lom" id="JSj-Am-AkH"/>
             </connections>

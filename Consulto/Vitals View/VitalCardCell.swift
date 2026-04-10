@@ -71,7 +71,6 @@ class VitalCardCell: UICollectionViewCell {
         }
     }
     
-    // MARK: - DGCharts Implementation
     private func setupLineChart(in container: UIView, color: UIColor, dataPoints: [ChartDataPoint]) {
         let lineChartView = LineChartView(frame: container.bounds)
         lineChartView.autoresizingMask = [.flexibleWidth, .flexibleHeight]

@@ -14,17 +14,16 @@ class ConsultViewController: UIViewController,
     // MARK: - Data Source
     private var consultSessions: [ConsultSession] = []
     private var allConsultSessions: [ConsultSession] = []
-    
+
     // For Filters
     var currentDoctorFilters: Set<String> = []
     var currentDateFilter: (start: Date, end: Date)?
-    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         print("[ConsultVC] init(coder:) called")
 
         tabBarItem = UITabBarItem(
-            title: "Prepare",
+            title: "Visits",
             image: UIImage(named: "Consult"),
             selectedImage: UIImage(named: "Consult")
         )
@@ -42,7 +41,7 @@ class ConsultViewController: UIViewController,
         consultCollectionView.delegate = self
         consultCollectionView.dataSource = self
         consultCollectionView.showsVerticalScrollIndicator = false
-        print("[ConsultVC] Collection view dataSource and delegate set")
+//        print("[ConsultVC] Collection view dataSource and delegate set")
         consultCollectionView.collectionViewLayout = createLayout()
 
         consultCollectionView.register(
@@ -59,6 +58,12 @@ class ConsultViewController: UIViewController,
         NotificationCenter.default.addObserver(
             self, selector: #selector(handleNewSession(_:)),
             name: NSNotification.Name("NewConsultSessionCreated"), object: nil)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        consultSessions = ConsultSessionStore.shared.loadSessions()
+        consultCollectionView.reloadData()
     }
 
     @objc private func handleSessionUpdate(_ notification: Notification) {
@@ -208,7 +213,6 @@ class ConsultViewController: UIViewController,
             hostingController.view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
             hostingController.view.trailingAnchor.constraint(equalTo: container.trailingAnchor),
         ])
-
         hostingController.didMove(toParent: self)
     }
 
@@ -427,7 +431,6 @@ class ConsultViewController: UIViewController,
             bottom: 20,
             trailing: 16
         )
-
         section.interGroupSpacing = 16
 
         return UICollectionViewCompositionalLayout(section: section)

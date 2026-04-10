@@ -102,21 +102,25 @@ struct Medication: Codable {
     
     //For reminders
     var times: [Date] = []
-    var mealTiming: MealTiming = .none
+    var mealTiming: MealTiming?
     var repeatDays: Set<String> = []
     var isSnoozeOn: Bool = false
     var snoozeTime: String?
     var inactiveTimes: [Date] = []
+    var reminderCreatedAt: Date? = nil
+    var isDone: Bool = false
 
     private enum CodingKeys: String, CodingKey {
         case id, recordID, name, dosage, frequency, duration, notes
         case times, mealTiming, repeatDays, isSnoozeOn, snoozeTime, inactiveTimes
+        case reminderCreatedAt, isDone
     }
 
     init(id: UUID, recordID: UUID?, name: String, dosage: String? = nil,
          frequency: MedicationFrequency? = nil, duration: String? = nil, notes: String? = nil,
-         times: [Date] = [], mealTiming: MealTiming = .none, repeatDays: Set<String> = [],
-         isSnoozeOn: Bool = false, snoozeTime: String? = nil, inactiveTimes: [Date] = []) {
+         times: [Date] = [], mealTiming: MealTiming? = nil, repeatDays: Set<String> = [],
+         isSnoozeOn: Bool = false, snoozeTime: String? = nil, inactiveTimes: [Date] = [],
+         reminderCreatedAt: Date? = nil, isDone: Bool = false) {
         self.id = id
         self.recordID = recordID
         self.name = name
@@ -130,6 +134,8 @@ struct Medication: Codable {
         self.isSnoozeOn = isSnoozeOn
         self.snoozeTime = snoozeTime
         self.inactiveTimes = inactiveTimes
+        self.reminderCreatedAt = reminderCreatedAt
+        self.isDone = isDone
     }
 
     init(from decoder: Decoder) throws {
@@ -142,11 +148,13 @@ struct Medication: Codable {
         duration = try container.decodeIfPresent(String.self, forKey: .duration)
         notes = try container.decodeIfPresent(String.self, forKey: .notes)
         times = try container.decodeIfPresent([Date].self, forKey: .times) ?? []
-        mealTiming = try container.decodeIfPresent(MealTiming.self, forKey: .mealTiming) ?? .none
+        mealTiming = try container.decodeIfPresent(MealTiming.self, forKey: .mealTiming)
         repeatDays = try container.decodeIfPresent(Set<String>.self, forKey: .repeatDays) ?? []
         isSnoozeOn = try container.decodeIfPresent(Bool.self, forKey: .isSnoozeOn) ?? false
         snoozeTime = try container.decodeIfPresent(String.self, forKey: .snoozeTime)
         inactiveTimes = try container.decodeIfPresent([Date].self, forKey: .inactiveTimes) ?? []
+        reminderCreatedAt = try container.decodeIfPresent(Date.self, forKey: .reminderCreatedAt)
+        isDone = try container.decodeIfPresent(Bool.self, forKey: .isDone) ?? false
     }
 }
 
@@ -161,7 +169,6 @@ enum MealTiming: String, Codable {
     case beforeMeal
     case afterMeal
     case emptyStomach
-    case none
 }
 
 enum SnoozeTime: String, CaseIterable, Codable {
@@ -248,6 +255,7 @@ enum ConsultStatus: String, Codable {
 
 struct ConsultationReminder {
     let id: UUID
+    var consultSessionID: UUID?
     var doctorName: String
     var purpose: String
     var date: Date
@@ -257,3 +265,4 @@ struct ConsultationReminder {
     var snoozeTime: String?
     var isPaused: Bool
 }
+

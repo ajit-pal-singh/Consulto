@@ -2,13 +2,11 @@ import UIKit
 
 class AddReadingViewController: UIViewController {
 
-    // MARK: - Outlets
     @IBOutlet weak var option1View: UIView! // Heart Rate
     @IBOutlet weak var option2View: UIView! // Blood Pressure
     @IBOutlet weak var option3View: UIView! // Blood Glucose
     @IBOutlet weak var option4View: UIView! // Body Weight
     
-    // Optional: If you created a small drag handle at the top center
     @IBOutlet weak var handleView: UIView!
 
     override func viewDidLoad() {
@@ -18,7 +16,7 @@ class AddReadingViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.layer.cornerRadius = 0 // Handled by custom mask now
+        view.layer.cornerRadius = 0
         view.clipsToBounds = true
         
         if let handle = handleView {
@@ -29,7 +27,6 @@ class AddReadingViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        // Custom mask to allow Top corners at 24 and Bottom corners at 55
         let path = UIBezierPath()
         let width = view.bounds.width
         let height = view.bounds.height
@@ -61,7 +58,6 @@ class AddReadingViewController: UIViewController {
     }
     
     private func setupGestures() {
-        // Ensure the option views can register touches
         [option1View, option2View, option3View, option4View].compactMap { $0 }.forEach {
             $0.isUserInteractionEnabled = true
         }
@@ -72,14 +68,11 @@ class AddReadingViewController: UIViewController {
         option3View?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapBloodGlucose)))
         option4View?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapBodyWeight)))
     }
-    
-    // MARK: - Callbacks
+
     var onHeartRateTap: (() -> Void)?
     var onBloodPressureTap: (() -> Void)?
     var onBloodGlucoseTap: (() -> Void)?
     var onBodyWeightTap: (() -> Void)?
-    
-    // MARK: - Actions
     
     @objc @IBAction func didTapHeartRate() {
         print("Tapped Heart Rate")

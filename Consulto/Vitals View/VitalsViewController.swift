@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  Vital_Screen
-//
-//  Created by GEU on 16/03/26.
-//
-
 import UIKit
 import SwiftUI
 
@@ -14,8 +7,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     @IBOutlet weak var vitalsCollectionView: UICollectionView!
     
     var vitalsData: [VitalReading] = []
+    var shouldShowAddReadingPlatterOnAppear = false
     
-    // MARK: - Platter Properties
     var platterViewController: AddReadingViewController?
     var overlayDimmingView: UIView?
     var platterBottomConstraint: NSLayoutConstraint?
@@ -41,6 +34,15 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         setupHeaderActions()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if shouldShowAddReadingPlatterOnAppear {
+            shouldShowAddReadingPlatterOnAppear = false
+            showAddReadingPlatter()
+        }
+    }
+
     func setupCollectionView() {
         guard let cv = vitalsCollectionView else { return }
         
@@ -82,19 +84,15 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         hostingController.didMove(toParent: self)
     }
-
-    // MARK: - Platter Presentation
     
     func showAddReadingPlatter() {
         let container = self.view! 
         
-        // 1. Create Dimming View
         let dimmingView = UIView()
         dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         dimmingView.alpha = 0
         dimmingView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Add Tap Gesture to Dismiss
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissPlatter))
         dimmingView.addGestureRecognizer(tap)
         
@@ -107,14 +105,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         ])
         self.overlayDimmingView = dimmingView
         
-        // 2. Instantiate View Controller from Storyboard
         let storyboard = UIStoryboard(name: "Vital", bundle: nil) 
         guard let platterVC = storyboard.instantiateViewController(withIdentifier: "AddReadingViewController") as? AddReadingViewController else {
             print("Could not instantiate AddReadingViewController")
             return
         }
         
-        // Handle Platter Clicks
         platterVC.onHeartRateTap = { [weak self] in
             self?.dismissPlatter()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -169,13 +165,11 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         container.addSubview(platterVC.view)
         platterVC.didMove(toParent: self)
         
-        // Add Pan Gesture for Swipe Down 
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePlatterPan(_:)))
         platterVC.view.addGestureRecognizer(panGesture)
         
         self.platterViewController = platterVC
         
-        // 3. Constraints 
         let bottomConstraint = platterVC.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 500) // Start below screen
         self.platterBottomConstraint = bottomConstraint
         
@@ -187,7 +181,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         container.layoutIfNeeded() 
         
-        // 4. Animate In
         self.platterBottomConstraint?.constant = -5
         
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
@@ -246,8 +239,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             break
         }
     }
-    
-    // MARK: - Generic UIAlertController Generator
     
     private func presentAddReadingAlert(title: String, message: String, placeholders: [String], units: [String]) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)

@@ -7,6 +7,7 @@ class DateInputTableViewCell: UITableViewCell {
 
     var didChangeDate: ((Date) -> Void)?
     private var displayFormat = "dd-MM-yyyy"
+    private lazy var fullCellTapGesture = UITapGestureRecognizer(target: self, action: #selector(openPickerFromCellTap))
     var showsShadow: Bool = true {
         didSet { updateShadowAppearance() }
     }
@@ -21,14 +22,19 @@ class DateInputTableViewCell: UITableViewCell {
         dateTextField.isEnabled = false
         contentView.sendSubviewToBack(compactDatePicker)
         compactDatePicker?.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
-        compactDatePicker?.addTarget(self, action: #selector(datePickerOpened), for: .editingDidBegin)
+        contentView.addGestureRecognizer(fullCellTapGesture)
+
+        if #available(iOS 13.4, *) {
+            compactDatePicker?.preferredDatePickerStyle = .compact
+        }
     }
 
-    @objc func datePickerOpened() {
+    @objc private func openPickerFromCellTap() {
         if dateTextField.text?.isEmpty ?? true {
-            setDate(compactDatePicker.date)
-            didChangeDate?(compactDatePicker.date)
+            setDate(compactDatePicker?.date ?? Date())
+            didChangeDate?(compactDatePicker?.date ?? Date())
         }
+        compactDatePicker?.becomeFirstResponder()
     }
 
     @objc func dateChanged(_ sender: UIDatePicker) {

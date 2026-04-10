@@ -227,19 +227,18 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     private func medicationsSection() -> NSCollectionLayoutSection {
 
         let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(0.5), heightDimension: .estimated(120))
+            widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(120))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .estimated(120))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        group.interItemSpacing = .fixed(16)
 
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = NSDirectionalEdgeInsets(
             top: 0, leading: 16, bottom: 0, trailing: 16)
-        section.interGroupSpacing = 16
+        section.interGroupSpacing = 10
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -422,7 +421,12 @@ extension ConsultDetailedViewController: UICollectionViewDataSource {
         case .medications:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MedicationCell", for: indexPath) as! MedicationCollectionViewCell
             let med = medications[indexPath.item]
-            cell.configure(name: med.name, dosage: med.dosage ?? "", frequency: med.frequency?.rawValue ?? "", duration: med.duration ?? "")
+            cell.configure(
+                name: med.name,
+                dosage: dosageText(for: med.dosage),
+                frequency: frequencyText(for: med),
+                duration: derivedDurationText(for: med)
+            )
             return cell
         case .records:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecordCell", for: indexPath) as! RecordCardCollectionViewCell
@@ -453,5 +457,71 @@ extension ConsultDetailedViewController: UICollectionViewDataSource {
         default: header.configure(title: "")
         }
         return header
+    }
+}
+
+private extension ConsultDetailedViewController {
+    func dosageText(for dosage: String?) -> String {
+        guard let dosage,
+              !dosage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return ""
+        }
+        return dosage
+    }
+
+    func derivedFrequency(for medication: Medication) -> MedicationFrequency {
+        let hasCustomRepeatDays = !medication.repeatDays.isEmpty && medication.repeatDays.count != 7
+        guard !hasCustomRepeatDays else {
+            return .asNeeded
+        }
+
+        switch medication.times.count {
+        case 1:
+            return .onceDaily
+        case 2:
+            return .twiceDaily
+        case 3:
+            return .thriceDaily
+        default:
+            return medication.frequency ?? .asNeeded
+        }
+    }
+
+    func frequencyText(for medication: Medication) -> String {
+        switch derivedFrequency(for: medication) {
+        case .onceDaily:
+            return "Once Daily"
+        case .twiceDaily:
+            return "Twice Daily"
+        case .thriceDaily:
+            return "Thrice Daily"
+        case .asNeeded:
+            return "As Needed"
+        }
+    }
+
+    func derivedDurationText(for medication: Medication, relativeTo now: Date = Date()) -> String {
+        if let reminderCreatedAt = medication.reminderCreatedAt {
+            let calendar = Calendar.current
+            let start = calendar.startOfDay(for: reminderCreatedAt)
+            let end = calendar.startOfDay(for: now)
+            let components = calendar.dateComponents([.year, .month, .weekOfYear, .day], from: start, to: end)
+
+            if let years = components.year, years > 0 {
+                return "From last \(years) year" + (years == 1 ? "" : "s")
+            }
+            if let months = components.month, months > 0 {
+                return "From last \(months) month" + (months == 1 ? "" : "s")
+            }
+            if let weeks = components.weekOfYear, weeks > 0 {
+                return "From last \(weeks) week" + (weeks == 1 ? "" : "s")
+            }
+            if let days = components.day, days > 0 {
+                return "From last \(days) day" + (days == 1 ? "" : "s")
+            }
+            return "From today"
+        }
+
+        return medication.duration ?? ""
     }
 }

@@ -19,7 +19,6 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
 
     @IBOutlet weak var tableView: UITableView!
 
-    var reminders = SampleData.reminders
     private var consultationReminders: [ConsultationReminder] = []
     private var selectedSegment: ReminderSegment = .medicine
     private var pendingSegmentReload: DispatchWorkItem?
@@ -32,28 +31,28 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
     }
 
     var currentRows: [ReminderCard] {
-        reminders.compactMap { medication in
+        MedicationReminderStore.shared.medications.compactMap { medication in
             let activeTimes = activeTimes(for: medication)
             guard !activeTimes.isEmpty else { return nil }
 
             return ReminderCard(
                 medicationID: medication.id,
                 times: activeTimes.sorted(),
-                mealTiming: medication.mealTiming,
+                mealTiming: medication.mealTiming ?? .afterMeal,
                 isActiveCard: true
             )
         }
     }
 
     var pausedRows: [ReminderCard] {
-        reminders.compactMap { medication in
+        MedicationReminderStore.shared.medications.compactMap { medication in
             let pausedTimes = pausedTimes(for: medication)
             guard !pausedTimes.isEmpty else { return nil }
 
             return ReminderCard(
                 medicationID: medication.id,
                 times: pausedTimes.sorted(),
-                mealTiming: medication.mealTiming,
+                mealTiming: medication.mealTiming ?? .afterMeal,
                 isActiveCard: false
             )
         }
@@ -107,14 +106,41 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
         tableView.register(UINib(nibName: "MedicineTableViewCell", bundle: nil), forCellReuseIdentifier: "MedicineCell")
         tableView.register(UINib(nibName: "ConsultationTableViewCell", bundle: nil), forCellReuseIdentifier: "ConsultationCell")
 
-        navigationItem.rightBarButtonItem?.target = self
-        navigationItem.rightBarButtonItem?.action = #selector(didTapAddButton)
+        configureAddMenu()
 
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleNewConsultationReminder(_:)),
             name: NSNotification.Name("NewConsultationReminderCreated"),
             object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleConsultationReminderUpdated),
+            name: NSNotification.Name("ConsultationReminderUpdated"),
+            object: nil
+        )
+    }
+
+    private func configureAddMenu() {
+        let addMedicine = UIAction(
+            title: "Add Medicine",
+            image: UIImage(systemName: "pills")
+        ) { [weak self] _ in
+            self?.performSegue(withIdentifier: SegueIdentifier.addMedicine, sender: nil)
+        }
+
+        let addConsultation = UIAction(
+            title: "Add Consultation",
+            image: UIImage(systemName: "stethoscope")
+        ) { [weak self] _ in
+            self?.presentConsultationEditor()
+        }
+
+        navigationItem.rightBarButtonItem?.menu = UIMenu(
+            title: "",
+            options: .displayInline,
+            children: [addMedicine, addConsultation]
         )
     }
 
@@ -124,24 +150,9 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
         reloadReminderTable()
     }
 
-    @objc private func didTapAddButton() {
-        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-
-        actionSheet.addAction(UIAlertAction(title: "Add Medicine", style: .default) { [weak self] _ in
-            self?.performSegue(withIdentifier: SegueIdentifier.addMedicine, sender: nil)
-        })
-
-        actionSheet.addAction(UIAlertAction(title: "Add Consultation", style: .default) { [weak self] _ in
-            self?.presentConsultationEditor()
-        })
-
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-
-        if let popover = actionSheet.popoverPresentationController {
-            popover.barButtonItem = navigationItem.rightBarButtonItem
-        }
-
-        present(actionSheet, animated: true)
+    @objc private func handleConsultationReminderUpdated() {
+        consultationReminders = ConsultationReminderStore.shared.reminders
+        reloadReminderTable()
     }
 
     private func appendReminder(from formData: AddMedicineFormData) {
@@ -158,11 +169,15 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
             repeatDays: formData.repeatDays,
             isSnoozeOn: formData.isSnoozeOn,
             snoozeTime: formData.snoozeTime,
-            inactiveTimes: formData.inactiveTimes
+            inactiveTimes: formData.inactiveTimes,
+            reminderCreatedAt: Date()
         )
 
-        reminders.insert(medication, at: 0)
+        var list = MedicationReminderStore.shared.medications
+        list.insert(medication, at: 0)
+        MedicationReminderStore.shared.medications = list
         reloadReminderTable()
+        MedicationReminderStore.shared.notifyMedicinesChanged()
     }
 
     private func appendConsultationReminder(from formData: AddConsultationFormData) {
@@ -183,35 +198,40 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
     }
 
     private func updateConsultationReminder(_ reminder: ConsultationReminder, from formData: AddConsultationFormData) {
-        guard let index = consultationReminders.firstIndex(where: { $0.id == reminder.id }) else { return }
+        _ = ConsultationReminderStore.shared.updateReminder(
+            id: reminder.id,
+            doctorName: formData.doctorName,
+            purpose: formData.purpose,
+            consultationDate: formData.consultationDate,
+            time: formData.time,
+            repeatDays: formData.repeatDays,
+            isSnoozeOn: formData.isSnoozeOn,
+            snoozeTime: formData.snoozeTime,
+            isPaused: formData.isPaused
+        )
 
-        consultationReminders[index].doctorName = formData.doctorName
-        consultationReminders[index].purpose = formData.purpose
-        consultationReminders[index].date = formData.consultationDate
-        consultationReminders[index].time = formData.time
-        consultationReminders[index].repeatDays = formData.repeatDays
-        consultationReminders[index].isSnoozeOn = formData.isSnoozeOn
-        consultationReminders[index].snoozeTime = formData.snoozeTime
-        consultationReminders[index].isPaused = formData.isPaused
-        ConsultationReminderStore.shared.reminders = consultationReminders
+        consultationReminders = ConsultationReminderStore.shared.reminders
 
         selectedSegment = .consultation
         reloadReminderTable()
     }
 
     private func updateReminder(_ medication: Medication, from formData: AddMedicineFormData) {
-        guard let index = reminders.firstIndex(where: { $0.id == medication.id }) else { return }
+        guard let index = MedicationReminderStore.shared.medications.firstIndex(where: { $0.id == medication.id }) else { return }
 
-        reminders[index].name = formData.medicineName
-        reminders[index].dosage = formData.dosage
-        reminders[index].times = formData.times.isEmpty ? reminders[index].times : formData.times
-        reminders[index].inactiveTimes = formData.inactiveTimes
-        reminders[index].mealTiming = formData.mealTiming
-        reminders[index].repeatDays = formData.repeatDays
-        reminders[index].isSnoozeOn = formData.isSnoozeOn
-        reminders[index].snoozeTime = formData.snoozeTime
+        var list = MedicationReminderStore.shared.medications
+        list[index].name = formData.medicineName
+        list[index].dosage = formData.dosage
+        list[index].times = formData.times.isEmpty ? list[index].times : formData.times
+        list[index].inactiveTimes = formData.inactiveTimes
+        list[index].mealTiming = formData.mealTiming
+        list[index].repeatDays = formData.repeatDays
+        list[index].isSnoozeOn = formData.isSnoozeOn
+        list[index].snoozeTime = formData.snoozeTime
+        MedicationReminderStore.shared.medications = list
 
         reloadReminderTable()
+        MedicationReminderStore.shared.notifyMedicinesChanged()
     }
 
     private func defaultReminderTime() -> Date {
@@ -282,8 +302,11 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
     }
 
     private func reloadReminderTable() {
-        UIView.transition(with: tableView, duration: 0.25, options: .transitionCrossDissolve) {
-            self.tableView.reloadData()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            UIView.transition(with: self.tableView, duration: 0.25, options: .transitionCrossDissolve) {
+                self.tableView.reloadData()
+            }
         }
     }
 
@@ -341,7 +364,7 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
     private func medicineCell(for indexPath: IndexPath, tableView: UITableView) -> UITableViewCell {
         if !currentRows.isEmpty && indexPath.row == 1 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "HeaderCell", for: indexPath) as! HeaderTableViewCell
-            cell.titleLabel.text = "Current Medicines"
+            cell.titleLabel.text = "Active Medicines"
             return cell
         }
 
@@ -396,7 +419,6 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         defer { tableView.deselectRow(at: indexPath, animated: true) }
-
         switch selectedSegment {
         case .medicine:
             if let medication = medicationForIndexPath(indexPath) {
@@ -439,12 +461,15 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
                 return
             }
 
-            guard let reminderIndex = self.reminders.firstIndex(where: { $0.id == medication.id }) else {
+            guard let reminderIndex = MedicationReminderStore.shared.medications.firstIndex(where: { $0.id == medication.id }) else {
                 completion(false)
                 return
             }
 
-            self.reminders.remove(at: reminderIndex)
+            var list = MedicationReminderStore.shared.medications
+            list.remove(at: reminderIndex)
+            MedicationReminderStore.shared.medications = list
+            MedicationReminderStore.shared.notifyMedicinesChanged()
             self.reloadReminderTable()
             completion(true)
         }
@@ -503,20 +528,23 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
         cell.onToggleChanged = { [weak self] isOn in
             guard let self = self else { return }
 
-            if let reminderIndex = self.reminders.firstIndex(where: { $0.id == medication.id }) {
+            if let reminderIndex = MedicationReminderStore.shared.medications.firstIndex(where: { $0.id == medication.id }) {
+                var list = MedicationReminderStore.shared.medications
                 if isOn {
-                    self.reminders[reminderIndex].inactiveTimes.removeAll { inactiveTime in
+                    list[reminderIndex].inactiveTimes.removeAll { inactiveTime in
                         card.times.contains(where: {
                             Calendar.current.isDate($0, equalTo: inactiveTime, toGranularity: .minute)
                         })
                     }
                 } else {
-                    for time in card.times where !self.reminders[reminderIndex].inactiveTimes.contains(where: {
+                    for time in card.times where !list[reminderIndex].inactiveTimes.contains(where: {
                         Calendar.current.isDate($0, equalTo: time, toGranularity: .minute)
                     }) {
-                        self.reminders[reminderIndex].inactiveTimes.append(time)
+                        list[reminderIndex].inactiveTimes.append(time)
                     }
                 }
+                MedicationReminderStore.shared.medications = list
+                MedicationReminderStore.shared.notifyMedicinesChanged()
             }
 
             self.reloadReminderTable()
@@ -529,9 +557,9 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
         cell.nameLabel.text = consultation.doctorName
         cell.dateLabel.text = formatDate(consultation.date)
         cell.timeLabel.text = formatTime(card.time)
-        cell.purposeLabel.text = consultation.purpose
+//        cell.purposeLabel.text = consultation.purpose
         cell.dotLabel.isHidden = cell.dateLabel.text?.isEmpty ?? true
-        cell.dot2Label.isHidden = cell.timeLabel.text?.isEmpty ?? true
+//        cell.dot2Label.isHidden = cell.timeLabel.text?.isEmpty ?? true
         cell.toggleSwitch.isOn = card.isActiveCard
 
         cell.onToggleChanged = { [weak self] isOn in
@@ -565,8 +593,6 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
             return "After Meal"
         case .emptyStomach:
             return "Empty Stomach"
-        case .none:
-            return ""
         }
     }
 
@@ -603,7 +629,7 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
             return nil
         }
 
-        return "(\(dosage))"
+        return dosage
     }
 
     private func medicationForIndexPath(_ indexPath: IndexPath) -> Medication? {
@@ -615,7 +641,7 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
     }
 
     private func medicationForCard(_ card: ReminderCard) -> Medication? {
-        reminders.first(where: { $0.id == card.medicationID })
+        MedicationReminderStore.shared.medications.first(where: { $0.id == card.medicationID })
     }
 
     private func reminderCardForIndexPath(_ indexPath: IndexPath) -> ReminderCard? {

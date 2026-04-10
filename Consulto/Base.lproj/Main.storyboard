@@ -333,7 +333,7 @@
         <!--Preview-->
         <scene sceneID="Kjk-eF-E6A">
             <objects>
-                <viewController title="Preview" id="b5X-hJ-bII" customClass="PreviewViewController" customModule="Consulto" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PreviewViewController" title="Preview" id="b5X-hJ-bII" customClass="PreviewViewController" customModule="Consulto" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="OT0-N0-D1m">
                         <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -749,9 +749,9 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
+                        <segue destination="DuM-4y-Vev" kind="relationship" relationship="viewControllers" id="4iB-Tk-VR2"/>
                         <segue destination="r4g-4g-uYX" kind="relationship" relationship="viewControllers" id="5QY-j1-IAG"/>
                         <segue destination="UN9-LM-rTU" kind="relationship" relationship="viewControllers" id="GpQ-9z-HKU"/>
-                        <segue destination="DuM-4y-Vev" kind="relationship" relationship="viewControllers" id="4iB-Tk-VR2"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sM4-Ke-kbn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -791,11 +791,27 @@
             </objects>
             <point key="canvasLocation" x="-764" y="920"/>
         </scene>
-        <!--Vital-->
+        <!--View Controller-->
+        <scene sceneID="meR-up-BoN">
+            <objects>
+                <viewController id="2Gu-Ho-0xQ" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="d1p-f5-wgX">
+                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="W3Q-xQ-gNw"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" systemItem="search" id="mfH-Um-lXb"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NdS-4N-Bru" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-537" y="1344"/>
+        </scene>
+        <!--Home_Screen-->
         <scene sceneID="BCA-28-xnX">
             <objects>
-                <viewControllerPlaceholder storyboardName="Vital" id="DuM-4y-Vev" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="Mo9-m0-nXN"/>
+                <viewControllerPlaceholder storyboardName="Home_Screen" id="DuM-4y-Vev" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" badgeValue="Home" selectedImage="bolt.house" catalog="system" id="Mo9-m0-nXN"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wBW-o9-GZd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -804,6 +820,7 @@
     </scenes>
     <resources>
         <image name="Records" width="25" height="25"/>
+        <image name="bolt.house" catalog="system" width="128" height="104"/>
         <image name="chevron.left" catalog="system" width="97" height="128"/>
         <image name="chevron.right" catalog="system" width="97" height="128"/>
         <image name="document" catalog="system" width="115" height="128"/>

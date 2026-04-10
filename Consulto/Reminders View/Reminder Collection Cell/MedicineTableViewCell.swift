@@ -1,5 +1,10 @@
 import UIKit
 
+enum MedicineCellMode {
+    case homeReminder
+    case reminder
+}
+
 class MedicineTableViewCell: UITableViewCell {
     
     @IBOutlet weak var cardView: UIView!
@@ -35,7 +40,7 @@ class MedicineTableViewCell: UITableViewCell {
     @IBAction func switchChanged(_ sender: UISwitch) {
         onToggleChanged?(sender.isOn)
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 

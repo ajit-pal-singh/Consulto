@@ -22,6 +22,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     var alreadySelectedRecordIDs: Set<UUID> = []
     var selectedRecords: [HealthRecord] = []
     var didSelectRecords: (([HealthRecord]) -> Void)?
+    var shouldShowAttachmentPlatterOnAppear = false
     
     @IBOutlet weak var platterContainerView: UIView!
 
@@ -67,21 +68,28 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
         if selectionMode {
             self.title = "Select Records"
             navigationItem.rightBarButtonItem = UIBarButtonItem(
-                title: "Done", style: .done, target: self, action: #selector(doneSelectingTapped))
+                image: UIImage(systemName: "checkmark"), style: .done, target: self, action: #selector(doneSelectingTapped))
             navigationItem.leftBarButtonItem = UIBarButtonItem(
-                title: "Cancel", style: .plain, target: self, action: #selector(cancelSelectionTapped))
+                image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(cancelSelectionTapped))
             navigationController?.setNavigationBarHidden(false, animated: false)
             
             headerActionsContainerView?.superview?.isHidden = true
             blurEffectView?.isHidden = true
         }
-        
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         loadData()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if shouldShowAttachmentPlatterOnAppear {
+            shouldShowAttachmentPlatterOnAppear = false
+            showAttachmentPlatter()
+        }
     }
     
     @objc private func doneSelectingTapped() {
@@ -203,7 +211,6 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
         recordsCollectionView.delegate = self
         recordsCollectionView.dataSource = self
         
-        // Register XIBs
         let nib = UINib(nibName: "RecordCardCollectionViewCell", bundle: nil)
         recordsCollectionView.register(nib, forCellWithReuseIdentifier: "RecordCardCollectionViewCell")
         
@@ -742,8 +749,6 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         }
     }
     
-    /// Dismisses the platter when the user taps in the transparent
-    /// area of platterContainerView above the platter card.
     @objc private func containerBackgroundTapped(_ gesture: UITapGestureRecognizer) {
         guard let platterView = platterViewController?.view else { return }
         let location = gesture.location(in: platterContainerView)

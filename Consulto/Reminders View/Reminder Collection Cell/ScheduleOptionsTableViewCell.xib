@@ -16,7 +16,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V1h-cu-FB8">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" horizontalCompressionResistancePriority="751" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V1h-cu-FB8">
                         <rect key="frame" x="16" y="16" width="33" height="12"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
@@ -30,7 +30,7 @@
                             <constraint firstAttribute="height" constant="20" id="xTU-Wf-iP5"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Value" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sf8-6q-vgY">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="250" horizontalCompressionResistancePriority="250" verticalHuggingPriority="251" text="Value" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sf8-6q-vgY">
                         <rect key="frame" x="232" y="16" width="42" height="12"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -41,10 +41,12 @@
                     <constraint firstAttribute="bottom" secondItem="Sf8-6q-vgY" secondAttribute="bottom" constant="16" id="0Mt-4m-VEr"/>
                     <constraint firstItem="2fF-aC-L3u" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="8IG-6C-7wa"/>
                     <constraint firstItem="V1h-cu-FB8" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="9HF-4q-DTE"/>
+                    <constraint firstItem="Sf8-6q-vgY" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="V1h-cu-FB8" secondAttribute="trailing" constant="12" id="NqN-7k-gxR"/>
                     <constraint firstAttribute="trailing" secondItem="2fF-aC-L3u" secondAttribute="trailing" constant="16" id="Q1Q-bi-b7S"/>
                     <constraint firstItem="V1h-cu-FB8" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="WJO-sG-17n"/>
                     <constraint firstItem="Sf8-6q-vgY" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="e0G-uA-8Xg"/>
                     <constraint firstItem="V1h-cu-FB8" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="grf-N9-cMO"/>
+                    <constraint firstItem="V1h-cu-FB8" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="Sf8-6q-vgY" secondAttribute="leading" constant="-12" id="j84-H0-nxM"/>
                     <constraint firstItem="2fF-aC-L3u" firstAttribute="leading" secondItem="Sf8-6q-vgY" secondAttribute="trailing" constant="10" id="poX-Wl-IwD"/>
                     <constraint firstItem="Sf8-6q-vgY" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="rOu-xM-6uW"/>
                     <constraint firstAttribute="bottom" secondItem="V1h-cu-FB8" secondAttribute="bottom" constant="16" id="s1L-oG-Brp"/>

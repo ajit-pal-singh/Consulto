@@ -20,7 +20,8 @@ struct SampleData {
                     Calendar.current.date(from: DateComponents(hour: 13, minute: 0))!
                 ],
                 mealTiming: .beforeMeal,
-                inactiveTimes: []
+                inactiveTimes: [],
+                reminderCreatedAt: Calendar.current.date(byAdding: .day, value: -12, to: Date())
             ),
             Medication(
                 id: UUID(),
@@ -30,7 +31,8 @@ struct SampleData {
                     Calendar.current.date(from: DateComponents(hour: 9, minute: 0))!
                 ],
                 mealTiming: .beforeMeal,
-                inactiveTimes: []
+                inactiveTimes: [],
+                reminderCreatedAt: Calendar.current.date(byAdding: .weekOfYear, value: -3, to: Date())
             ),
             Medication(
                 id: UUID(),
@@ -40,7 +42,8 @@ struct SampleData {
                     Calendar.current.date(from: DateComponents(hour: 8, minute: 0))!
                 ],
                 mealTiming: .beforeMeal,
-                inactiveTimes: []
+                inactiveTimes: [],
+                reminderCreatedAt: Calendar.current.date(byAdding: .month, value: -2, to: Date())
             ),
             Medication(
                 id: UUID(),
@@ -53,13 +56,15 @@ struct SampleData {
                 mealTiming: .afterMeal,
                 inactiveTimes: [
                     Calendar.current.date(from: DateComponents(hour: 8, minute: 0))!
-                ]
+                ],
+                reminderCreatedAt: Calendar.current.date(byAdding: .year, value: -1, to: Date())
             )
         ]
 
     static let consultationReminders: [ConsultationReminder] = [
         ConsultationReminder(
             id: UUID(),
+            consultSessionID: nil,
             doctorName: "Dr. Sandeep Gupta",
             purpose: "Follow up consultation",
             date: Calendar.current.date(byAdding: .day, value: 1, to: Date())!,
@@ -71,6 +76,7 @@ struct SampleData {
         ),
         ConsultationReminder(
             id: UUID(),
+            consultSessionID: nil,
             doctorName: "Dr. Vijay Sinha",
             purpose: "Blood sugar review",
             date: Calendar.current.date(byAdding: .day, value: 3, to: Date())!,
@@ -82,6 +88,7 @@ struct SampleData {
         ),
         ConsultationReminder(
             id: UUID(),
+            consultSessionID: nil,
             doctorName: "Dr. Anupam Jain",
             purpose: "Sleep assessment",
             date: Calendar.current.date(byAdding: .day, value: 5, to: Date())!,
