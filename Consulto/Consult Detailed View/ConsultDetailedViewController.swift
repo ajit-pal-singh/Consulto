@@ -15,9 +15,10 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     var medications: [Medication] = []
     var records: [HealthRecord] = []
     var questions: [Question] = []
+    var notes: String? = nil
     
     enum DetailSection {
-        case header, symptoms, medications, records, questions
+        case header, symptoms, medications, records, questions, notes
     }
     var visibleSections: [DetailSection] = []
 
@@ -42,6 +43,24 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
             prepareVC.existingCreatedAt = session.createdAt
             
             self.present(navVC, animated: true, completion: nil)
+        }
+    }
+
+    @IBAction func doneTapped(_ sender: Any) {
+        // 1. Mark the session as completed
+        if var session = consultSession {
+            session.status = .completed
+            ConsultSessionStore.shared.updateSession(session)
+            
+            // Post notification to update other views
+            NotificationCenter.default.post(name: NSNotification.Name("ConsultSessionUpdated"), object: nil, userInfo: ["session": session])
+        }
+        
+        // 2. Go back to the 'prepare screen'
+        if let nav = self.navigationController {
+            nav.popViewController(animated: true)
+        } else {
+            self.dismiss(animated: true, completion: nil)
         }
     }
 
@@ -84,6 +103,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
             medications = session.medications
             records = session.records
             questions = session.questions
+            notes = session.notes
         } else {
             let sampleSession = SampleData.consultSessions.first!
             sessionTitle = sampleSession.title
@@ -91,6 +111,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
             medications = sampleSession.medications
             records = sampleSession.records
             questions = sampleSession.questions
+            notes = sampleSession.notes
         }
         buildVisibleSections()
     }
@@ -100,6 +121,9 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         if !medications.isEmpty { visibleSections.append(.medications) }
         if !records.isEmpty { visibleSections.append(.records) }
         if !questions.isEmpty { visibleSections.append(.questions) }
+        if let notes = notes, !notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            visibleSections.append(.notes)
+        }
     }
 
     private func setupCollectionView() {
@@ -131,6 +155,10 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         collectionView.register(
             UINib(nibName: "QuestionCollectionViewCell", bundle: nil),
             forCellWithReuseIdentifier: "QuestionCell")
+            
+        collectionView.register(
+            UINib(nibName: "NoteCollectionViewCell", bundle: nil),
+            forCellWithReuseIdentifier: "NoteCell")
 
         collectionView.collectionViewLayout = generateLayout()
     }
@@ -145,6 +173,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
             case .medications: return self.medicationsSection()
             case .records: return self.recordsSection()
             case .questions: return self.questionsSection()
+            case .notes: return self.notesSection()
             }
         }
     }
@@ -276,8 +305,40 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 10
+        let isLast = visibleSections.last == .questions
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0, leading: 16, bottom: 100, trailing: 16)
+            top: 0, leading: 16, bottom: isLast ? 100 : 20, trailing: 16)
+
+        let headerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(50))
+
+        let header = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerSize,
+            elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
+
+        section.boundarySupplementaryItems = [header]
+
+        return section
+    }
+
+    private func notesSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(75))
+
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(75))
+
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 10
+        let isLast = visibleSections.last == .notes
+        section.contentInsets = NSDirectionalEdgeInsets(
+            top: 0, leading: 16, bottom: isLast ? 100 : 20, trailing: 16)
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -336,6 +397,7 @@ extension ConsultDetailedViewController: UICollectionViewDataSource {
         case .medications: return medications.count
         case .records: return records.count
         case .questions: return questions.count
+        case .notes: return 1
         }
     }
 
@@ -370,6 +432,10 @@ extension ConsultDetailedViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "QuestionCell", for: indexPath) as! QuestionCollectionViewCell
             cell.configure(with: questions[indexPath.item])
             return cell
+        case .notes:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NoteCell", for: indexPath) as! NoteCollectionViewCell
+            cell.configure(with: notes ?? "")
+            return cell
         }
     }
 
@@ -383,6 +449,7 @@ extension ConsultDetailedViewController: UICollectionViewDataSource {
         case .medications: header.configure(title: "Current Medications")
         case .records: header.configure(title: "Added Records")
         case .questions: header.configure(title: "Questions")
+        case .notes: header.configure(title: "Additional Notes")
         default: header.configure(title: "")
         }
         return header

@@ -1,9 +1,3 @@
-//
-//  RecordCardCollectionViewCell.swift
-//  Consulto
-//
-//  Created by Ajitpal Singh on 04/02/26.
-//
 
 import UIKit
 
@@ -75,7 +69,7 @@ class RecordCardCollectionViewCell: UICollectionViewCell {
             themeColor = .darkGray
         }
         
-        typeLabel.textColor = themeColor
+        typeLabel.textColor = .white
         dateShape.tintColor = themeColor
     }
 }

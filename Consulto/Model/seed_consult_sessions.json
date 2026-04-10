@@ -1,0 +1,354 @@
+[   
+  {
+    "id": "A0000000-0000-0000-0000-000000000001",
+    "userID": "11111111-1111-1111-1111-111111111111",
+    "doctorName": "Dr. Sandeep Gupta",
+    "title": "Follow up Consultation",
+    "date": "2026-02-25T00:00:00Z",
+    "symptoms": [
+      {
+        "name": "Headache",
+        "description": "Persistent pain in the head, especially in the morning. Continuous for at least one week. Not able to sleep properly at night."
+      },
+      {
+        "name": "Nausea",
+        "description": "Uneasy feeling with urge to vomit. Food seems tasteless."
+      },
+      {
+        "name": "Photophobia",
+        "description": "Light sensitivity during episodes."
+      }
+    ],
+    "questions": [
+      { "text": "Is this related to dehydration?" },
+      { "text": "Should I reduce caffeine?" },
+      { "text": "Is this related to dehydration?" },
+      { "text": "Should I reduce caffeine?" }
+    ],
+    "medications": [
+      {
+        "id": "B0000000-0000-0000-0000-000000000001",
+        "recordID": "C0000000-0000-0000-0000-000000000001",
+        "name": "Amoxicillin",
+        "dosage": "250 mg",
+        "frequency": "thriceDaily",
+        "duration": "From last 7 days",
+        "notes": "Before meals"
+      }
+    ],
+    "records": [
+      {
+        "id": "D0000000-0000-0000-0000-000000000001",
+        "userID": "11111111-1111-1111-1111-111111111111",
+        "title": "General Physician Note",
+        "recordType": "prescription",
+        "healthFacilityName": "Green Valley Clinic",
+        "summary": "Advice for headache and fatigue management",
+        "dateAdded": "2026-03-22T00:00:00Z",
+        "documentDate": "2026-03-22T00:00:00Z",
+        "files": [
+          { "filePath": "gp_note_2026.pdf", "fileType": "pdf" }
+        ],
+        "extractedData": {
+          "medications": [
+            {
+              "id": "B0000000-0000-0000-0000-000000000001",
+              "recordID": "C0000000-0000-0000-0000-000000000001",
+              "name": "Amoxicillin",
+              "dosage": "250 mg",
+              "frequency": "thriceDaily",
+              "duration": "From last 7 days",
+              "notes": "Before meals"
+            },
+            {
+              "id": "B0000000-0000-0000-0000-000000000002",
+              "recordID": "C0000000-0000-0000-0000-000000000002",
+              "name": "Diclofenac",
+              "dosage": "50 mg",
+              "frequency": "twiceDaily",
+              "duration": "From last 5 days",
+              "notes": "With water"
+            }
+          ],
+          "followUpDate": "2026-04-06T00:00:00Z"
+        }
+      }
+    ],
+    "notes": "Hydration plan and 20-20-20 rule advised.",
+    "status": "pending",
+    "createdAt": "2026-02-25T00:00:00Z"
+  },
+  {
+    "id": "A0000000-0000-0000-0000-000000000002",
+    "userID": "11111111-1111-1111-1111-111111111111",
+    "doctorName": "Dr. Vijay Sinha",
+    "title": "Follow up Consultation",
+    "date": "2026-03-07T00:00:00Z",
+    "symptoms": [
+      {
+        "name": "Fatigue",
+        "description": "Low energy through the afternoon."
+      },
+      {
+        "name": "Craving",
+        "description": "Sugar cravings after lunch."
+      },
+      {
+        "name": "Bloating",
+        "description": "Fullness after heavy meals."
+      },
+      {
+        "name": "Irritability",
+        "description": "Short temper when hungry."
+      }
+    ],
+    "questions": [
+      { "text": "Should I adjust my sleep schedule?" }
+    ],
+    "medications": [
+      {
+        "id": "B0000000-0000-0000-0000-000000000003",
+        "recordID": "C0000000-0000-0000-0000-000000000003",
+        "name": "Diclofenac",
+        "dosage": "50 mg",
+        "frequency": "twiceDaily",
+        "duration": "From last 5 days",
+        "notes": "With water"
+      }
+    ],
+    "records": [
+      {
+        "id": "D0000000-0000-0000-0000-000000000001",
+        "userID": "11111111-1111-1111-1111-111111111111",
+        "title": "General Physician Note",
+        "recordType": "prescription",
+        "healthFacilityName": "Green Valley Clinic",
+        "summary": "Advice for headache and fatigue management",
+        "dateAdded": "2026-03-22T00:00:00Z",
+        "documentDate": "2026-03-22T00:00:00Z",
+        "files": [
+          { "filePath": "gp_note_2026.pdf", "fileType": "pdf" }
+        ],
+        "extractedData": {
+          "medications": [
+            {
+              "id": "B0000000-0000-0000-0000-000000000001",
+              "recordID": "C0000000-0000-0000-0000-000000000001",
+              "name": "Amoxicillin",
+              "dosage": "250 mg",
+              "frequency": "thriceDaily",
+              "duration": "From last 7 days",
+              "notes": "Before meals"
+            },
+            {
+              "id": "B0000000-0000-0000-0000-000000000002",
+              "recordID": "C0000000-0000-0000-0000-000000000002",
+              "name": "Diclofenac",
+              "dosage": "50 mg",
+              "frequency": "twiceDaily",
+              "duration": "From last 5 days",
+              "notes": "With water"
+            }
+          ],
+          "followUpDate": "2026-04-06T00:00:00Z"
+        }
+      }
+    ],
+    "notes": "Recommended balanced macros and fiber.",
+    "status": "completed",
+    "createdAt": "2026-03-07T00:00:00Z"
+  },
+  {
+    "id": "A0000000-0000-0000-0000-000000000003",
+    "userID": "11111111-1111-1111-1111-111111111111",
+    "doctorName": "Dr. Anupam Jain",
+    "title": "Sleep Hygiene Check",
+    "date": "2026-03-15T00:00:00Z",
+    "symptoms": [
+      {
+        "name": "Insomnia",
+        "description": "Difficulty falling asleep."
+      },
+      {
+        "name": "Restlessness",
+        "description": "Frequent nighttime awakenings."
+      },
+      {
+        "name": "Dreaminess",
+        "description": "Vivid dreams near morning."
+      },
+      {
+        "name": "DryMouth",
+        "description": "Wakes up with dry mouth."
+      },
+      {
+        "name": "Snoring",
+        "description": "Reported by partner."
+      }
+    ],
+    "questions": [
+      { "text": "Do I need further blood tests?" }
+    ],
+    "medications": [],
+    "records": [],
+    "notes": "Set consistent bedtime and limit screens.",
+    "status": "completed",
+    "createdAt": "2026-03-15T00:00:00Z"
+  },
+  {
+    "id": "A0000000-0000-0000-0000-000000000004",
+    "userID": "11111111-1111-1111-1111-111111111111",
+    "doctorName": "Dr. Sandeep Gupta",
+    "title": "High Blood Pressure",
+    "date": "2026-03-22T00:00:00Z",
+    "symptoms": [
+      {
+        "name": "Headache",
+        "description": "Less frequent, intensity 3/10."
+      },
+      {
+        "name": "Photophobia",
+        "description": "Occurs only with bright sun."
+      },
+      {
+        "name": "Tension",
+        "description": "Neck tightness late evening."
+      }
+    ],
+    "questions": [
+      { "text": "Can I resume workouts?" }
+    ],
+    "medications": [],
+    "records": [
+      {
+        "id": "D0000000-0000-0000-0000-000000000001",
+        "userID": "11111111-1111-1111-1111-111111111111",
+        "title": "General Physician Note",
+        "recordType": "prescription",
+        "healthFacilityName": "Green Valley Clinic",
+        "summary": "Advice for headache and fatigue management",
+        "dateAdded": "2026-03-22T00:00:00Z",
+        "documentDate": "2026-03-22T00:00:00Z",
+        "files": [
+          { "filePath": "gp_note_2026.pdf", "fileType": "pdf" }
+        ],
+        "extractedData": {
+          "medications": [
+            {
+              "id": "B0000000-0000-0000-0000-000000000001",
+              "recordID": "C0000000-0000-0000-0000-000000000001",
+              "name": "Amoxicillin",
+              "dosage": "250 mg",
+              "frequency": "thriceDaily",
+              "duration": "From last 7 days",
+              "notes": "Before meals"
+            },
+            {
+              "id": "B0000000-0000-0000-0000-000000000002",
+              "recordID": "C0000000-0000-0000-0000-000000000002",
+              "name": "Diclofenac",
+              "dosage": "50 mg",
+              "frequency": "twiceDaily",
+              "duration": "From last 5 days",
+              "notes": "With water"
+            }
+          ],
+          "followUpDate": "2026-04-06T00:00:00Z"
+        }
+      }
+    ],
+    "notes": "Continue hydration and posture checks.",
+    "status": "completed",
+    "createdAt": "2026-03-22T00:00:00Z"
+  },
+  {
+    "id": "A0000000-0000-0000-0000-000000000005",
+    "userID": "11111111-1111-1111-1111-111111111111",
+    "doctorName": "Dr. Vijay Sinha",
+    "title": "High Sugar level",
+    "date": "2026-03-27T00:00:00Z",
+    "symptoms": [
+      {
+        "name": "Fatigue",
+        "description": "Mild slump after 3 PM."
+      },
+      {
+        "name": "Headache",
+        "description": "Brief ache after long calls."
+      },
+      {
+        "name": "DryMouth",
+        "description": "Forgets to sip water."
+      },
+      {
+        "name": "Anxiety",
+        "description": "Work deadlines causing stress."
+      }
+    ],
+    "questions": [
+      { "text": "Any red flags to watch?" },
+      { "text": "Should I try magnesium?" }
+    ],
+    "medications": [
+      {
+        "id": "B0000000-0000-0000-0000-000000000001",
+        "recordID": "C0000000-0000-0000-0000-000000000001",
+        "name": "Amoxicillin",
+        "dosage": "250 mg",
+        "frequency": "thriceDaily",
+        "duration": "From last 7 days",
+        "notes": "Before meals"
+      },
+      {
+        "id": "B0000000-0000-0000-0000-000000000002",
+        "recordID": "C0000000-0000-0000-0000-000000000002",
+        "name": "Diclofenac",
+        "dosage": "50 mg",
+        "frequency": "twiceDaily",
+        "duration": "From last 5 days",
+        "notes": "With water"
+      }
+    ],
+    "records": [
+      {
+        "id": "D0000000-0000-0000-0000-000000000001",
+        "userID": "11111111-1111-1111-1111-111111111111",
+        "title": "General Physician Note",
+        "recordType": "prescription",
+        "healthFacilityName": "Green Valley Clinic",
+        "summary": "Advice for headache and fatigue management",
+        "dateAdded": "2026-03-22T00:00:00Z",
+        "documentDate": "2026-03-22T00:00:00Z",
+        "files": [
+          { "filePath": "gp_note_2026.pdf", "fileType": "pdf" }
+        ],
+        "extractedData": {
+          "medications": [
+            {
+              "id": "B0000000-0000-0000-0000-000000000001",
+              "recordID": "C0000000-0000-0000-0000-000000000001",
+              "name": "Amoxicillin",
+              "dosage": "250 mg",
+              "frequency": "thriceDaily",
+              "duration": "From last 7 days",
+              "notes": "Before meals"
+            },
+            {
+              "id": "B0000000-0000-0000-0000-000000000002",
+              "recordID": "C0000000-0000-0000-0000-000000000002",
+              "name": "Diclofenac",
+              "dosage": "50 mg",
+              "frequency": "twiceDaily",
+              "duration": "From last 5 days",
+              "notes": "With water"
+            }
+          ],
+          "followUpDate": "2026-04-06T00:00:00Z"
+        }
+      }
+    ],
+    "notes": "Introduce micro-breaks and short walks.",
+    "status": "completed",
+    "createdAt": "2026-03-27T00:00:00Z"
+  }
+]

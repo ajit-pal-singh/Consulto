@@ -12,8 +12,13 @@ class ConsultViewController: UIViewController,
     @IBOutlet weak var blurEffectView: UIVisualEffectView!
 
     // MARK: - Data Source
-    private var consultSessions = SampleData.consultSessions
-
+    private var consultSessions: [ConsultSession] = []
+    private var allConsultSessions: [ConsultSession] = []
+    
+    // For Filters
+    var currentDoctorFilters: Set<String> = []
+    var currentDateFilter: (start: Date, end: Date)?
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         print("[ConsultVC] init(coder:) called")
@@ -27,6 +32,11 @@ class ConsultViewController: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.tintAdjustmentMode = .normal
+
+        // Load persisted sessions
+        allConsultSessions = ConsultSessionStore.shared.loadSessions()
+        applyFilters()
 
         navigationController?.delegate = self
         consultCollectionView.delegate = self
@@ -55,9 +65,10 @@ class ConsultViewController: UIViewController,
         if let userInfo = notification.userInfo,
             let updatedSession = userInfo["session"] as? ConsultSession
         {
-            if let index = consultSessions.firstIndex(where: { $0.id == updatedSession.id }) {
-                consultSessions[index] = updatedSession
-                consultCollectionView.reloadItems(at: [IndexPath(item: index, section: 0)])
+            if let index = allConsultSessions.firstIndex(where: { $0.id == updatedSession.id }) {
+                allConsultSessions[index] = updatedSession
+                ConsultSessionStore.shared.updateSession(updatedSession)
+                applyFilters()
             }
         }
     }
@@ -66,8 +77,9 @@ class ConsultViewController: UIViewController,
         if let userInfo = notification.userInfo,
            let newSession = userInfo["session"] as? ConsultSession
         {
-            consultSessions.insert(newSession, at: 0)
-            consultCollectionView.insertItems(at: [IndexPath(item: 0, section: 0)])
+            allConsultSessions.insert(newSession, at: 0)
+            ConsultSessionStore.shared.addSession(newSession)
+            applyFilters()
         }
     }
     
@@ -107,6 +119,29 @@ class ConsultViewController: UIViewController,
         navigationController?.pushViewController(detailVC, animated: true)
     }
 
+    func applyFilters() {
+        var filtered = allConsultSessions
+        
+        if !currentDoctorFilters.isEmpty {
+            filtered = filtered.filter { currentDoctorFilters.contains($0.doctorName) }
+        }
+        
+        if let dates = currentDateFilter {
+            let calendar = Calendar.current
+            let start = calendar.startOfDay(for: dates.start)
+            let end = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: dates.end))!
+            
+            filtered = filtered.filter { session in
+                let targetDate = session.date
+                return targetDate >= start && targetDate < end
+            }
+        }
+        
+        consultSessions = filtered
+        consultCollectionView.reloadData()
+        setupHeaderActions()
+    }
+
     func setupHeaderActions() {
         guard let container = headerActionsContainerView else { return }
         print("[ConsultVC] Setting up header actions")
@@ -114,12 +149,51 @@ class ConsultViewController: UIViewController,
         container.subviews.forEach { $0.removeFromSuperview() }
         container.backgroundColor = .clear
 
-        let swiftUIView = ConsultHeaderActionsView {
-            print("Add Consult Tapped")
-            
-            self.performSegue(withIdentifier: "prepare_consultation", sender: nil)
-            
+        let isDateSelected = currentDateFilter != nil
+        var dateTitle = "Filter by Date"
+        if let dates = currentDateFilter {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .short
+            if dates.start == dates.end {
+                dateTitle = formatter.string(from: dates.start)
+            } else {
+                dateTitle = "\(formatter.string(from: dates.start)) - \(formatter.string(from: dates.end))"
+            }
         }
+        
+        let dateAction = UIAction(title: dateTitle, image: UIImage(systemName: "calendar"), state: isDateSelected ? .on : .off) { [weak self] _ in
+            if isDateSelected {
+                self?.currentDateFilter = nil
+                self?.applyFilters()
+            } else {
+                self?.openDatePicker()
+            }
+        }
+        
+        let doctorAction = UIAction(title: "Filter by Doctor", image: UIImage(systemName: "stethoscope"), state: currentDoctorFilters.isEmpty ? .off : .on) { [weak self] _ in
+            self?.openDoctorSelection()
+        }
+        
+        let clearFiltersAction = UIAction(title: "Remove all filters", image: UIImage(systemName: "xmark.circle"), attributes: .destructive) { [weak self] _ in
+            self?.currentDoctorFilters.removeAll()
+            self?.currentDateFilter = nil
+            self?.applyFilters()
+        }
+        
+        var menuChildren: [UIMenuElement] = [dateAction, doctorAction]
+        if !currentDoctorFilters.isEmpty || currentDateFilter != nil {
+            menuChildren.insert(clearFiltersAction, at: 0)
+        }
+        
+        let menu = UIMenu(title: "", children: menuChildren)
+
+        let swiftUIView = ConsultHeaderActionsView(
+            onAddAction: { [weak self] in
+                print("Add Consult Tapped")
+                self?.performSegue(withIdentifier: "prepare_consultation", sender: nil)
+            },
+            filterMenu: menu
+        )
 
         let hostingController = UIHostingController(rootView: swiftUIView)
         hostingController.view.backgroundColor = .clear
@@ -136,6 +210,53 @@ class ConsultViewController: UIViewController,
         ])
 
         hostingController.didMove(toParent: self)
+    }
+
+    func openDatePicker() {
+        let dateVC = DateFilterViewController()
+        dateVC.onFilterSingleDate = { [weak self] selectedDate in
+            self?.currentDateFilter = (start: selectedDate, end: selectedDate)
+            self?.applyFilters()
+        }
+        dateVC.onFilterDateRange = { [weak self] start, end in
+            self?.currentDateFilter = (start: min(start, end), end: max(start, end))
+            self?.applyFilters()
+        }
+        
+        dateVC.modalPresentationStyle = .popover
+        dateVC.preferredContentSize = CGSize(width: 320, height: 420)
+        
+        if let popover = dateVC.popoverPresentationController {
+            popover.sourceView = self.headerActionsContainerView
+            popover.sourceRect = self.headerActionsContainerView?.bounds ?? .zero
+            popover.delegate = self
+            popover.permittedArrowDirections = .up
+        }
+        present(dateVC, animated: true)
+    }
+    
+    func openDoctorSelection() {
+        let doctorNames = Array(Set(allConsultSessions.map { $0.doctorName })).sorted()
+        
+        let doctorVC = DoctorSelectionViewController()
+        doctorVC.doctorNames = doctorNames
+        doctorVC.selectedDoctors = currentDoctorFilters
+        doctorVC.onDoctorSelectionChanged = { [weak self] doctors in
+            self?.currentDoctorFilters = doctors
+            self?.applyFilters()
+        }
+        
+        doctorVC.modalPresentationStyle = .popover
+        let popoverHeight = min(doctorNames.count * 44 + 40, 350)
+        doctorVC.preferredContentSize = CGSize(width: 250, height: popoverHeight)
+        
+        if let popover = doctorVC.popoverPresentationController {
+            popover.sourceView = self.headerActionsContainerView
+            popover.sourceRect = self.headerActionsContainerView?.bounds ?? .zero
+            popover.delegate = self
+            popover.permittedArrowDirections = .up
+        }
+        present(doctorVC, animated: true)
     }
 
     override func viewDidLayoutSubviews() {
@@ -229,15 +350,40 @@ class ConsultViewController: UIViewController,
             
             let toggleStatusAction = UIAction(title: toggleTitle, image: UIImage(systemName: toggleIcon)) { _ in
                 self?.consultSessions[indexPath.item].status = isPending ? .completed : .pending
+                if let updated = self?.consultSessions[indexPath.item] {
+                    ConsultSessionStore.shared.updateSession(updated)
+                }
                 self?.consultCollectionView.reloadItems(at: [indexPath])
             }
             
-            let deleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
-                self?.consultSessions.remove(at: indexPath.item)
-                self?.consultCollectionView.deleteItems(at: [indexPath])
+            let deleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { [weak self] _ in
+                self?.presentDeleteConfirmation(for: session)
             }
             
             return UIMenu(title: "", children: [toggleStatusAction, deleteAction])
+        }
+    }
+    
+    private func presentDeleteConfirmation(for session: ConsultSession) {
+        let alert = UIAlertController(
+            title: "Delete Consultation",
+            message: "Are you sure you want to delete this consultation details?",
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+            self?.deleteSession(session)
+        })
+
+        present(alert, animated: true)
+    }
+
+    private func deleteSession(_ session: ConsultSession) {
+        if let index = allConsultSessions.firstIndex(where: { $0.id == session.id }) {
+            allConsultSessions.remove(at: index)
+            ConsultSessionStore.shared.deleteSession(id: session.id)
+            applyFilters()
         }
     }
     
@@ -285,5 +431,11 @@ class ConsultViewController: UIViewController,
         section.interGroupSpacing = 16
 
         return UICollectionViewCompositionalLayout(section: section)
+    }
+}
+
+extension ConsultViewController: UIPopoverPresentationControllerDelegate {
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .none
     }
 }

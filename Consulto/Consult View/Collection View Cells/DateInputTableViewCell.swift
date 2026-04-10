@@ -21,6 +21,14 @@ class DateInputTableViewCell: UITableViewCell {
         dateTextField.isEnabled = false
         contentView.sendSubviewToBack(compactDatePicker)
         compactDatePicker?.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
+        compactDatePicker?.addTarget(self, action: #selector(datePickerOpened), for: .editingDidBegin)
+    }
+
+    @objc func datePickerOpened() {
+        if dateTextField.text?.isEmpty ?? true {
+            setDate(compactDatePicker.date)
+            didChangeDate?(compactDatePicker.date)
+        }
     }
 
     @objc func dateChanged(_ sender: UIDatePicker) {
@@ -46,11 +54,13 @@ class DateInputTableViewCell: UITableViewCell {
         placeholder: String,
         date: Date? = nil,
         mode: UIDatePicker.Mode = .date,
-        displayFormat: String = "dd-MM-yyyy"
+        displayFormat: String = "dd-MM-yyyy",
+        minimumDate: Date? = nil
     ) {
         self.displayFormat = displayFormat
         dateTextField.placeholder = placeholder
         compactDatePicker?.datePickerMode = mode
+        compactDatePicker?.minimumDate = minimumDate
 
         if let date {
             setDate(date)

@@ -41,6 +41,30 @@ class SymptomCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         onChevronTap = nil
+        chevronImageView.isHidden = false
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        guard let text = descriptionLabel.text, !text.isEmpty else {
+            chevronImageView.isHidden = true
+            return
+        }
+        
+        let width = descriptionLabel.bounds.width
+        if width > 0 {
+            let maxSize = CGSize(width: width, height: .greatestFiniteMagnitude)
+            let exactSize = text.boundingRect(
+                with: maxSize,
+                options: .usesLineFragmentOrigin,
+                attributes: [.font: descriptionLabel.font!],
+                context: nil
+            )
+            
+            let isMultiline = exactSize.height > descriptionLabel.font.lineHeight + 5
+            chevronImageView.isHidden = !isMultiline
+        }
     }
 
     func configure(title: String, description: String, isExpanded: Bool) {
@@ -51,8 +75,11 @@ class SymptomCollectionViewCell: UICollectionViewCell {
         descriptionLabel.numberOfLines = isExpanded ? 0 : 1
 
         UIView.animate(withDuration: 0.25) {
-            self.chevronImageView.transform =
-                isExpanded ? CGAffineTransform(rotationAngle: .pi) : .identity
+            if self.chevronImageView.isHidden == false {
+                self.chevronImageView.transform = isExpanded ? CGAffineTransform(rotationAngle: .pi) : .identity
+            } else {
+                self.chevronImageView.transform = .identity
+            }
         }
     }
 

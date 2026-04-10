@@ -752,7 +752,6 @@
                         <segue destination="r4g-4g-uYX" kind="relationship" relationship="viewControllers" id="5QY-j1-IAG"/>
                         <segue destination="UN9-LM-rTU" kind="relationship" relationship="viewControllers" id="GpQ-9z-HKU"/>
                         <segue destination="DuM-4y-Vev" kind="relationship" relationship="viewControllers" id="4iB-Tk-VR2"/>
-                        <segue destination="2Gu-Ho-0xQ" kind="relationship" relationship="viewControllers" id="aod-ph-97G"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sM4-Ke-kbn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -791,22 +790,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="clZ-M0-qMK" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-764" y="920"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="meR-up-BoN">
-            <objects>
-                <viewController id="2Gu-Ho-0xQ" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="d1p-f5-wgX">
-                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="W3Q-xQ-gNw"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" systemItem="search" id="mfH-Um-lXb"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="NdS-4N-Bru" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-537" y="1492"/>
         </scene>
         <!--Vital-->
         <scene sceneID="BCA-28-xnX">

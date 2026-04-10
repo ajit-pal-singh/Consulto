@@ -50,7 +50,9 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
         dimmingOverlayView?.isHidden = true
         dimmingOverlayView?.isUserInteractionEnabled = false
         
-        setupCollectionView()
+        // Prevent background elements from turning gray/black when popover is presented
+        self.view.tintAdjustmentMode = .normal
+                setupCollectionView()
         setupChipsView()
         setupHeaderActions()
         
@@ -74,26 +76,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             blurEffectView?.isHidden = true
         }
         
-        //Temporary Reminder section as tab
-        if let tabBarController = self.tabBarController,
-               !(tabBarController.viewControllers?.contains(where: { $0.tabBarItem.title == "Reminders" }) ?? false) {
 
-                var viewControllers = tabBarController.viewControllers ?? []
-
-                let storyboard = UIStoryboard(name: "RemindersScreen", bundle: nil)
-                let remindersVC = storyboard.instantiateViewController(withIdentifier: "RemindersVC")
-
-                let nav = UINavigationController(rootViewController: remindersVC)
-
-                nav.tabBarItem = UITabBarItem(
-                    title: "Reminders",
-                    image: UIImage(systemName: "bell"),
-                    selectedImage: UIImage(systemName: "bell.fill")
-                )
-
-                viewControllers.append(nav)
-                tabBarController.viewControllers = viewControllers
-            }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -110,20 +93,63 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
         dismiss(animated: true)
     }
     
+    var currentDoctorFilters: Set<String> = []
+    var currentFacilityFilters: Set<String> = []
+    var currentDateFilter: (start: Date, end: Date)?
+
     func setupHeaderActions() {
         guard let container = headerActionsContainerView else { return }
-        
-        // Clear any existing subviews
         container.subviews.forEach { $0.removeFromSuperview() }
         container.backgroundColor = .clear
+        
+        let isDateSelected = currentDateFilter != nil
+        var dateTitle = "Filter by Date"
+        if let dates = currentDateFilter {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .short
+            if dates.start == dates.end {
+                dateTitle = formatter.string(from: dates.start)
+            } else {
+                dateTitle = "\(formatter.string(from: dates.start)) - \(formatter.string(from: dates.end))"
+            }
+        }
+        
+        let dateAction = UIAction(title: dateTitle, image: UIImage(systemName: "calendar"), state: isDateSelected ? .on : .off) { [weak self] _ in
+            if isDateSelected {
+                self?.currentDateFilter = nil
+                self?.applyFilters()
+            } else {
+                self?.openDatePicker()
+            }
+        }
+        
+        let doctorAction = UIAction(title: "Filter by Doctor", image: UIImage(systemName: "stethoscope"), state: currentDoctorFilters.isEmpty ? .off : .on) { [weak self] _ in
+            self?.openDoctorSelection()
+        }
+        
+        let facilityAction = UIAction(title: "Filter by Health Facility", image: UIImage(systemName: "building.2.fill"), state: currentFacilityFilters.isEmpty ? .off : .on) { [weak self] _ in
+            self?.openFacilitySelection()
+        }
+        
+        let clearFiltersAction = UIAction(title: "Remove all filters", image: UIImage(systemName: "xmark.circle"), attributes: .destructive) { [weak self] _ in
+            self?.currentDoctorFilters.removeAll()
+            self?.currentFacilityFilters.removeAll()
+            self?.currentDateFilter = nil
+            self?.applyFilters()
+        }
+        
+        var menuChildren: [UIMenuElement] = [dateAction, doctorAction, facilityAction]
+        if !currentDoctorFilters.isEmpty || !currentFacilityFilters.isEmpty || currentDateFilter != nil {
+            menuChildren.insert(clearFiltersAction, at: 0)
+        }
+        
+        let menu = UIMenu(title: "", children: menuChildren)
         
         let swiftUIView = HeaderActionsView(
             onAddAction: { [weak self] in
                 self?.showAttachmentPlatter()
             },
-            onFilterAction: {
-                print("Filter Tapped")
-            }
+            filterMenu: menu
         )
         
         let hostingController = UIHostingController(rootView: swiftUIView)
@@ -196,31 +222,137 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             allRecords = []
             print("Failed to load records: \(error)")
         }
+        setupHeaderActions()
         filterRecords(by: filterViewModel.selectedFilter)
     }
     
     func filterRecords(by filter: String) {
-        if filter == "All" {
-            records = allRecords
-        } else {
-            records = allRecords.filter { record in
-                switch filter {
+        applyFilters()
+    }
+    
+    func applyFilters() {
+        var filtered = allRecords
+        let chipFilter = filterViewModel.selectedFilter
+        
+        if chipFilter != "All" {
+            filtered = filtered.filter { record in
+                switch chipFilter {
                 case "Prescription": return record.recordType == .prescription
                 case "Lab Report": return record.recordType == .labReport
                 case "Discharge": return record.recordType == .dischargeSummary
                 case "Scan": return record.recordType == .scan
                 case "Other": return record.recordType == .other
-                default: return false
+                default: return true
                 }
             }
         }
+        
+        if !currentDoctorFilters.isEmpty {
+            filtered = filtered.filter { currentDoctorFilters.contains($0.title) }
+        }
+        
+        if !currentFacilityFilters.isEmpty {
+            filtered = filtered.filter { record in
+                guard let facility = record.healthFacilityName else { return false }
+                return currentFacilityFilters.contains(facility)
+            }
+        }
+        
+        if let dates = currentDateFilter {
+            let calendar = Calendar.current
+            let start = calendar.startOfDay(for: dates.start)
+            let end = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: dates.end))!
+            
+            filtered = filtered.filter { record in
+                let targetDate = record.documentDate ?? record.dateAdded
+                return targetDate >= start && targetDate < end
+            }
+        }
+        
+        records = filtered
         recordsCollectionView.reloadData()
+        setupHeaderActions() // This re-renders the checkmarks correctly
+    }
+    
+    func openDatePicker() {
+        let dateVC = DateFilterViewController()
+        dateVC.onFilterSingleDate = { [weak self] selectedDate in
+            self?.currentDateFilter = (start: selectedDate, end: selectedDate)
+            self?.applyFilters()
+        }
+        dateVC.onFilterDateRange = { [weak self] start, end in
+            self?.currentDateFilter = (start: min(start, end), end: max(start, end))
+            self?.applyFilters()
+        }
+        
+        dateVC.modalPresentationStyle = .popover
+        dateVC.preferredContentSize = CGSize(width: 320, height: 420)
+        
+        if let popover = dateVC.popoverPresentationController {
+            popover.sourceView = self.headerActionsContainerView
+            popover.sourceRect = self.headerActionsContainerView?.bounds ?? .zero
+            popover.delegate = self
+            popover.permittedArrowDirections = .up
+            // Removed passthroughViews so the background is disabled and tap-to-dismiss works properly.
+        }
+        present(dateVC, animated: true)
+    }
+    
+    func openDoctorSelection() {
+        let doctorNames = Array(Set(allRecords.compactMap {
+            $0.title.lowercased().hasPrefix("dr") ? $0.title : nil
+        })).sorted()
+        
+        let doctorVC = DoctorSelectionViewController()
+        doctorVC.doctorNames = doctorNames
+        doctorVC.selectedDoctors = currentDoctorFilters
+        doctorVC.onDoctorSelectionChanged = { [weak self] doctors in
+            self?.currentDoctorFilters = doctors
+            self?.applyFilters()
+        }
+        
+        doctorVC.modalPresentationStyle = .popover
+        let popoverHeight = min(doctorNames.count * 44 + 40, 350)
+        doctorVC.preferredContentSize = CGSize(width: 250, height: popoverHeight)
+        
+        if let popover = doctorVC.popoverPresentationController {
+            popover.sourceView = self.headerActionsContainerView
+            popover.sourceRect = self.headerActionsContainerView?.bounds ?? .zero
+            popover.delegate = self
+            popover.permittedArrowDirections = .up
+            // Removed passthroughViews so the background is disabled and tap-to-dismiss works properly.
+        }
+        present(doctorVC, animated: true)
+    }
+
+    func openFacilitySelection() {
+        let facilityNames = Array(Set(allRecords.compactMap { $0.healthFacilityName })).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }.sorted()
+        
+        let facilityVC = FacilitySelectionViewController()
+        facilityVC.facilityNames = facilityNames
+        facilityVC.selectedFacilities = currentFacilityFilters
+        facilityVC.onFacilitySelectionChanged = { [weak self] facilities in
+            self?.currentFacilityFilters = facilities
+            self?.applyFilters()
+        }
+        
+        facilityVC.modalPresentationStyle = .popover
+        let popoverHeight = min(max(facilityNames.count * 44 + 40, 100), 350)
+        facilityVC.preferredContentSize = CGSize(width: 250, height: CGFloat(popoverHeight))
+        
+        if let popover = facilityVC.popoverPresentationController {
+            popover.sourceView = self.headerActionsContainerView
+            popover.sourceRect = self.headerActionsContainerView?.bounds ?? .zero
+            popover.delegate = self
+            popover.permittedArrowDirections = .up
+        }
+        present(facilityVC, animated: true)
     }
 
     private func presentDeleteConfirmation(for record: HealthRecord) {
         let alert = UIAlertController(
-            title: "Delete Record?",
-            message: "This will remove the record from your saved records.",
+            title: "Delete Record",
+            message: "Are you sure you want to delete this record?",
             preferredStyle: .alert
         )
 
@@ -757,5 +889,249 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
     ) -> UITargetedPreview? {
         targetedPreview(for: configuration)
+    }
+}
+
+extension RecordsViewController: UIPopoverPresentationControllerDelegate {
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .none
+    }
+}
+
+class DateFilterViewController: UIViewController {
+    var onFilterSingleDate: ((Date) -> Void)?
+    var onFilterDateRange: ((Date, Date) -> Void)?
+    
+    let segmentedControl = UISegmentedControl(items: ["Specific Date", "Custom Range"])
+    let singleDatePicker = UIDatePicker()
+    let startDatePicker = UIDatePicker()
+    let endDatePicker = UIDatePicker()
+    
+    let singleDateContainer = UIView()
+    let dateRangeContainer = UIStackView()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
+        
+        singleDatePicker.datePickerMode = .date
+        singleDatePicker.maximumDate = Date()
+        if #available(iOS 14.0, *) {
+            singleDatePicker.preferredDatePickerStyle = .inline
+        }
+        singleDatePicker.addTarget(self, action: #selector(singleDateChanged), for: .valueChanged)
+        
+        singleDateContainer.addSubview(singleDatePicker)
+        singleDatePicker.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            singleDatePicker.topAnchor.constraint(equalTo: singleDateContainer.topAnchor),
+            singleDatePicker.bottomAnchor.constraint(equalTo: singleDateContainer.bottomAnchor),
+            singleDatePicker.leadingAnchor.constraint(equalTo: singleDateContainer.leadingAnchor),
+            singleDatePicker.trailingAnchor.constraint(equalTo: singleDateContainer.trailingAnchor)
+        ])
+        
+        dateRangeContainer.axis = .vertical
+        dateRangeContainer.spacing = 24
+        dateRangeContainer.alignment = .fill
+        
+        startDatePicker.datePickerMode = .date
+        startDatePicker.maximumDate = Date()
+        if #available(iOS 14.0, *) {
+            startDatePicker.preferredDatePickerStyle = .compact
+        }
+        startDatePicker.addTarget(self, action: #selector(rangeDateChanged), for: .valueChanged)
+        
+        endDatePicker.datePickerMode = .date
+        endDatePicker.maximumDate = Date()
+        if #available(iOS 14.0, *) {
+            endDatePicker.preferredDatePickerStyle = .compact
+        }
+        endDatePicker.addTarget(self, action: #selector(rangeDateChanged), for: .valueChanged)
+        
+        let startLabel = UILabel()
+        startLabel.text = "Start Date"
+        startLabel.font = .systemFont(ofSize: 16, weight: .medium)
+        let startRow = UIStackView(arrangedSubviews: [startLabel, startDatePicker])
+        startRow.axis = .horizontal
+        startRow.distribution = .equalSpacing
+        
+        let endLabel = UILabel()
+        endLabel.text = "End Date"
+        endLabel.font = .systemFont(ofSize: 16, weight: .medium)
+        let endRow = UIStackView(arrangedSubviews: [endLabel, endDatePicker])
+        endRow.axis = .horizontal
+        endRow.distribution = .equalSpacing
+        
+        dateRangeContainer.addArrangedSubview(startRow)
+        dateRangeContainer.addArrangedSubview(endRow)
+        dateRangeContainer.isHidden = true
+        
+        let spacer = UIView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        spacer.heightAnchor.constraint(greaterThanOrEqualToConstant: 0).isActive = true
+        dateRangeContainer.addArrangedSubview(spacer)
+        
+        let mainStack = UIStackView(arrangedSubviews: [segmentedControl, singleDateContainer, dateRangeContainer])
+        mainStack.axis = .vertical
+        mainStack.spacing = 20
+        mainStack.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(mainStack)
+        
+        NSLayoutConstraint.activate([
+            mainStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            mainStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            mainStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            mainStack.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+        ])
+    }
+    
+    @objc func segmentChanged() {
+        singleDateContainer.isHidden = segmentedControl.selectedSegmentIndex != 0
+        dateRangeContainer.isHidden = segmentedControl.selectedSegmentIndex == 0
+    }
+    
+    @objc func singleDateChanged() {
+        onFilterSingleDate?(singleDatePicker.date)
+        dismiss(animated: true)
+    }
+    
+    @objc func rangeDateChanged() {
+        onFilterDateRange?(startDatePicker.date, endDatePicker.date)
+        // Does not dismiss when range changes so user can easily adjust both ends!
+    }
+}
+
+class DoctorSelectionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    var doctorNames: [String] = []
+    var selectedDoctors: Set<String> = []
+    var onDoctorSelectionChanged: ((Set<String>) -> Void)?
+    
+    let tableView = UITableView()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.rowHeight = 44
+        
+        let headerLabel = UILabel()
+        headerLabel.text = "Select Doctors"
+        headerLabel.font = .systemFont(ofSize: 16, weight: .bold)
+        headerLabel.textAlignment = .center
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 40))
+        headerLabel.frame = headerView.bounds
+        headerLabel.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        headerView.addSubview(headerLabel)
+        tableView.tableHeaderView = headerView
+        
+        view.addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return doctorNames.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let doctor = doctorNames[indexPath.row]
+        cell.textLabel?.text = doctor
+        cell.accessoryType = selectedDoctors.contains(doctor) ? .checkmark : .none
+        cell.selectionStyle = .none
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let doctor = doctorNames[indexPath.row]
+        if selectedDoctors.contains(doctor) {
+            selectedDoctors.remove(doctor)
+        } else {
+            selectedDoctors.insert(doctor)
+        }
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+        onDoctorSelectionChanged?(selectedDoctors)
+    }
+}
+
+class FacilitySelectionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    var facilityNames: [String] = []
+    var selectedFacilities: Set<String> = []
+    var onFacilitySelectionChanged: ((Set<String>) -> Void)?
+    
+    let tableView = UITableView()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.rowHeight = 44
+        
+        let headerLabel = UILabel()
+        headerLabel.text = "Select Health Facilities"
+        headerLabel.font = .systemFont(ofSize: 16, weight: .bold)
+        headerLabel.textAlignment = .center
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 40))
+        headerLabel.frame = headerView.bounds
+        headerLabel.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        headerView.addSubview(headerLabel)
+        tableView.tableHeaderView = headerView
+        
+        view.addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return max(1, facilityNames.count)
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        if facilityNames.isEmpty {
+            cell.textLabel?.text = "No facilities available"
+            cell.textLabel?.textColor = .systemGray
+            cell.accessoryType = .none
+            cell.selectionStyle = .none
+        } else {
+            let facility = facilityNames[indexPath.row]
+            cell.textLabel?.text = facility
+            cell.textLabel?.textColor = .label
+            cell.accessoryType = selectedFacilities.contains(facility) ? .checkmark : .none
+            cell.selectionStyle = .none
+        }
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard !facilityNames.isEmpty else { return }
+        
+        let facility = facilityNames[indexPath.row]
+        if selectedFacilities.contains(facility) {
+            selectedFacilities.remove(facility)
+        } else {
+            selectedFacilities.insert(facility)
+        }
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+        onFacilitySelectionChanged?(selectedFacilities)
     }
 }

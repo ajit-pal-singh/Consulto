@@ -107,6 +107,47 @@ struct Medication: Codable {
     var isSnoozeOn: Bool = false
     var snoozeTime: String?
     var inactiveTimes: [Date] = []
+
+    private enum CodingKeys: String, CodingKey {
+        case id, recordID, name, dosage, frequency, duration, notes
+        case times, mealTiming, repeatDays, isSnoozeOn, snoozeTime, inactiveTimes
+    }
+
+    init(id: UUID, recordID: UUID?, name: String, dosage: String? = nil,
+         frequency: MedicationFrequency? = nil, duration: String? = nil, notes: String? = nil,
+         times: [Date] = [], mealTiming: MealTiming = .none, repeatDays: Set<String> = [],
+         isSnoozeOn: Bool = false, snoozeTime: String? = nil, inactiveTimes: [Date] = []) {
+        self.id = id
+        self.recordID = recordID
+        self.name = name
+        self.dosage = dosage
+        self.frequency = frequency
+        self.duration = duration
+        self.notes = notes
+        self.times = times
+        self.mealTiming = mealTiming
+        self.repeatDays = repeatDays
+        self.isSnoozeOn = isSnoozeOn
+        self.snoozeTime = snoozeTime
+        self.inactiveTimes = inactiveTimes
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        recordID = try container.decodeIfPresent(UUID.self, forKey: .recordID)
+        name = try container.decode(String.self, forKey: .name)
+        dosage = try container.decodeIfPresent(String.self, forKey: .dosage)
+        frequency = try container.decodeIfPresent(MedicationFrequency.self, forKey: .frequency)
+        duration = try container.decodeIfPresent(String.self, forKey: .duration)
+        notes = try container.decodeIfPresent(String.self, forKey: .notes)
+        times = try container.decodeIfPresent([Date].self, forKey: .times) ?? []
+        mealTiming = try container.decodeIfPresent(MealTiming.self, forKey: .mealTiming) ?? .none
+        repeatDays = try container.decodeIfPresent(Set<String>.self, forKey: .repeatDays) ?? []
+        isSnoozeOn = try container.decodeIfPresent(Bool.self, forKey: .isSnoozeOn) ?? false
+        snoozeTime = try container.decodeIfPresent(String.self, forKey: .snoozeTime)
+        inactiveTimes = try container.decodeIfPresent([Date].self, forKey: .inactiveTimes) ?? []
+    }
 }
 
 enum MedicationFrequency: String, Codable {
@@ -132,7 +173,7 @@ enum SnoozeTime: String, CaseIterable, Codable {
 
 // MARK: - Consult
 
-struct ConsultSession {
+struct ConsultSession: Codable {
     let id: UUID
     let userID: UUID
 
@@ -157,15 +198,47 @@ struct ConsultSession {
     var createdAt: Date
 }
 
-struct Question {
+struct Question: Codable {
     var text: String
     var isSelected: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case text
+    }
+
+    init(text: String, isSelected: Bool = false) {
+        self.text = text
+        self.isSelected = isSelected
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        text = try container.decode(String.self, forKey: .text)
+        isSelected = false
+    }
 }
 
-struct Symptom {
+struct Symptom: Codable {
     var name: String
     var description: String
     var isExpanded: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case name, description
+    }
+
+    init(name: String, description: String, isExpanded: Bool = false) {
+        self.name = name
+        self.description = description
+        self.isExpanded = isExpanded
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        description = try container.decode(String.self, forKey: .description)
+        isExpanded = false
+    }
 }
 
 enum ConsultStatus: String, Codable {

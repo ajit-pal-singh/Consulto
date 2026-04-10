@@ -146,120 +146,23 @@ struct SampleData {
         )
     ]
 
-    static let consultSessions: [ConsultSession] = [
-        ConsultSession(
-            id: UUID(),
-            userID: user.id,
-            doctorName: "Dr. Sandeep Gupta",
-            title: "Follow up Consultation",
-            date: Calendar.current.date(byAdding: .day, value: -30, to: Date())!,
-            symptoms: [
-                Symptom(name: "Headache", description: "Persistent pain in the head, especially in the morning. Continuous for at least one week. Not able to sleep properly at night.", isExpanded: false),
-                Symptom(name: "Nausea", description: "Uneasy feeling with urge to vomit. Food seems tasteless.", isExpanded: false),
-                Symptom(name: "Photophobia", description: "Light sensitivity during episodes.", isExpanded: false),
-            ],
-            questions: [
-                Question(text: "Is this related to dehydration?", isSelected: false),
-                Question(text: "Should I reduce caffeine?", isSelected: false),
-                Question(text: "Is this related to dehydration?", isSelected: false),
-                Question(text: "Should I reduce caffeine?", isSelected: false)
-            ],
-            medications: [
-                Medication(id: UUID(), recordID: UUID(), name: "Amoxicillin", dosage: "250 mg", frequency: .thriceDaily, duration: "From last 7 days", notes: "Before meals")
-            ],
-            records: records,
-            notes: "Hydration plan and 20-20-20 rule advised.",
-            status: .pending,
-            createdAt: Calendar.current.date(byAdding: .day, value: -30, to: Date())!
-        ),
-        ConsultSession(
-            id: UUID(),
-            userID: user.id,
-            doctorName: "Dr. Vijay Sinha",
-            title: "Follow up Consultation",
-            date: Calendar.current.date(byAdding: .day, value: -20, to: Date())!,
-            symptoms: [
-                Symptom(name: "Fatigue", description: "Low energy through the afternoon.", isExpanded: false),
-                Symptom(name: "Craving", description: "Sugar cravings after lunch.", isExpanded: false),
-                Symptom(name: "Bloating", description: "Fullness after heavy meals.", isExpanded: false),
-                Symptom(name: "Irritability", description: "Short temper when hungry.", isExpanded: false)
-            ],
-            questions: [
-                Question(text: "Should I adjust my sleep schedule?", isSelected: false)
-            ],
-            medications: [
-                Medication(id: UUID(), recordID: UUID(), name: "Diclofenac", dosage: "50 mg", frequency: .twiceDaily, duration: "From last 5 days", notes: "With water")
-            ],
-            records: records,
-            notes: "Recommended balanced macros and fiber.",
-            status: .completed,
-            createdAt: Calendar.current.date(byAdding: .day, value: -20, to: Date())!
-        ),
-        ConsultSession(
-            id: UUID(),
-            userID: user.id,
-            doctorName: "Dr. Anupam Jain",
-            title: "Sleep Hygiene Check",
-            date: Calendar.current.date(byAdding: .day, value: -12, to: Date())!,
-            symptoms: [
-                Symptom(name: "Insomnia", description: "Difficulty falling asleep.", isExpanded: false),
-                Symptom(name: "Restlessness", description: "Frequent nighttime awakenings.", isExpanded: false),
-                Symptom(name: "Dreaminess", description: "Vivid dreams near morning.", isExpanded: false),
-                Symptom(name: "DryMouth", description: "Wakes up with dry mouth.", isExpanded: false),
-                Symptom(name: "Snoring", description: "Reported by partner.", isExpanded: false)
-            ],
-            questions: [
-                Question(text: "Do I need further blood tests?", isSelected: false)
-            ],
-            medications: [],
-            records: [],
-            notes: "Set consistent bedtime and limit screens.",
-            status: .completed,
-            createdAt: Calendar.current.date(byAdding: .day, value: -12, to: Date())!
-        ),
-        ConsultSession(
-            id: UUID(),
-            userID: user.id,
-            doctorName: "Dr. Sandeep Gupta",
-            title: "High Blood Pressure",
-            date: Calendar.current.date(byAdding: .day, value: -5, to: Date())!,
-            symptoms: [
-                Symptom(name: "Headache", description: "Less frequent, intensity 3/10.", isExpanded: false),
-                Symptom(name: "Photophobia", description: "Occurs only with bright sun.", isExpanded: false),
-                Symptom(name: "Tension", description: "Neck tightness late evening.", isExpanded: false)
-            ],
-            questions: [
-                Question(text: "Can I resume workouts?", isSelected: false)
-            ],
-            medications: [],
-            records: records,
-            notes: "Continue hydration and posture checks.",
-            status: .completed,
-            createdAt: Calendar.current.date(byAdding: .day, value: -5, to: Date())!
-        ),
-        ConsultSession(
-            id: UUID(),
-            userID: user.id,
-            doctorName: "Dr. Vijay Sinha",
-            title: "High Sugar level",
-            date: Date(),
-            symptoms: [
-                Symptom(name: "Fatigue", description: "Mild slump after 3 PM.", isExpanded: false),
-                Symptom(name: "Headache", description: "Brief ache after long calls.", isExpanded: false),
-                Symptom(name: "DryMouth", description: "Forgets to sip water.", isExpanded: false),
-                Symptom(name: "Anxiety", description: "Work deadlines causing stress.", isExpanded: false)
-            ],
-            questions: [
-                Question(text: "Any red flags to watch?", isSelected: false),
-                Question(text: "Should I try magnesium?", isSelected: false)
-            ],
-            medications: medications,
-            records: records,
-            notes: "Introduce micro-breaks and short walks.",
-            status: .completed,
-            createdAt: Date()
-        )
-    ]
+    static let consultSessions: [ConsultSession] = loadConsultSessions()
+
+    private static func loadConsultSessions() -> [ConsultSession] {
+        guard let url = Bundle.main.url(forResource: "seed_consult_sessions", withExtension: "json") else {
+            print("⚠️ seed_consult_sessions.json not found in bundle")
+            return []
+        }
+        do {
+            let data = try Data(contentsOf: url)
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            return try decoder.decode([ConsultSession].self, from: data)
+        } catch {
+            print("⚠️ Failed to decode consult sessions: \(error)")
+            return []
+        }
+    }
     
     static let allSampleRecords: [HealthRecord] = {
         var records: [HealthRecord] = []

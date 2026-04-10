@@ -26,26 +26,26 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XDF-Y8-0Om">
                         <rect key="frame" x="0.0" y="0.0" width="190" height="140"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Type" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dGH-Na-fHg">
-                                <rect key="frame" x="12" y="10" width="86.333333333333329" height="13.666666666666664"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dGH-Na-fHg">
+                                <rect key="frame" x="12" y="10" width="86.333333333333329" height="14"/>
                                 <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="11"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9ML-tq-J2q">
-                                <rect key="frame" x="12" y="41.666666666666664" width="166" height="25.666666666666664"/>
+                                <rect key="frame" x="12" y="42" width="166" height="25.666666666666671"/>
                                 <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="21"/>
                                 <color key="textColor" red="0.059902343750000031" green="0.059902343750000031" blue="0.059902343750000031" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Health Facility" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tx8-Tc-yEP">
-                                <rect key="frame" x="12" y="68.333333333333329" width="166" height="17.333333333333329"/>
+                                <rect key="frame" x="12" y="68.666666666666671" width="166" height="17.333333333333329"/>
                                 <fontDescription key="fontDescription" name="Montserrat-Medium" family="Montserrat" pointSize="14"/>
                                 <color key="textColor" red="0.092656249999999996" green="0.092656249999999996" blue="0.092656249999999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor " lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hQh-7T-KPE">
-                                <rect key="frame" x="12" y="101.66666666666667" width="166" height="29.333333333333329"/>
+                                <rect key="frame" x="12" y="102" width="166" height="29.333333333333343"/>
                                 <fontDescription key="fontDescription" name="Montserrat-Medium" family="Montserrat" pointSize="12"/>
                                 <color key="textColor" red="0.62745098039215685" green="0.62745098039215685" blue="0.62745098039215685" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -63,8 +63,8 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bZz-68-QjA" userLabel="Containerize">
                                         <rect key="frame" x="8" y="0.0" width="83.666666666666671" height="24"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OSc-Ge-VeQ">
-                                                <rect key="frame" x="28.666666666666671" y="5.6666666666666661" width="26" height="12.999999999999998"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Type" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OSc-Ge-VeQ">
+                                                <rect key="frame" x="28.333333333333329" y="5.6666666666666661" width="27" height="12.999999999999998"/>
                                                 <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="10.5"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
@@ -125,12 +125,12 @@
             </constraints>
             <size key="customSize" width="190" height="140"/>
             <connections>
-                <outlet property="dateLabel" destination="OSc-Ge-VeQ" id="nYf-Dj-wNM"/>
+                <outlet property="dateLabel" destination="dGH-Na-fHg" id="e6m-66-xiu"/>
                 <outlet property="dateShape" destination="4BH-WE-Jg9" id="br2-Cn-TTE"/>
                 <outlet property="facilityLabel" destination="Tx8-Tc-yEP" id="no7-Ee-2pE"/>
                 <outlet property="summaryLabel" destination="hQh-7T-KPE" id="oGA-SR-uFO"/>
                 <outlet property="titleLabel" destination="9ML-tq-J2q" id="qWb-Ay-KKY"/>
-                <outlet property="typeLabel" destination="dGH-Na-fHg" id="Drn-8V-bzF"/>
+                <outlet property="typeLabel" destination="OSc-Ge-VeQ" id="cye-Lp-giy"/>
             </connections>
             <point key="canvasLocation" x="-239.69465648854961" y="139.43661971830986"/>
         </collectionViewCell>
