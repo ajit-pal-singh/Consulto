@@ -1,193 +1,310 @@
 import UIKit
+import QuickLook
 
 class RecordDetailedViewController: UIViewController {
 
     // MARK: - Outlets
-
-    // Top 40% Area
-    @IBOutlet weak var recordImageView: UIImageView!
-
-    // Bottom Details Area
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var facilityLabel: UILabel!
-    @IBOutlet weak var typeLabel: UILabel!
-    @IBOutlet weak var dateLabel: UILabel!
-    @IBOutlet weak var summaryLabel: UILabel!
-
-    @IBOutlet weak var overviewLabel: UILabel!
-
-    @IBOutlet weak var summaryHeadingLabel: UILabel!
+    @IBOutlet weak var tableView: UITableView!
 
     // MARK: - Properties
     var record: HealthRecord?
-
-    // Constraints
-    @IBOutlet weak var imageViewWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var imageContainerHeightConstraint: NSLayoutConstraint!
-
+    private var quickLookPreviewURLs: [URL] = []
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.largeTitleDisplayMode = .never
         setupUI()
-        configureData()
+        configureTableView()
     }
 
     private func setupUI() {
-        guard let imageView = recordImageView else { return }
-
-        // Image Styling
-        imageView.image = UIImage(named: "sample")  // Default sample image
-        imageView.contentMode = .scaleAspectFit
-        imageView.layer.cornerRadius = 16
-        imageView.clipsToBounds = true
-
-        // Shadow Check: Verify if shadow view already exists to avoid duplicates
-        if let superview = imageView.superview,
-            superview.subviews.first(where: { $0.tag == 999 }) == nil
-        {
-
-            let shadowView = UIView()
-            shadowView.tag = 999  // Mark it to avoid re-adding
-            shadowView.translatesAutoresizingMaskIntoConstraints = false
-            shadowView.backgroundColor = .white  // Needed for shadow
-            shadowView.layer.cornerRadius = 16
-
-            // Subtle Shadow Configuration
-            shadowView.layer.shadowColor = UIColor.black.cgColor
-            shadowView.layer.shadowOpacity = 0.1
-            shadowView.layer.shadowOffset = CGSize(width: 0, height: 0)
-            shadowView.layer.shadowRadius = 12
-
-            // Insert below imageView
-            superview.insertSubview(shadowView, belowSubview: imageView)
-
-            // Pin to edges of image view
-            NSLayoutConstraint.activate([
-                shadowView.topAnchor.constraint(equalTo: imageView.topAnchor),
-                shadowView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
-                shadowView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor),
-                shadowView.trailingAnchor.constraint(equalTo: imageView.trailingAnchor),
-            ])
+        // Set dynamic navigation bar title based on record type
+        if let type = record?.recordType {
+            switch type {
+            case .dischargeSummary: self.title = "Discharge"
+            case .labReport: self.title = "Lab Report"
+            case .prescription: self.title = "Prescription"
+            case .scan: self.title = "Scan"
+            default: self.title = "Record"
+            }
+        } else {
+            self.title = "Record"
         }
-
-        // Font Styling
-        titleLabel.font = .systemFont(ofSize: titleLabel.font.pointSize, weight: .regular).rounded
-        facilityLabel.font =
-            .systemFont(ofSize: facilityLabel.font.pointSize, weight: .regular).rounded
-        typeLabel.font = .systemFont(ofSize: typeLabel.font.pointSize, weight: .regular).rounded
-        dateLabel.font = .systemFont(ofSize: dateLabel.font.pointSize, weight: .regular).rounded
-        summaryLabel.font =
-            .systemFont(ofSize: summaryLabel.font.pointSize, weight: .regular).rounded
-        summaryHeadingLabel.font =
-            .systemFont(ofSize: summaryHeadingLabel.font.pointSize, weight: .bold).rounded
-        overviewLabel.font =
-            .systemFont(ofSize: overviewLabel.font.pointSize, weight: .bold).rounded
+        
+        // Hide large titles for this view to match Figma
+        navigationItem.largeTitleDisplayMode = .never
     }
 
-    private func updateImageConstraints() {
-        // Safe unwrap to prevent crash if outlets are disconnected
-        guard let imageView = recordImageView, let image = imageView.image else { return }
-
-        // Calculate aspect ratio
-        let aspectRatio = image.size.width / image.size.height
-
-        // Desired fixed dimension anchors (same logic as before for height-first sizing)
-        let fixedHeight: CGFloat = UIScreen.main.bounds.height * 0.6
-        var newWidth = fixedHeight * aspectRatio
-        var newHeight = fixedHeight
-
-        // Cap to screen bounds with padding
-        let horizontalPadding: CGFloat = 40
-        let verticalPadding: CGFloat = 40
-        let maxWidth = UIScreen.main.bounds.width - horizontalPadding
-        let maxHeight = UIScreen.main.bounds.height * 0.55 - verticalPadding  // keep image within top area comfortably
-
-        // If width exceeds available, scale down both maintaining aspect
-        if newWidth > maxWidth {
-            newWidth = maxWidth
-            newHeight = newWidth / aspectRatio
+    private func configureTableView() {
+        // Safe check in case you haven't connected the outlet yet
+        guard let tableView = tableView else { return }
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        // Remove empty cell separators
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = UIColor(hex: "F5F5F5")
+        view.backgroundColor = UIColor(hex: "F5F5F5")
+        
+        // Remove default grouped table head/foot spacing
+        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0.01))
+        tableView.sectionFooterHeight = 0.01
+        
+        if #available(iOS 15.0, *) {
+            tableView.sectionHeaderTopPadding = 0
         }
-
-        // If height exceeds available, scale down both maintaining aspect
-        if newHeight > maxHeight {
-            newHeight = maxHeight
-            newWidth = newHeight * aspectRatio
-        }
-
-        // Apply constraints safely
-        if let widthConstraint = imageViewWidthConstraint {
-            widthConstraint.constant = max(0, newWidth)
-            widthConstraint.priority = .required
-        } else {
-            print(
-                "Warning: imageViewWidthConstraint is disconnected. Please reconnect it in Storyboard."
-            )
-        }
-
-        if let heightConstraint = imageViewHeightConstraint {
-            heightConstraint.constant = max(0, newHeight)
-            heightConstraint.priority = .required
-        } else {
-            print(
-                "Warning: imageViewHeightConstraint is disconnected. Please connect it to the image view height."
-            )
-        }
-
-        // Update container (wrapper) height to follow image height
-        if let containerHeight = imageContainerHeightConstraint {
-            containerHeight.constant = max(0, newHeight)
-            containerHeight.priority = .required
-        } else {
-            print(
-                "Warning: imageContainerHeightConstraint is disconnected. Please connect it to the container view height."
-            )
-        }
-
-        self.view.layoutIfNeeded()
+        
+        // Automatic sizing for dynamic cells (crucial for PreviewMediaTableViewCell)
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 200
+        
+        // Register Custom XIB Cells Here
+        // (PreviewMediaTableViewCell will be designed as a prototype cell directly in the storyboard)
+        tableView.register(UINib(nibName: "InfoTableViewCell", bundle: nil), forCellReuseIdentifier: "InfoTableViewCell")
+        tableView.register(UINib(nibName: "SummaryTableViewCell", bundle: nil), forCellReuseIdentifier: "SummaryTableViewCell")
     }
-
-    private func configureData() {
-        guard let record = record else { return }
-
-        recordImageView.image = HealthRecordStore.shared.previewImage(for: record) ?? UIImage(named: "sample")
-        updateImageConstraints()
-
-        // Populate Text
-        titleLabel.text = record.title
-        facilityLabel.text = record.healthFacilityName
-        summaryLabel.text = record.summary
-
-        // Date
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d MMM yyyy"
-        if let date = record.documentDate ?? Optional(record.dateAdded) {
-            dateLabel.text = formatter.string(from: date)
+    
+    // Helper to get Theme Color
+    private var themeColor: UIColor {
+        guard let type = record?.recordType else { return .systemBlue }
+        switch type {
+        case .dischargeSummary: return UIColor(named: "DischargeSummaryColor") ?? .systemYellow
+        case .labReport: return UIColor(named: "ReportColor") ?? .systemRed
+        case .prescription: return UIColor(named: "PrescriptionColor") ?? .systemBlue
+        case .scan: return UIColor(named: "ScanColor") ?? .systemPurple
+        default: return .darkGray
         }
+    }
+}
 
-        // Record Type & Color
-        let typeText: String
-        let themeColor: UIColor
-
-        switch record.recordType {
-        case .dischargeSummary:
-            typeText = "Discharge"
-            themeColor = UIColor(named: "DischargeSummaryColor") ?? .systemYellow
-        case .labReport:
-            typeText = "Lab Report"
-            themeColor = UIColor(named: "ReportColor") ?? .systemRed
-        case .prescription:
-            typeText = "Prescription"
-            themeColor = UIColor(named: "PrescriptionColor") ?? .systemBlue
-        case .scan:
-            typeText = "Scan"
-            themeColor = UIColor(named: "ScanColor") ?? .systemPurple
+// MARK: - UITableView DataSource & Delegate
+extension RecordDetailedViewController: UITableViewDataSource, UITableViewDelegate {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 3 // 0: Images, 1: Overview, 2: Summary
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        switch section {
+        case 0: return 1 // Image Carousel
+        case 1: return 3 // Doctor/Report Name, Facility, Date Added
+        case 2: return 1 // Summary Text
+        default: return 0
+        }
+    }
+    
+    // Explicitly set the height for the Image Carousel to fix the layout overlap!
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            // Replicate the aspect ratio math from PreviewMediaTableViewCell to give it the exact height
+            let screenWidth = UIScreen.main.bounds.width
+            let itemWidth = screenWidth - 40 - (2 * 20) // screen margins (40) + peeks (40)
+            let cardHeight = (itemWidth * 4 / 3).rounded() // 3:4 portrait aspect ratio
+            let pageNavigatorHeight: CGFloat = 66
+            
+            // 🛠️ TO CONTROL THE GAP BELOW IMAGE CELL: Change the "+ 20" here!
+            // This adds extra vertical space to the bottom of the entire Image cell.
+            return cardHeight + 26
+        }
+        
+        // Let the other cells size automatically
+        return UITableView.automaticDimension
+    }
+    
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let record = record else { return UITableViewCell() }
+        
+        switch indexPath.section {
+        case 0:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "PreviewMediaTableViewCell", for: indexPath) as? PreviewMediaTableViewCell else {
+                return UITableViewCell()
+            }
+            
+            // Fetch all uploaded images for the carousel
+            var imagesToDisplay = HealthRecordStore.shared.allImages(for: record)
+            
+            // Fallback to sample image if no images exist
+            if imagesToDisplay.isEmpty, let fallback = UIImage(named: "sample") {
+                imagesToDisplay.append(fallback)
+            }
+            
+            cell.configure(with: imagesToDisplay, state: .pending)
+            
+            // Hide the delete button — this is a read-only view
+            cell.hideDeleteButton = true
+            
+            // Wire up the expand button
+            cell.onExpandTapped = { [weak self] index in
+                self?.presentNativePreview(for: index)
+            }
+            
+            return cell
+            
+        case 1:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "InfoTableViewCell", for: indexPath) as? InfoTableViewCell else {
+                return UITableViewCell()
+            }
+            
+            if indexPath.row == 0 {
+                let bottomText = record.title ?? "Unknown"
+                
+                let iconName: String
+                let topText: String
+                
+                switch record.recordType {
+                case .dischargeSummary:
+                    iconName = "bed.double.fill"
+                    topText = "Discharge From"
+                case .scan:
+                    iconName = "viewfinder"
+                    topText = "Scan Name"
+                case .labReport:
+                    iconName = "flask"
+                    topText = "Report Name"
+                case .prescription:
+                    iconName = "stethoscope"
+                    topText = "Doctor Name"
+                default:
+                    iconName = "doc.fill"
+                    topText = "Title"
+                }
+                
+                cell.configure(topText: topText, bottomText: bottomText, iconName: iconName, themeColor: themeColor)
+                
+            } else if indexPath.row == 1 {
+                cell.configure(topText: "Facility Name", bottomText: record.healthFacilityName ?? "Unknown", iconName: "building.2.fill", themeColor: themeColor)
+                
+            } else if indexPath.row == 2 {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "dd MMMM yyyy"
+                let dateStr = formatter.string(from: record.documentDate ?? record.dateAdded)
+                cell.configure(topText: "Date Added", bottomText: dateStr, iconName: "calendar", themeColor: themeColor)
+            }
+            
+            return cell
+            
+        case 2:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "SummaryTableViewCell", for: indexPath) as? SummaryTableViewCell else {
+                return UITableViewCell()
+            }
+            // Use the true summary text or a fallback if empty
+            let summaryText = (record.summary?.isEmpty == false) ? record.summary! : "No summary available for this record."
+            cell.configure(with: summaryText)
+            return cell
+            
         default:
-            typeText = record.recordType.rawValue.capitalized
-            themeColor = .darkGray
+            return UITableViewCell()
         }
+    }
+    
+    // Custom Section Headers
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 0 { return nil }
+        
+        let headerView = UIView()
+        headerView.backgroundColor = .clear // Let table background show
+        
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 20, weight: .bold).rounded
+        label.textColor = .label
+        
+        if section == 1 {
+            label.text = "Overview"
+        } else if section == 2 {
+            label.text = "Summary"
+        }
+        
+        headerView.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 20),
+            label.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -20),
+            label.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -8) // Anchor to bottom to push text closer to the cells below
+        ])
+        
+        return headerView
+    }
+    
+    // Provide a concrete height so the headers actually show up without clipping!
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 { return 0.01 }
+        
+        // 🛠️ TO CONTROL GAP ABOVE 'OVERVIEW' / 'SUMMARY' TEXT:
+        // Increase or decrease this '45'. It pushes the text further down from the previous cell.
+        return 45 
+    }
 
-        typeLabel.text = typeText
-        typeLabel.textColor = themeColor
+    // Force footers to 0 to remove the massive default gaps below sections
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0.01
+    }
+    
+    // Removes the view for footers so it doesn't default
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
+    }
+    
+    // MARK: - Actions
+    @IBAction func deleteRecordTapped(_ sender: Any) {
+        let alert = UIAlertController(title: "Delete Record", message: "Are you sure you want to delete this permanently? This action cannot be undone.", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
+            guard let self = self, let recordID = self.record?.id else { return }
+            do {
+                try HealthRecordStore.shared.deleteRecord(id: recordID)
+                self.navigationController?.popViewController(animated: true)
+            } catch {
+                let errorAlert = UIAlertController(title: "Error", message: "Failed to delete record.", preferredStyle: .alert)
+                errorAlert.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(errorAlert, animated: true)
+            }
+        }))
+        
+        present(alert, animated: true)
+    }
+    
+    // MARK: - Native Preview (Quick Look)
+    private func presentNativePreview(for index: Int) {
+        guard let record = record, index >= 0, index < record.files.count else { return }
+        
+        if let url = HealthRecordStore.shared.url(for: record.files[index]) {
+            quickLookPreviewURLs = [url]
+            let controller = QLPreviewController()
+            controller.dataSource = self
+            present(controller, animated: true)
+        }
+    }
+}
+
+// MARK: - QLPreviewControllerDataSource
+extension RecordDetailedViewController: QLPreviewControllerDataSource {
+    func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
+        return quickLookPreviewURLs.count
+    }
+    
+    func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
+        return quickLookPreviewURLs[index] as QLPreviewItem
+    }
+}
+
+// MARK: - Navigation
+extension RecordDetailedViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "EditForm" {
+            if let nav = segue.destination as? UINavigationController,
+               let editVC = nav.topViewController as? RecordEditFormViewController {
+                editVC.record = self.record
+                
+                // Immediately refresh native UI properties when changes occur!
+                editVC.onRecordUpdated = { [weak self] updatedRecord in
+                    self?.record = updatedRecord
+                    self?.setupUI()
+                    self?.tableView.reloadData()
+                }
+            } 
+        }
     }
 }

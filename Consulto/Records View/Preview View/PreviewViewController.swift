@@ -406,6 +406,16 @@ extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
             cell.onExpandTapped = { [weak self] index in
                 self?.presentNativePreview(forAttachmentAt: index)
             }
+            cell.onDeleteTapped = { [weak self] index in
+                guard let self = self, self.currentState == .pending else { return }
+                guard index >= 0, index < self.attachments.count else { return }
+                self.attachments.remove(at: index)
+                if self.attachments.isEmpty {
+                    self.navigationController?.popViewController(animated: true)
+                } else {
+                    self.tableView.reloadData()
+                }
+            }
             return cell
         } 
         else if indexPath.section == 1 {

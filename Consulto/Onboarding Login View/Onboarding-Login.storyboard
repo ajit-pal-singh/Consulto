@@ -328,19 +328,19 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="and" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G7I-wh-Bhl">
-                                        <rect key="frame" x="185" y="814" width="18" height="11"/>
+                                        <rect key="frame" x="184.66666666666666" y="814" width="17.333333333333343" height="11"/>
                                         <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="8.8000001907348633"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Terms of Use" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v4W-j5-dJc">
-                                        <rect key="frame" x="125" y="814" width="59" height="11"/>
+                                        <rect key="frame" x="125.00000000000001" y="814" width="58.666666666666671" height="11"/>
                                         <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="8.8000001907348633"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Privacy Notice" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eBG-8O-mLn">
-                                        <rect key="frame" x="204" y="814" width="65" height="11"/>
+                                        <rect key="frame" x="203" y="814" width="65" height="11"/>
                                         <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="8.8000001907348633"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -465,19 +465,19 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="and" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2ME-bJ-WaX">
-                                        <rect key="frame" x="185" y="814" width="18" height="11"/>
+                                        <rect key="frame" x="184.66666666666666" y="814" width="17.333333333333343" height="11"/>
                                         <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="8.8000001907348633"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Privacy Notice" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vf8-LO-Yh1">
-                                        <rect key="frame" x="204" y="814" width="65" height="11"/>
+                                        <rect key="frame" x="203" y="814" width="65" height="11"/>
                                         <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="8.8000001907348633"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Terms of Use" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UbR-mB-Ad0">
-                                        <rect key="frame" x="125" y="814" width="59" height="11"/>
+                                        <rect key="frame" x="125.00000000000001" y="814" width="58.666666666666671" height="11"/>
                                         <fontDescription key="fontDescription" name="Montserrat-SemiBold" family="Montserrat" pointSize="8.8000001907348633"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -791,21 +791,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kNi-Hh-rh4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1066.4122137404579" y="91.549295774647888"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="0mY-QA-uSZ">
-            <objects>
-                <viewController id="sQF-g8-yOL" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="eSm-Zn-UeN">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="gB9-VZ-Xxi"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="CNW-5u-Bfo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="5022" y="739"/>
         </scene>
     </scenes>
     <resources>

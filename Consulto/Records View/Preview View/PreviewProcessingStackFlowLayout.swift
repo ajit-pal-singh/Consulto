@@ -32,11 +32,19 @@ final class PreviewProcessingStackFlowLayout: UICollectionViewFlowLayout {
             return super.collectionViewContentSize
         }
 
+        let baseContentSize = super.collectionViewContentSize
         let height = max(
             collectionView.bounds.height,
             sectionInset.top + itemSize.height + sectionInset.bottom
         )
-        return CGSize(width: collectionView.bounds.width, height: height)
+
+        // Preserve the paged content width while stacked so UIKit does not clamp the
+        // current horizontal offset mid-animation when the user is on page 2+.
+        let width = max(
+            baseContentSize.width,
+            collectionView.contentOffset.x + collectionView.bounds.width
+        )
+        return CGSize(width: width, height: height)
     }
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {

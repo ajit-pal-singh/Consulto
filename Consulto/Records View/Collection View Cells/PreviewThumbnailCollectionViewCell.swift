@@ -10,8 +10,10 @@ import UIKit
 class PreviewThumbnailCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var thumbnailImageView: UIImageView!
     @IBOutlet weak var expandView: UIView!
+    @IBOutlet weak var deleteView: UIView!
     
     var onExpandTapped: (() -> Void)?
+    var onDeleteTapped: (() -> Void)?
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -45,12 +47,17 @@ class PreviewThumbnailCollectionViewCell: UICollectionViewCell {
         transform = .identity
         layer.zPosition = 0
         thumbnailImageView.image = image
-        // Hide the expand button and drop shadow cleanly if processing
+        // Hide the expand button, delete button, and drop shadow cleanly if processing
         expandView.alpha = isProcessing ? 0 : 1
+        deleteView?.alpha = isProcessing ? 0 : 1
         self.layer.shadowOpacity = isProcessing ? 0 : 0.10
     }
 
     @IBAction func expandButtonTapped(_ sender: UIButton) {
         onExpandTapped?()
+    }
+    
+    @IBAction func deleteButtonTapped(_ sender: UIButton) {
+        onDeleteTapped?()
     }
 }

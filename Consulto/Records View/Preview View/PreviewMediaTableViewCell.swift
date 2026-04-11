@@ -34,6 +34,11 @@ class PreviewMediaTableViewCell: UITableViewCell {
     private var currentPage: Int = 0
     private var cardState: CardState = .pending
     var onExpandTapped: ((Int) -> Void)?
+    var onDeleteTapped: ((Int) -> Void)?
+    
+    /// Set to `true` to hide the delete button overlay on every thumbnail card.
+    /// Useful when the cell is shown in a read-only context (e.g. Record Detailed View).
+    var hideDeleteButton: Bool = false
 
     // MARK: - Lifecycle
     override func awakeFromNib() {
@@ -190,6 +195,39 @@ class PreviewMediaTableViewCell: UITableViewCell {
         nextButton.isEnabled = currentPage < images.count - 1
     }
 
+    private func clampedCurrentPage() -> Int {
+        guard !images.isEmpty else { return 0 }
+        return max(0, min(currentPage, images.count - 1))
+    }
+
+    private func preserveCurrentPageForAnimatedStateTransition() -> Int {
+        let preservedPage = clampedCurrentPage()
+        currentPage = preservedPage
+
+        if let layout = collectionView.collectionViewLayout as? PreviewProcessingStackFlowLayout {
+            layout.processingStackCurrentItem = preservedPage
+        }
+
+        return preservedPage
+    }
+
+    private func targetContentOffsetX(for page: Int, state: CardState) -> CGFloat {
+        guard page > 0 else { return 0 }
+        guard collectionView.bounds.width > 0 else { return 0 }
+
+        var itemWidth = collectionView.bounds.width - 40 - (2 * peek)
+        var cardHeight = (itemWidth * 4 / 3).rounded()
+
+        if state != .pending {
+            cardHeight -= 150
+            itemWidth = (cardHeight * 3 / 4).rounded()
+        }
+
+        let pageStride = itemWidth + spacing
+        guard pageStride > 0 else { return 0 }
+        return CGFloat(page) * pageStride
+    }
+
     /// Scrolls the collection view to a specific page, snapping it into the centered position.
     private func scrollToPage(_ page: Int, animated: Bool = true) {
         guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
@@ -239,10 +277,21 @@ extension PreviewMediaTableViewCell: UICollectionViewDataSource, UICollectionVie
         // If we are in State 2 (processing) or State 3 (form), we want to keep the expand view hidden
         let hideControls = self.cardState != .pending
         cell.configure(with: images[indexPath.item], isProcessing: hideControls)
+        
+        // Hide the delete overlay when requested by the parent (e.g. Record Detailed View)
+        if hideDeleteButton {
+            cell.deleteView?.isHidden = true
+        }
+        
         cell.onExpandTapped = { [weak self] in
             guard let self else { return }
             guard indexPath.item >= 0, indexPath.item < self.images.count else { return }
             self.onExpandTapped?(indexPath.item)
+        }
+        cell.onDeleteTapped = { [weak self] in
+            guard let self else { return }
+            guard indexPath.item >= 0, indexPath.item < self.images.count else { return }
+            self.onDeleteTapped?(indexPath.item)
         }
         return cell
     }
@@ -281,6 +330,7 @@ extension PreviewMediaTableViewCell: UICollectionViewDataSource, UICollectionVie
     
     func startProcessingAnimation() {
         guard cardState == .pending else { return }
+        let preservedPage = preserveCurrentPageForAnimatedStateTransition()
         cardState = .processing
         
         // Lock scrolling
@@ -293,6 +343,7 @@ extension PreviewMediaTableViewCell: UICollectionViewDataSource, UICollectionVie
             for cell in self.collectionView.visibleCells {
                 if let thumbCell = cell as? PreviewThumbnailCollectionViewCell {
                     thumbCell.expandView.alpha = 0
+                    thumbCell.deleteView?.alpha = 0
                     
                     // Explicitly fade out shadow using a layer animation
                     let shadowAnim = CABasicAnimation(keyPath: "shadowOpacity")
@@ -330,6 +381,17 @@ extension PreviewMediaTableViewCell: UICollectionViewDataSource, UICollectionVie
     }
     
     func transitionToState3() {
+        let preservedPage = preserveCurrentPageForAnimatedStateTransition()
+        let targetOffsetX = targetContentOffsetX(for: preservedPage, state: .form)
+
+        // Make the final page offset effective before expansion begins. In processing
+        // every card is visually centered by the custom layout, so this offset change
+        // is invisible here and prevents sideways drift while expanding.
+        UIView.performWithoutAnimation {
+            self.collectionView.contentOffset = CGPoint(x: targetOffsetX, y: 0)
+            self.collectionView.layoutIfNeeded()
+        }
+
         cardState = .form
         
         // 1. Fade out the pulsating processing status view completely over 0.3 seconds
@@ -345,9 +407,7 @@ extension PreviewMediaTableViewCell: UICollectionViewDataSource, UICollectionVie
             self.collectionView.performBatchUpdates({
                 self.updateItemSize()
             }) { _ in
-                if !self.images.isEmpty {
-                    self.scrollToPage(self.currentPage, animated: false)
-                }
+                self.scrollToPage(preservedPage, animated: false)
                 self.collectionView.reloadData()
             }
             self.layoutIfNeeded()

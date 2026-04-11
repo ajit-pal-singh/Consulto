@@ -61,6 +61,15 @@ final class HealthRecordStore {
         try persist(records)
         return newRecord
     }
+    
+    // Updates an existing record in place
+    func updateRecord(_ updatedRecord: HealthRecord) throws {
+        var records = try loadRecords()
+        guard let index = records.firstIndex(where: { $0.id == updatedRecord.id }) else { return }
+        
+        records[index] = updatedRecord
+        try persist(records)
+    }
 
     func deleteRecord(id: UUID) throws {
         var records = try loadRecords()
@@ -88,6 +97,30 @@ final class HealthRecordStore {
         }
 
         return nil
+    }
+    
+    // Fetches all images associated with the record (resolves the single-image bug)
+    func allImages(for record: HealthRecord) -> [UIImage] {
+        var images: [UIImage] = []
+        
+        for file in record.files {
+            if file.fileType == .image,
+               let url = try? absoluteURL(forRelativePath: file.filePath),
+               let image = UIImage(contentsOfFile: url.path) {
+                images.append(image)
+            } else if file.fileType == .pdf,
+                      let url = try? absoluteURL(forRelativePath: file.filePath),
+                      let image = previewImage(forPDFAt: url) {
+                images.append(image)
+            }
+        }
+        
+        return images
+    }
+    
+    // Extracted absolute URL exposed for QuickLook native previewing
+    func url(for file: RecordFile) -> URL? {
+        return try? absoluteURL(forRelativePath: file.filePath)
     }
 
     private func loadSeedRecords() throws -> [HealthRecord] {
