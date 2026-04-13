@@ -84,11 +84,27 @@ final class HealthRecordStore {
         }
     }
 
+    // MARK: - Asset path helper
+    // Seed records use "asset:imageName" convention to reference images bundled in Assets.xcassets
+    private func isAssetPath(_ path: String) -> Bool {
+        return path.hasPrefix("asset:")
+    }
+
+    private func assetName(from path: String) -> String {
+        return String(path.dropFirst("asset:".count))
+    }
+
     func previewImage(for record: HealthRecord) -> UIImage? {
-        if let imageFile = record.files.first(where: { $0.fileType == .image }),
-           let url = try? absoluteURL(forRelativePath: imageFile.filePath),
-           let image = UIImage(contentsOfFile: url.path) {
-            return image
+        if let imageFile = record.files.first(where: { $0.fileType == .image }) {
+            // Check if this is a bundled asset image (from seed data)
+            if isAssetPath(imageFile.filePath) {
+                return UIImage(named: assetName(from: imageFile.filePath))
+            }
+            // Otherwise load from the Documents directory (user-added record)
+            if let url = try? absoluteURL(forRelativePath: imageFile.filePath),
+               let image = UIImage(contentsOfFile: url.path) {
+                return image
+            }
         }
 
         if let pdfFile = record.files.first(where: { $0.fileType == .pdf }),
@@ -104,10 +120,15 @@ final class HealthRecordStore {
         var images: [UIImage] = []
         
         for file in record.files {
-            if file.fileType == .image,
-               let url = try? absoluteURL(forRelativePath: file.filePath),
-               let image = UIImage(contentsOfFile: url.path) {
-                images.append(image)
+            if file.fileType == .image {
+                // Check for bundled asset image first
+                if isAssetPath(file.filePath),
+                   let image = UIImage(named: assetName(from: file.filePath)) {
+                    images.append(image)
+                } else if let url = try? absoluteURL(forRelativePath: file.filePath),
+                          let image = UIImage(contentsOfFile: url.path) {
+                    images.append(image)
+                }
             } else if file.fileType == .pdf,
                       let url = try? absoluteURL(forRelativePath: file.filePath),
                       let image = previewImage(forPDFAt: url) {
@@ -120,6 +141,22 @@ final class HealthRecordStore {
     
     // Extracted absolute URL exposed for QuickLook native previewing
     func url(for file: RecordFile) -> URL? {
+        // Handle bundled asset images by saving them to a temporary URL for QuickLook
+        if isAssetPath(file.filePath) {
+            let name = assetName(from: file.filePath)
+            guard let image = UIImage(named: name),
+                  let data = image.jpegData(compressionQuality: 1.0) else { return nil }
+            
+            let tempURL = fileManager.temporaryDirectory.appendingPathComponent("\(name).jpg")
+            do {
+                try data.write(to: tempURL, options: .atomic)
+                return tempURL
+            } catch {
+                print("Failed to save temporary asset preview: \(error)")
+                return nil
+            }
+        }
+        
         return try? absoluteURL(forRelativePath: file.filePath)
     }
 
@@ -149,7 +186,7 @@ final class HealthRecordStore {
     }
 
     private func ensureDirectoriesExist() throws {
-        try fileManager.createDirectory(at: applicationSupportDirectory(), withIntermediateDirectories: true, attributes: nil)
+        try fileManager.createDirectory(at: documentDirectory(), withIntermediateDirectories: true, attributes: nil)
         try fileManager.createDirectory(at: recordFilesDirectory(), withIntermediateDirectories: true, attributes: nil)
     }
 
@@ -219,19 +256,19 @@ final class HealthRecordStore {
     }
 
     private func recordsFileURL() -> URL {
-        ((try? applicationSupportDirectory()) ?? fileManager.temporaryDirectory).appendingPathComponent("records.json")
+        ((try? documentDirectory()) ?? fileManager.temporaryDirectory).appendingPathComponent("records.json")
     }
 
     private func recordFilesDirectory() -> URL {
-        ((try? applicationSupportDirectory()) ?? fileManager.temporaryDirectory).appendingPathComponent("RecordFiles", isDirectory: true)
+        ((try? documentDirectory()) ?? fileManager.temporaryDirectory).appendingPathComponent("RecordFiles", isDirectory: true)
     }
 
-    private func applicationSupportDirectory() throws -> URL {
-        try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+    private func documentDirectory() throws -> URL {
+        try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     }
 
     private func absoluteURL(forRelativePath path: String) throws -> URL {
-        let baseURL = try applicationSupportDirectory()
+        let baseURL = try documentDirectory()
         return baseURL.appendingPathComponent(path)
     }
 }

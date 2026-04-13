@@ -32,6 +32,8 @@ class ConsultViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.tintAdjustmentMode = .normal
+        self.view.backgroundColor = UIColor(hex: "#F1F6FF")
+        consultCollectionView.backgroundColor = UIColor(hex: "#F1F6FF")
 
         // Load persisted sessions
         allConsultSessions = ConsultSessionStore.shared.loadSessions()
@@ -292,7 +294,7 @@ class ConsultViewController: UIViewController,
             let overlayLayer = CALayer()
             overlayLayer.name = "SolidOverlay"
             overlayLayer.frame = blurEffectView.bounds
-            overlayLayer.backgroundColor = UIColor(hex: "#f5f5f5").withAlphaComponent(0.5).cgColor
+            overlayLayer.backgroundColor = UIColor(hex: "#F1F6FF").withAlphaComponent(0.5).cgColor
 
             let overlayMask = CAGradientLayer()
             overlayMask.frame = overlayLayer.bounds

@@ -1,4 +1,5 @@
 import UIKit
+import SwiftUI
 
 class HomeViewController: UIViewController, UINavigationControllerDelegate,
                           UICollectionViewDataSource,
@@ -36,7 +37,6 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
     @IBOutlet weak var headerActionsContainerView: UIView!
     @IBOutlet weak var homeCollectionView: UICollectionView!
     @IBOutlet weak var blurEffectView: UIVisualEffectView!
-    @IBOutlet weak var profileButton: UIButton!
 
     private var upcomingConsultation: ConsultSession? {
         ConsultSessionStore.shared.nearestPendingSession()
@@ -68,7 +68,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
     private let quickActions: [QuickActionItem] = [
         QuickActionItem(title: "Add Record", assetName: "Records", tintColor: UIColor(named: "PrescriptionColor") ?? .systemBlue),
         QuickActionItem(title: "Log Vitals", assetName: "Vitals", tintColor: UIColor(named: "ReportColor") ?? .systemRed),
-        QuickActionItem(title: "Prepare", assetName: "Consult", tintColor: UIColor(named: "ScanColor") ?? .systemPurple)
+        QuickActionItem(title: "Create Visit", assetName: "Consult", tintColor: UIColor(named: "ScanColor") ?? .systemPurple)
     ]
     
     private let recentVitals: [RecentVitals] = [
@@ -95,9 +95,9 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         homeCollectionView.dataSource = self
         homeCollectionView.showsVerticalScrollIndicator = false
 
-        blurEffectView.backgroundColor = UIColor(hex: "F1F6FF")
+        blurEffectView.backgroundColor = .clear
         homeCollectionView.backgroundColor = UIColor(hex: "F1F6FF")
-        configureProfileButton()
+        setupProfileButton()
 
         homeCollectionView.register(UINib(nibName: "HomeConsultCardCollectionViewCell", bundle: nil),
                                     forCellWithReuseIdentifier: "HomeConsultCell")
@@ -144,7 +144,9 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        profileButton.layer.cornerRadius = profileButton.bounds.height / 2
+        if blurEffectView != nil {
+            setupBlurGradientMask()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -158,6 +160,38 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+
+    // MARK: - Blur Gradient Mask
+    func setupBlurGradientMask() {
+        let gradientMask = CAGradientLayer()
+        gradientMask.frame = blurEffectView.bounds
+
+        gradientMask.colors = [
+            UIColor.black.cgColor,
+            UIColor.black.cgColor,
+            UIColor.clear.cgColor
+        ]
+        gradientMask.locations = [0.0, 0.8, 1.0]
+
+        blurEffectView.layer.mask = gradientMask
+
+        if let existingOverlay = blurEffectView.layer.sublayers?.first(where: { $0.name == "SolidOverlay" }) {
+            existingOverlay.frame = blurEffectView.bounds
+        } else {
+            let overlayLayer = CALayer()
+            overlayLayer.name = "SolidOverlay"
+            overlayLayer.frame = blurEffectView.bounds
+            overlayLayer.backgroundColor = UIColor(hex: "#F1F6FF").withAlphaComponent(0.5).cgColor
+
+            let overlayMask = CAGradientLayer()
+            overlayMask.frame = overlayLayer.bounds
+            overlayMask.colors = gradientMask.colors
+            overlayMask.locations = gradientMask.locations
+            overlayLayer.mask = overlayMask
+
+            blurEffectView.layer.addSublayer(overlayLayer)
+        }
     }
 
     deinit {
@@ -180,17 +214,33 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         homeCollectionView.reloadData()
     }
 
-    private func configureProfileButton() {
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
-        profileButton.setImage(UIImage(systemName: "person.fill", withConfiguration: symbolConfig), for: .normal)
-        profileButton.tintColor = UIColor(red: 0.36, green: 0.60, blue: 0.86, alpha: 1)
-        profileButton.backgroundColor = UIColor(red: 0.78, green: 0.89, blue: 1.0, alpha: 1)
-        profileButton.clipsToBounds = true
-        profileButton.imageView?.contentMode = .scaleAspectFit
-        profileButton.contentHorizontalAlignment = .center
-        profileButton.contentVerticalAlignment = .center
-        profileButton.contentEdgeInsets = UIEdgeInsets(top: 9, left: 9, bottom: 9, right: 9)
-        profileButton.layer.cornerCurve = .continuous
+    private func setupProfileButton() {
+        guard let container = headerActionsContainerView else { return }
+        container.subviews.forEach { $0.removeFromSuperview() }
+        container.backgroundColor = .clear
+
+        let swiftUIView = HomeHeaderActionsView {
+            [weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                self?.performSegue(withIdentifier: "ProfileSettings", sender: nil)
+            }
+        }
+
+        let hostingController = UIHostingController(rootView: swiftUIView)
+        hostingController.view.backgroundColor = .clear
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+
+        addChild(hostingController)
+        container.addSubview(hostingController.view)
+
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: container.topAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
+        ])
+
+        hostingController.didMove(toParent: self)
     }
 
     private func toggleMedicineHomeListExpanded() {

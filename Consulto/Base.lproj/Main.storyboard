@@ -695,7 +695,7 @@
                                                 </view>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="c02-qp-xee" firstAttribute="top" secondItem="a6Q-B9-fl1" secondAttribute="bottom" constant="5" id="AZn-Iz-t1N"/>
+                                                <constraint firstItem="c02-qp-xee" firstAttribute="top" secondItem="a6Q-B9-fl1" secondAttribute="bottom" constant="20" id="AZn-Iz-t1N"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="a6Q-B9-fl1" secondAttribute="trailing" id="S8k-pd-5Ga"/>
                                                 <constraint firstItem="a6Q-B9-fl1" firstAttribute="leading" secondItem="ufL-eD-ZsL" secondAttribute="leadingMargin" id="etm-CB-jz7"/>
                                                 <constraint firstItem="c02-qp-xee" firstAttribute="centerX" secondItem="ufL-eD-ZsL" secondAttribute="centerX" id="fss-x1-2OC"/>
@@ -704,6 +704,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="collectionView" destination="a6Q-B9-fl1" id="cVM-za-sQU"/>
+                                            <outlet property="collectionViewHeightConstraint" destination="ZtG-1u-no1" id="mzf-tk-p9r"/>
                                             <outlet property="nextButton" destination="Qxe-ZF-pnS" id="bks-sj-Bqh"/>
                                             <outlet property="pageLabel" destination="ERg-DF-eJG" id="rcV-O3-OqM"/>
                                             <outlet property="pageNavigatorView" destination="c02-qp-xee" id="DuU-8p-bqo"/>

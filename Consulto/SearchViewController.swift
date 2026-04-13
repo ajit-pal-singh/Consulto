@@ -43,7 +43,7 @@ class SearchViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(hex: "F5F5F5")
+        view.backgroundColor = UIColor(hex: "#F1F6FF")
 
         setupCustomNavigation()
 
@@ -63,9 +63,7 @@ class SearchViewController: UIViewController {
         navigationItem.searchController = searchController
 
         // Disable the automatic cancel 'X' button so it doesn't shrink the field
-        searchController.automaticallyShowsCancelButton = false
-        searchController.searchBar.showsCancelButton = false
-
+        searchController.automaticallyShowsCancelButton = true
         // Ensures search bar always visible
         navigationItem.hidesSearchBarWhenScrolling = false
 
@@ -184,12 +182,15 @@ class SearchViewController: UIViewController {
         if let leftView = textField.leftView {
             NSLayoutConstraint.activate([
                 placeholderStackView.leadingAnchor.constraint(equalTo: leftView.trailingAnchor, constant: 9),
-                placeholderStackView.centerYAnchor.constraint(equalTo: textField.centerYAnchor)
+                placeholderStackView.centerYAnchor.constraint(equalTo: textField.centerYAnchor),
+                placeholderStackView.trailingAnchor.constraint(lessThanOrEqualTo: textField.trailingAnchor, constant: -10)
             ])
         } else {
             NSLayoutConstraint.activate([
                 placeholderStackView.leadingAnchor.constraint(equalTo: textField.leadingAnchor, constant: 40),
-                placeholderStackView.centerYAnchor.constraint(equalTo: textField.centerYAnchor)
+                placeholderStackView.centerYAnchor.constraint(equalTo: textField.centerYAnchor),
+                placeholderStackView.trailingAnchor.constraint(lessThanOrEqualTo: textField.trailingAnchor, constant: -10)
+
             ])
         }
     }

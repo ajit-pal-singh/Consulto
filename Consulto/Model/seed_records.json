@@ -1,146 +1,118 @@
 [
   {
     "dateAdded" : "2026-03-25T00:00:00Z",
-    "documentDate" : "2026-03-25T00:00:00Z",
+    "documentDate" : "2026-02-06T00:00:00Z",
     "extractedData" : null,
-    "files" : [],
-    "healthFacilityName" : "Apollo Clinic",
+    "files" : [
+      { "filePath" : "asset:seed_record_1", "fileType" : "image" }
+    ],
+    "healthFacilityName" : "Nutema Hospital",
     "id" : "00000000-0000-0000-0000-000000000001",
     "recordType" : "prescription",
-    "summary" : "Diagnosis: Gut infection confirmed after clinical evaluation. Prescription includes ORS solution and Pantoprazole for symptomatic relief. Patient advised hydration and bland diet.",
-    "title" : "Dr. Sharma",
+    "summary" : "The document contains a prescription with details of medications and dosages. It also lists complaints, diagnosis, and lab parameters. Complaints include fever, while the diagnosis is CKD CIN HTN STAGE 5, MAINTAINANCE HAEMODIALYSIS, LOWTURN OVER BONE DISEASE. Lab parameters include CBC, Urea, Creatinine, Sodium, Potassium, Uric Acid, Calcium, Phosphorus, Alkaline Phosphatase, and Intact PTH",
+    "title" : "Dr. Sandeep Garg",
     "userID" : "11111111-1111-1111-1111-111111111111"
   },
+  
   {
-    "dateAdded" : "2026-03-10T00:00:00Z",
-    "documentDate" : "2026-03-10T00:00:00Z",
+    "dateAdded" : "2025-12-01T00:00:00Z",
+    "documentDate" : "2025-12-01T00:00:00Z",
     "extractedData" : null,
-    "files" : [],
-    "healthFacilityName" : "Tata 1mg",
+    "files" : [
+      { "filePath" : "asset:seed_record_7", "fileType" : "image" }
+    ],
+    "healthFacilityName" : "Max HealthCare",
     "id" : "00000000-0000-0000-0000-000000000002",
     "recordType" : "labReport",
-    "summary" : "Tests performed: CBC, Blood Sugar, and Lipid profile. Results show high hemoglobin and low HDL requiring lifestyle changes. Follow-up testing recommended in four weeks.",
-    "title" : "Full Body Test",
+    "summary" : "The clinical context includes a laboratory report detailing complete blood counts and various indices such as haemoglobin, white blood cell counts, haematocrit, and platelet counts. It also mentions neutrophil to lymphocyte ratio (NLR).",
+    "title" : "Kidney Function Test",
     "userID" : "11111111-1111-1111-1111-111111111111"
   },
+  
   {
-    "dateAdded" : "2026-02-23T00:00:00Z",
-    "documentDate" : "2026-02-23T00:00:00Z",
+    "dateAdded" : "2025-11-01T00:00:00Z",
+    "documentDate" : "2025-11-01T00:00:00Z",
     "extractedData" : null,
-    "files" : [],
-    "healthFacilityName" : "Max Healthcare",
+    "files" : [
+      { "filePath" : "asset:seed_record_2", "fileType" : "image" }
+    ],
+    "healthFacilityName" : "Max HealthCare",
     "id" : "00000000-0000-0000-0000-000000000003",
-    "recordType" : "dischargeSummary",
-    "summary" : "Summary: Patient received IV fluids with steady recovery status. Observation period completed without complications. Follow-up advised after ten days for reassessment.",
-    "title" : "Gastroenteritis",
+    "recordType" : "labReport",
+    "summary" : "The document contains clinical biochemistry results focusing on Kidney Function Test (KFT) with parameters such as Urea, Enzymatic Rate (Urease), Blood Urea Nitrogen, Creatinine, eGFR, and other electrolytes like Sodium, Potassium, Chloride, Calcium, and Uric Acid. The eGFR is calculated using the MDRD equation, indicating varying degrees of kidney function, ranging from normal to severely decreased. The results are categorized as mildly decreased, moderately to severely decreased, and kidney failure.",
+    "title" : "Kidney Function Test",
     "userID" : "11111111-1111-1111-1111-111111111111"
   },
   {
-    "dateAdded" : "2026-02-08T00:00:00Z",
-    "documentDate" : "2026-02-08T00:00:00Z",
+    "dateAdded" : "2025-10-15T00:00:00Z",
+    "documentDate" : "2025-10-15T00:00:00Z",
     "extractedData" : null,
-    "files" : [],
-    "healthFacilityName" : "CityCare Clinic",
+    "files" : [
+      { "filePath" : "asset:seed_record_8", "fileType" : "image" }
+    ],
+    "healthFacilityName" : "Nutema Hospital",
     "id" : "00000000-0000-0000-0000-000000000004",
     "recordType" : "prescription",
-    "summary" : "Diagnosis: Seasonal flu based on symptoms and exam. Prescription includes Vitamin C supplementation and steam inhalation. Rest and hydration strongly recommended.",
-    "title" : "Dr. Kapoor",
+    "summary" : "The patient has been diagnosed with CKD CIN HTN STAGE 5, requiring maintenance haemodialysis and treatment for low turnover bone disease. He is prescribed multiple medications, including ACE inhibitors, calcium channel blockers, and iron supplements, with specific timings and dosage instructions. The patient also underwent maintenance haemodialysis and had blood tests indicating elevated urea, creatinine, and calcium levels.",
+    "title" : "Dr. Sandeep Garg",
     "userID" : "11111111-1111-1111-1111-111111111111"
   },
+
   {
-    "dateAdded" : "2026-01-24T00:00:00Z",
-    "documentDate" : "2026-01-24T00:00:00Z",
+    "dateAdded" : "2025-10-15T00:00:00Z",
+    "documentDate" : "2025-10-15T00:00:00Z",
     "extractedData" : null,
-    "files" : [],
-    "healthFacilityName" : "Medlife Hospital",
+    "files" : [
+      { "filePath" : "asset:seed_record_5", "fileType" : "image" }
+    ],
+    "healthFacilityName" : "Nutema Hospital",
     "id" : "00000000-0000-0000-0000-000000000005",
-    "recordType" : "prescription",
-    "summary" : "Diagnosis: Migraine with episodic headaches. Prescription includes Naproxen and trigger avoidance counseling. Stress management and sleep hygiene discussed.",
-    "title" : "Dr. Bansal",
+    "recordType" : "labReport",
+    "summary" : "The report details a blood glucose level of 83.0 mg/dL, a blood urea level of 221.0 mg/dL, serum creatinine at 17.0 mg/dL, serum alkaline phosphatase at 136.0 IU/L, serum uric acid at 7.5 mg/dL, serum calcium at 9.2 mg/dL, serum phosphorus at 2.4 mg/dL, serum sodium at 134.0 mEq/L, and serum potassium at 6.8 mEq/L. ",
+    "title" : "Kidney Function Test",
     "userID" : "11111111-1111-1111-1111-111111111111"
   },
   {
-    "dateAdded" : "2026-01-09T00:00:00Z",
-    "documentDate" : "2026-01-09T00:00:00Z",
+    "dateAdded" : "2025-09-18T00:00:00Z",
+    "documentDate" : "2025-09-18T00:00:00Z",
     "extractedData" : null,
-    "files" : [],
-    "healthFacilityName" : "SRL Diagnostics",
+    "files" : [
+      { "filePath" : "asset:seed_record_6", "fileType" : "image" }
+    ],
+    "healthFacilityName" : "Nutema Hospital",
     "id" : "00000000-0000-0000-0000-000000000006",
     "recordType" : "labReport",
-    "summary" : "Tests ordered: T3, T4, and TSH for thyroid evaluation. Results indicate mild hypothyroidism consistent with symptoms. Endocrinology follow-up and medication titration planned.",
-    "title" : "Thyroid Test",
+    "summary" : "The medical record pertains to a biochemical blood test conducted. The test results include: Blood Glucose: 142.0 mg/dL, Blood Urea: 124.0 mg/dL, Serum Creatinine: 14.2 mg/dL, Serum Alkaline Phosphatase: 191.0 IU/L, Serum Uric Acid: 6.0 mg/dL, Serum Calcium: 9.9 mg/dL, Serum Phosphorus: 3.0 mg/dL, Serum Sodium: Unknown, Serum Potassium: 135.0 mEq/L, and Blood Plain, EDTA EDTA Plasma Random Whole Blood, Fluoride",
+    "title" : "Kidney Function Test",
     "userID" : "11111111-1111-1111-1111-111111111111"
   },
+  
   {
-    "dateAdded" : "2025-12-25T00:00:00Z",
-    "documentDate" : "2025-12-25T00:00:00Z",
+    "dateAdded" : "2025-09-04T00:00:00Z",
+    "documentDate" : "2025-09-04T00:00:00Z",
     "extractedData" : null,
-    "files" : [],
-    "healthFacilityName" : "City Hospital",
+    "files" : [
+      { "filePath" : "asset:seed_record_3", "fileType" : "image" }
+    ],
+    "healthFacilityName" : "Nutema Hospital",
     "id" : "00000000-0000-0000-0000-000000000007",
-    "recordType" : "dischargeSummary",
-    "summary" : "Surgery performed: Cyst removal with no intraoperative issues. Postoperative course was stable with clean wound margins. Patient discharged with recovery instructions.",
-    "title" : "Minor Surgery",
-    "userID" : "11111111-1111-1111-1111-111111111111"
-  },
-  {
-    "dateAdded" : "2025-12-10T00:00:00Z",
-    "documentDate" : "2025-12-10T00:00:00Z",
-    "extractedData" : null,
-    "files" : [],
-    "healthFacilityName" : "Fortis Health",
-    "id" : "00000000-0000-0000-0000-000000000008",
-    "recordType" : "other",
-    "summary" : "Vaccine administered: Hepatitis B third dose completed. Immunization schedule is now up to date. No adverse reactions observed post vaccination.",
-    "title" : "Vaccination",
-    "userID" : "11111111-1111-1111-1111-111111111111"
-  },
-  {
-    "dateAdded" : "2025-11-25T00:00:00Z",
-    "documentDate" : "2025-11-25T00:00:00Z",
-    "extractedData" : null,
-    "files" : [],
-    "healthFacilityName" : "Vasan Eye Care",
-    "id" : "00000000-0000-0000-0000-000000000009",
     "recordType" : "prescription",
-    "summary" : "Vision assessment: 6/6 in both eyes with normal ocular health. Prescription provided for lubricating eye drops as needed. Routine checkup advised annually.",
-    "title" : "Eye Checkup",
+    "summary" : "This document is a prescription for a patient diagnosed with CKD CIN HTN Stage 5, requiring maintenance haemodialysis. The patient is prescribed multiple medications including: Tab. Acutrol C 800MG, Tab. Lanum, Capsules Eido, Capsules Toxidom, Darbitop 40 IU, Amp. Fe 102, Amtas 5 MG, Oxra Biso 10+5, Azithral 500MG, and D-Kof-Ot. The patient's blood tests include CBC, Urea, Creatinine, Sodium, Potassium, Uric Acid, Calcium, Phosphorus, and Alkaline Phosphatase, with a random sugar and intact PTH test.",
+    "title" : "Dr. Sandeep Garg",
     "userID" : "11111111-1111-1111-1111-111111111111"
   },
-  {
-    "dateAdded" : "2025-11-10T00:00:00Z",
-    "documentDate" : "2025-11-10T00:00:00Z",
+{
+    "dateAdded" : "2025-02-19T00:00:00Z",
+    "documentDate" : "2025-02-19T00:00:00Z",
     "extractedData" : null,
-    "files" : [],
-    "healthFacilityName" : "Clove Dental",
-    "id" : "00000000-0000-0000-0000-000000000010",
-    "recordType" : "other",
-    "summary" : "Dental procedure completed: Scaling and polishing performed. Oral hygiene instructions provided with flossing guidance. Follow-up cleaning recommended in six months.",
-    "title" : "Dental Clean",
-    "userID" : "11111111-1111-1111-1111-111111111111"
-  },
-  {
-    "dateAdded" : "2025-10-26T00:00:00Z",
-    "documentDate" : "2025-10-26T00:00:00Z",
-    "extractedData" : null,
-    "files" : [],
-    "healthFacilityName" : "Mahajan Imaging",
-    "id" : "00000000-0000-0000-0000-000000000011",
+    "files" : [
+      { "filePath" : "asset:seed_record_4", "fileType" : "image" }
+    ],
+    "healthFacilityName" : "Singh Pathology",
+    "id" : "00000000-0000-0000-0000-000000000008",
     "recordType" : "scan",
-    "summary" : "Imaging region: Lumbar spine MRI reviewed thoroughly. Findings suggest mild slip disc without nerve compression. Conservative management and physiotherapy advised.",
-    "title" : "MRI Scan",
-    "userID" : "11111111-1111-1111-1111-111111111111"
-  },
-  {
-    "dateAdded" : "2025-10-11T00:00:00Z",
-    "documentDate" : "2025-10-11T00:00:00Z",
-    "extractedData" : null,
-    "files" : [],
-    "healthFacilityName" : "Dr. Lal PathLabs",
-    "id" : "00000000-0000-0000-0000-000000000012",
-    "recordType" : "labReport",
-    "summary" : "Tests performed: Vitamin D and B12 levels measured. Results indicate deficiencies requiring supplementation. Diet modifications and sunlight exposure recommended.",
-    "title" : "Blood Test",
+    "summary" : "The report details an ultrasound examination of the whole abdomen and pelvis. Findings include normal liver and gallbladder, but bilateral renal parenchymal disease is noted with increased echogenicity and poor differentiation at the corticomedullary junction. No hydronephrotic changes are observed in the pelvis, and the urinary bladder and prostate are also normal. The report suggests further imaging (CT/CECT for urinary tract, MRI for pelvis) based on limitations of the ultrasound",
+    "title" : "Ultrasound Abdomen",
     "userID" : "11111111-1111-1111-1111-111111111111"
   }
 ]

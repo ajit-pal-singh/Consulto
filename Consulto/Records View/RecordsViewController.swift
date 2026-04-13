@@ -53,6 +53,8 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
         
         // Prevent background elements from turning gray/black when popover is presented
         self.view.tintAdjustmentMode = .normal
+        self.view.backgroundColor = UIColor(hex: "#F1F6FF")
+        recordsCollectionView?.backgroundColor = UIColor(hex: "#F1F6FF")
                 setupCollectionView()
         setupChipsView()
         setupHeaderActions()
@@ -276,6 +278,13 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             }
         }
         
+        // Sort: newest first (by documentDate, falling back to dateAdded)
+        filtered.sort { lhs, rhs in
+            let lhsDate = lhs.documentDate ?? lhs.dateAdded
+            let rhsDate = rhs.documentDate ?? rhs.dateAdded
+            return lhsDate > rhsDate
+        }
+        
         records = filtered
         recordsCollectionView.reloadData()
         setupHeaderActions() // This re-renders the checkmarks correctly
@@ -389,10 +398,12 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     }
 
     private func indexPath(forContextMenuConfiguration configuration: UIContextMenuConfiguration) -> IndexPath? {
-        guard let identifier = configuration.identifier as? NSUUID else { return nil }
-        let recordID = identifier as UUID
-        guard let itemIndex = records.firstIndex(where: { $0.id == recordID }) else { return nil }
-        return IndexPath(item: itemIndex, section: 0)
+        guard let identifier = configuration.identifier as? String else { return nil }
+        let components = identifier.components(separatedBy: ":")
+        guard components.count >= 3,
+              let section = Int(components[1]),
+              let item = Int(components[2]) else { return nil }
+        return IndexPath(item: item, section: section)
     }
 
     private func targetedPreview(for configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
@@ -443,7 +454,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             let overlayLayer = CALayer()
             overlayLayer.name = "SolidOverlay"
             overlayLayer.frame = blurEffectView.bounds
-            overlayLayer.backgroundColor = UIColor(hex: "#f5f5f5").withAlphaComponent(0.5).cgColor
+            overlayLayer.backgroundColor = UIColor(hex: "#F1F6FF").withAlphaComponent(0.5).cgColor
             
             let overlayMask = CAGradientLayer()
             overlayMask.frame = overlayLayer.bounds
@@ -867,7 +878,9 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
         guard !selectionMode, indexPath.item < records.count else { return nil }
 
         let record = records[indexPath.item]
-        return UIContextMenuConfiguration(identifier: record.id as NSUUID, previewProvider: nil) { [weak self] _ in
+        // Include index path in identifier to uniquely identify the exact cell even with duplicate IDs
+        let identifier = "\(record.id.uuidString):\(indexPath.section):\(indexPath.item)"
+        return UIContextMenuConfiguration(identifier: identifier as NSString, previewProvider: nil) { [weak self] _ in
             guard let self else { return nil }
 
             let deleteAction = UIAction(

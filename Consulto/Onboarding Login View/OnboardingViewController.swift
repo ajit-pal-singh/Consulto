@@ -37,7 +37,7 @@ class OnboardingViewController: UIViewController {
             illustration: "Record-illustration",
             icon: "Record-icon",
             title: "Instantly Organize Records",
-            body: "Snap a photo or upload PDFs. Consulto automatically summarizes and structures your records, securely on your device."
+            body: "Snap a photo or upload PDFs. Consulto automatically summarizes and structures your records, securely on your device with privacy and ease."
         ),
         Slide(
             illustration: "Prepare-illustration",

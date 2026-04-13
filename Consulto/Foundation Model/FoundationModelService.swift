@@ -42,6 +42,10 @@ class MedicalIntelligenceService {
         // Limit to roughly 12,000 chars for extreme safety margin to ensure no context window crashes
         let safeString = String(rawTranscript.prefix(12000))
         
+        print("======== EXTRACTED OCR TEXT ========")
+        print(safeString)
+        print("====================================")
+        
         // 3. Prepare the Foundation Model
         let session = LanguageModelSession()
         
@@ -68,6 +72,15 @@ class MedicalIntelligenceService {
         let response = try await session.respond(to: prompt, generating: FormDataExtraction.self)
         
         let extraction = response.content
+        
+        print("====== APPLE INTELLIGENCE OUTPUT ======")
+        print("isMedicalRecord: \(extraction.isMedicalRecord)")
+        print("title: \(extraction.title ?? "nil")")
+        print("facilityName: \(extraction.facilityName ?? "nil")")
+        print("dateString: \(extraction.dateString ?? "nil")")
+        print("recordType: \(extraction.recordType?.rawValue ?? "nil")")
+        print("summary: \(extraction.summary ?? "nil")")
+        print("=======================================")
         
         if extraction.isMedicalRecord {
             return extraction

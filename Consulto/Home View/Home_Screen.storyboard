@@ -37,7 +37,7 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
-                            <visualEffectView opaque="NO" alpha="0.0" tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pwi-j4-kcQ" userLabel="Blur Effect View">
+                            <visualEffectView opaque="NO" tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pwi-j4-kcQ" userLabel="Blur Effect View">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="120"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.0" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="UxA-lM-72A">
                                     <rect key="frame" x="0.0" y="0.0" width="393" height="120"/>
@@ -59,21 +59,6 @@
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kb8-5J-zaR" userLabel="Header Actions Container View">
                                         <rect key="frame" x="128.33333333333337" y="4" width="248.66666666666663" height="42"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TGA-gT-jyo">
-                                                <rect key="frame" x="202.66666666666666" y="1" width="40" height="40"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="40" id="nlS-8C-ZtI"/>
-                                                    <constraint firstAttribute="width" constant="40" id="ri1-zg-Aif"/>
-                                                </constraints>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" image="Memoji"/>
-                                            </button>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="TGA-gT-jyo" secondAttribute="trailing" constant="6" id="ksQ-Yw-lBK"/>
-                                            <constraint firstItem="TGA-gT-jyo" firstAttribute="centerY" secondItem="Kb8-5J-zaR" secondAttribute="centerY" id="z9e-RQ-32w"/>
-                                        </constraints>
                                     </view>
                                 </subviews>
                                 <constraints>
@@ -108,12 +93,34 @@
                         <outlet property="blurEffectView" destination="Pwi-j4-kcQ" id="idx-Us-q3B"/>
                         <outlet property="headerActionsContainerView" destination="Kb8-5J-zaR" id="PPw-aQ-Wab"/>
                         <outlet property="homeCollectionView" destination="wKg-Ad-qL7" id="hw5-9s-NK9"/>
-                        <outlet property="profileButton" destination="TGA-gT-jyo" id="HP4-PS-cfN"/>
+                        <segue destination="WQI-y6-iFb" kind="presentation" identifier="ProfileSettings" id="lk5-lV-ILJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1066.4122137404579" y="91.549295774647888"/>
+        </scene>
+        <!--Profile Settings-->
+        <scene sceneID="0xk-5d-UK2">
+            <objects>
+                <viewController title="Profile Settings" id="sNu-3y-Gcy" customClass="ProfileSettingsViewController" customModule="Consulto" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="g75-aY-fK3">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="793"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="BE4-eh-BUJ"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Ol3-70-eH4">
+                        <barButtonItem key="rightBarButtonItem" systemItem="cancel" id="BDA-lB-kRC">
+                            <connections>
+                                <action selector="cancelButtonTapped:" destination="sNu-3y-Gcy" id="QJ6-JI-q2G"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Bfp-JT-oir" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2759.5419847328244" y="91.549295774647888"/>
         </scene>
         <!--Home-->
         <scene sceneID="Iew-ba-2AA">
@@ -133,9 +140,26 @@
             </objects>
             <point key="canvasLocation" x="139.69465648854961" y="91.549295774647888"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="t4M-NQ-mzs">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="WQI-y6-iFb" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="K7A-yJ-9qW">
+                        <rect key="frame" x="0.0" y="16" width="393" height="54"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="sNu-3y-Gcy" kind="relationship" relationship="rootViewController" id="lck-nO-QMo"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="K3R-Q7-ahA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1832.824427480916" y="91.549295774647888"/>
+        </scene>
     </scenes>
     <resources>
-        <image name="Memoji" width="512" height="512"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

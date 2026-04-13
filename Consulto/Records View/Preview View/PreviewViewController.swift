@@ -54,6 +54,7 @@ class PreviewViewController: UIViewController, PHPickerViewControllerDelegate, U
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Preview"
+        navigationItem.largeTitleDisplayMode = .never
         setupTableView()
         
         platterContainerView?.isUserInteractionEnabled = false
