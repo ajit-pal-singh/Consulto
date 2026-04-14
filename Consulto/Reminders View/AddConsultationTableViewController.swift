@@ -53,7 +53,6 @@ class AddConsultationTableViewController: UITableViewController {
 
         view.backgroundColor = UIColor(hex: "F5F5F5")
         tableView.backgroundColor = UIColor(hex: "F5F5F5")
-        tableView.allowsSelection = false
         tableView.keyboardDismissMode = .interactive
         tableView.sectionHeaderTopPadding = 0
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 24, right: 0)
@@ -279,6 +278,13 @@ class AddConsultationTableViewController: UITableViewController {
 
         default:
             return UITableViewCell()
+        }
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section == 3 && indexPath.row == 0 {
+            showRepeatDaysPicker()
         }
     }
 

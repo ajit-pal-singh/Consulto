@@ -111,6 +111,33 @@ final class ConsultSessionStore {
         }.first
     }
 
+    func allPendingSessions(relativeTo now: Date = Date()) -> [ConsultSession] {
+        let sessions = loadSessions()
+        let pendingSessions = sessions.filter { $0.status == .pending }
+
+        let upcoming = pendingSessions
+            .filter { $0.date >= now }
+            .sorted { lhs, rhs in
+                if lhs.date == rhs.date {
+                    return lhs.createdAt > rhs.createdAt
+                }
+                return lhs.date < rhs.date
+            }
+
+        let past = pendingSessions
+            .filter { $0.date < now }
+            .sorted { lhs, rhs in
+                let lhsDistance = abs(lhs.date.timeIntervalSince(now))
+                let rhsDistance = abs(rhs.date.timeIntervalSince(now))
+                if lhsDistance == rhsDistance {
+                    return lhs.createdAt > rhs.createdAt
+                }
+                return lhsDistance < rhsDistance
+            }
+
+        return upcoming + past
+    }
+
     // MARK: - Private Helpers
 
     private func ensureWritableStoreExists() throws {

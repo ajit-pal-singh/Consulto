@@ -1,10 +1,3 @@
-//
-//  ScheduleOptionsTableViewCell.swift
-//  Consulto
-//
-//  Created by Tevika Kumbhawat on 30/03/26.
-//
-
 import UIKit
 
 class ScheduleOptionsTableViewCell: UITableViewCell {
@@ -12,12 +5,13 @@ class ScheduleOptionsTableViewCell: UITableViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var valueLabel: UILabel!
     @IBOutlet weak var chevronImageView: UIImageView!
-    
-    private let menuButton = UIButton(type: .system)
+
+    private let menuButton = UIButton(type: .custom)
     var onTap: (() -> Void)?
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
+        
         titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         valueLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         valueLabel.textAlignment = .right
@@ -32,7 +26,7 @@ class ScheduleOptionsTableViewCell: UITableViewCell {
             menuButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             menuButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             menuButton.topAnchor.constraint(equalTo: contentView.topAnchor),
-            menuButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            menuButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
 
@@ -66,5 +60,4 @@ class ScheduleOptionsTableViewCell: UITableViewCell {
     @objc private func handleTap() {
         onTap?()
     }
-    
 }

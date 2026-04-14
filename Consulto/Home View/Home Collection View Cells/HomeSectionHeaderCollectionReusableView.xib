@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="HeaderView" id="U6b-Vx-4bR" customClass="HomeSectionHeaderCollectionReusableView" customModule="Consulto" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="79"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Uzz-hk-feK">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="79"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Section Header" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CrX-P5-X54">
+                            <rect key="frame" x="0.0" y="6" width="142" height="67"/>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pix-Ya-FTx">
+                            <rect key="frame" x="296" y="6" width="24" height="67"/>
+                            <state key="normal" title="Button"/>
+                            <buttonConfiguration key="configuration" style="plain"/>
+                            <connections>
+                                <action selector="viewAllTapped:" destination="U6b-Vx-4bR" eventType="touchUpInside" id="RnN-ez-nY8"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="CrX-P5-X54" firstAttribute="top" secondItem="Uzz-hk-feK" secondAttribute="top" constant="6" id="3XR-E6-DT6"/>
+                        <constraint firstItem="CrX-P5-X54" firstAttribute="leading" secondItem="Uzz-hk-feK" secondAttribute="leading" id="6Fy-Qd-6X9"/>
+                        <constraint firstItem="pix-Ya-FTx" firstAttribute="top" secondItem="Uzz-hk-feK" secondAttribute="top" constant="6" id="Gq0-lM-vep"/>
+                        <constraint firstAttribute="trailing" secondItem="pix-Ya-FTx" secondAttribute="trailing" id="H0U-Iy-40v"/>
+                        <constraint firstAttribute="bottom" secondItem="pix-Ya-FTx" secondAttribute="bottom" constant="6" id="HJY-ym-3lG"/>
+                        <constraint firstAttribute="bottom" secondItem="CrX-P5-X54" secondAttribute="bottom" constant="6" id="Vwy-OU-XLe"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="VXr-Tz-HHm"/>
+            <constraints>
+                <constraint firstItem="Uzz-hk-feK" firstAttribute="top" secondItem="U6b-Vx-4bR" secondAttribute="top" id="LaL-Y5-ZTx"/>
+                <constraint firstItem="Uzz-hk-feK" firstAttribute="leading" secondItem="VXr-Tz-HHm" secondAttribute="leading" id="Wsh-Zt-teP"/>
+                <constraint firstAttribute="bottom" secondItem="Uzz-hk-feK" secondAttribute="bottom" id="egH-uZ-Rzx"/>
+                <constraint firstItem="VXr-Tz-HHm" firstAttribute="trailing" secondItem="Uzz-hk-feK" secondAttribute="trailing" id="yuy-rp-qR0"/>
+            </constraints>
+            <connections>
+                <outlet property="titleLabel" destination="CrX-P5-X54" id="UAm-d3-M2F"/>
+                <outlet property="viewAllButton" destination="pix-Ya-FTx" id="0Zl-OF-kqd"/>
+            </connections>
+            <point key="canvasLocation" x="-302.29007633587787" y="122.88732394366198"/>
+        </collectionReusableView>
+    </objects>
+</document>

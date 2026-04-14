@@ -112,7 +112,6 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.selectionStyle = .none
         
-        // Match the Figma #F4F4F4 grey background
         let greyBg = UIColor(hex: "#F4F4F4") ?? UIColor(red: 0xF4/255.0, green: 0xF4/255.0, blue: 0xF4/255.0, alpha: 1.0)
         
         // The cell itself should be clear! we apply the color & shape to the contentView.
@@ -162,7 +161,7 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
         return view
     }
     
-    // 🔥 We MUST override the footer height to 0.01, otherwise iOS adds a hidden 20pt gap here automatically!
+    //  We MUST override the footer height to 0.01, otherwise iOS adds a hidden 20pt gap here automatically!
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0.01
     }

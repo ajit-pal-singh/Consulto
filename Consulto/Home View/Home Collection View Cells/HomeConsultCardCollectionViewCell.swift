@@ -10,7 +10,6 @@ import UIKit
 class HomeConsultCardCollectionViewCell: UICollectionViewCell {
 
     @IBOutlet weak var cardView: UIView!
-    @IBOutlet weak var headingLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var purposeLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
@@ -18,7 +17,6 @@ class HomeConsultCardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var detailsContainerView: UIView!
     @IBOutlet weak var markDoneButton: UIButton!
     @IBOutlet weak var openSessionButton: UIButton!
-    
 
     var onTapMarkDone: (() -> Void)?
     var onTapOpenSession: (() -> Void)?
@@ -30,7 +28,6 @@ class HomeConsultCardCollectionViewCell: UICollectionViewCell {
         
         cardView.layer.cornerRadius = 20
         
-        headingLabel.font = .systemFont(ofSize: headingLabel.font.pointSize, weight: .regular).rounded
         nameLabel.font = .systemFont(ofSize: nameLabel.font.pointSize, weight: .semibold).rounded
         purposeLabel.font = .systemFont(ofSize: purposeLabel.font.pointSize, weight: .medium).rounded
         dateLabel.font = .systemFont(ofSize: dateLabel.font.pointSize, weight: .medium).rounded

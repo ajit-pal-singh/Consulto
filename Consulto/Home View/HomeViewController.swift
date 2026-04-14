@@ -1,9 +1,14 @@
 import UIKit
 import SwiftUI
+import PhotosUI
+import UniformTypeIdentifiers
 
 class HomeViewController: UIViewController, UINavigationControllerDelegate,
                           UICollectionViewDataSource,
-                          UICollectionViewDelegate {
+                          UICollectionViewDelegate,
+                          PHPickerViewControllerDelegate,
+                          UIDocumentPickerDelegate,
+                          UIImagePickerControllerDelegate {
 
     private enum HomeSection: Int, CaseIterable {
         case consultation
@@ -37,9 +42,19 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
     @IBOutlet weak var headerActionsContainerView: UIView!
     @IBOutlet weak var homeCollectionView: UICollectionView!
     @IBOutlet weak var blurEffectView: UIVisualEffectView!
+    
+    @IBOutlet weak var platterContainerView: UIView!
+    @IBOutlet weak var dimmingOverlayView: UIView!
+    
+    private var platterViewController: AttachmentPlatterViewController?
+    private var platterBottomConstraint: NSLayoutConstraint?
+    private var platterHeightConstraint: NSLayoutConstraint?
+    
+    private var addReadingPlatterViewController: AddReadingViewController?
+    private var addReadingPlatterBottomConstraint: NSLayoutConstraint?
 
-    private var upcomingConsultation: ConsultSession? {
-        ConsultSessionStore.shared.nearestPendingSession()
+    private var pendingConsultations: [ConsultSession] {
+        ConsultSessionStore.shared.allPendingSessions()
     }
 
     private var homeMedicineRows: [HomeMedicineListRow] {
@@ -90,21 +105,28 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationController?.delegate = self
 
         homeCollectionView.delegate = self
         homeCollectionView.dataSource = self
         homeCollectionView.showsVerticalScrollIndicator = false
+        homeCollectionView.contentInset = UIEdgeInsets(top: 56, left: 0, bottom: 0, right: 0)
 
         blurEffectView.backgroundColor = .clear
         homeCollectionView.backgroundColor = UIColor(hex: "F1F6FF")
         setupProfileButton()
+        
+        platterContainerView?.isUserInteractionEnabled = false
+        dimmingOverlayView?.alpha = 0
+        dimmingOverlayView?.isHidden = true
+        dimmingOverlayView?.isUserInteractionEnabled = false
 
         homeCollectionView.register(UINib(nibName: "HomeConsultCardCollectionViewCell", bundle: nil),
                                     forCellWithReuseIdentifier: "HomeConsultCell")
         homeCollectionView.register(
-            UINib(nibName: "HomeSectionHeaderCollectionViewCell", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            UINib(nibName: "HomeSectionHeaderCollectionReusableView", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "HeaderView")
-
         homeCollectionView.register(UINib(nibName: "QuickActionCollectionViewCell", bundle: nil),
                                     forCellWithReuseIdentifier: "QuickActionCell")
         homeCollectionView.register(UINib(nibName: "HomeMedicineCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "HomeMedicineCell")
@@ -161,6 +183,11 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
+    
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        let isHomeScreen = (viewController === self)
+        navigationController.setNavigationBarHidden(isHomeScreen, animated: animated)
+    }
 
     // MARK: - Blur Gradient Mask
     func setupBlurGradientMask() {
@@ -193,6 +220,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
             blurEffectView.layer.addSublayer(overlayLayer)
         }
     }
+
 
     deinit {
         NotificationCenter.default.removeObserver(self)
@@ -273,7 +301,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
 
         switch section {
         case .consultation:
-            return upcomingConsultation == nil ? 0 : 1
+            return pendingConsultations.count
         case .medicineReminders:
             return homeMedicineRows.count
         case .quickActions:
@@ -292,18 +320,16 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         case .consultation:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HomeConsultCell", for: indexPath) as! HomeConsultCardCollectionViewCell
 
-            if let consultation = upcomingConsultation {
-                cell.headingLabel.text = "UPCOMING CONSULTATION"
-                cell.nameLabel.text = consultation.doctorName
-                cell.purposeLabel.text = consultation.title
-                cell.dateLabel.text = formatDate(consultation.date)
-                cell.timeLabel.text = formatTime(consultation.date)
-                cell.onTapMarkDone = { [weak self] in
-                    self?.markConsultationAsCompleted(consultation)
-                }
-                cell.onTapOpenSession = { [weak self] in
-                    self?.openConsultationDetail(for: consultation)
-                }
+            let consultation = pendingConsultations[indexPath.item]
+            cell.nameLabel.text = consultation.doctorName
+            cell.purposeLabel.text = consultation.title
+            cell.dateLabel.text = formatDate(consultation.date)
+            cell.timeLabel.text = formatTime(consultation.date)
+            cell.onTapMarkDone = { [weak self] in
+                self?.markConsultationAsCompleted(consultation)
+            }
+            cell.onTapOpenSession = { [weak self] in
+                self?.openConsultationDetail(for: consultation)
             }
             return cell
 
@@ -361,9 +387,11 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
             ofKind: kind,
             withReuseIdentifier: "HeaderView",
             for: indexPath
-        ) as! HomeSectionHeaderCollectionViewCell
+        ) as! HomeSectionHeaderCollectionReusableView
         let section = HomeSection(rawValue: indexPath.section)!
         switch section {
+        case .consultation:
+            header.configure(title: "Upcoming Consultation", showsViewAll: false)
         case .medicineReminders:
             header.configure(title: "Today's Medicines", showsViewAll: true)
             header.onViewAllTapped = { [weak self] in
@@ -375,8 +403,6 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
             header.configure(title: "Recent Vitals", showsViewAll: true)
             header.onViewAllTapped = { [weak self] in self?.openVitalsScreen()
             }
-        default:
-            header.configure(title: "", showsViewAll: false)
         }
         return header
     }
@@ -386,8 +412,8 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
 
         switch section {
         case .consultation:
-            if let consultation = upcomingConsultation {
-                openConsultationDetail(for: consultation)
+            if indexPath.item < pendingConsultations.count {
+                openConsultationDetail(for: pendingConsultations[indexPath.item])
             }
         case .medicineReminders:
             break
@@ -440,21 +466,541 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
     private func handleQuickActionTap(at index: Int) {
         switch index {
         case 0:
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            guard let recordsVC = storyboard.instantiateViewController(withIdentifier: "RecordsViewController") as? RecordsViewController else { return }
-            recordsVC.shouldShowAttachmentPlatterOnAppear = true
-            navigationController?.pushViewController(recordsVC, animated: true)
+            showAttachmentPlatter()
         case 1:
-            let storyboard = UIStoryboard(name: "Vital", bundle: nil)
-            guard let vitalsVC = storyboard.instantiateViewController(withIdentifier: "VitalViewController") as? ViewController else { return }
-            vitalsVC.shouldShowAddReadingPlatterOnAppear = true
-            navigationController?.pushViewController(vitalsVC, animated: true)
+            showAddReadingPlatter()
         case 2:
             let storyboard = UIStoryboard(name: "Consult-Screen", bundle: nil)
             guard let navVC = storyboard.instantiateViewController(withIdentifier: "PrepareConsultationNav") as? UINavigationController else { return }
             present(navVC, animated: true)
         default:
             break
+        }
+    }
+    
+    private func showAttachmentPlatter() {
+        guard let container = platterContainerView else { return }
+        guard platterViewController == nil, addReadingPlatterViewController == nil else { return }
+        
+        container.isUserInteractionEnabled = true
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let platterVC = storyboard.instantiateViewController(withIdentifier: "AttachmentPlatterVC") as? AttachmentPlatterViewController else {
+            return
+        }
+        
+        platterVC.onCameraTap = { [weak self] in
+            self?.dismissPlatter()
+            self?.openCamera()
+        }
+        platterVC.onGalleryTap = { [weak self] in
+            self?.dismissPlatter()
+            self?.openGallery()
+        }
+        platterVC.onDocumentTap = { [weak self] in
+            self?.dismissPlatter()
+            self?.openDocumentPicker()
+        }
+        platterVC.onDismiss = { [weak self] in
+            self?.dismissPlatter()
+        }
+        platterVC.onAddPhotosTapped = { [weak self] assets in
+            self?.dismissPlatter()
+            self?.processPlatterAssets(assets)
+        }
+        platterVC.onSelectionChange = { [weak self] hasSelection in
+            guard let self else { return }
+            let targetHeight: CGFloat = hasSelection ? 310 : 280
+            let duration: TimeInterval = 0.3
+            
+            self.platterViewController?.animateMaskPath(toHeight: targetHeight, duration: duration)
+            self.platterHeightConstraint?.constant = targetHeight
+            UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut) {
+                self.view.layoutIfNeeded()
+            }
+        }
+        
+        platterVC.view.translatesAutoresizingMaskIntoConstraints = false
+        addChild(platterVC)
+        container.addSubview(platterVC.view)
+        platterVC.didMove(toParent: self)
+        
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePlatterPan(_:)))
+        platterVC.view.addGestureRecognizer(panGesture)
+        
+        let containerTap = UITapGestureRecognizer(target: self, action: #selector(containerBackgroundTapped(_:)))
+        containerTap.cancelsTouchesInView = false
+        container.addGestureRecognizer(containerTap)
+        
+        self.platterViewController = platterVC
+        
+        let bottomConstraint = platterVC.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 400)
+        self.platterBottomConstraint = bottomConstraint
+        
+        let heightConstraint = platterVC.view.heightAnchor.constraint(equalToConstant: 280)
+        self.platterHeightConstraint = heightConstraint
+        
+        NSLayoutConstraint.activate([
+            platterVC.view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 5),
+            platterVC.view.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -5),
+            bottomConstraint,
+            heightConstraint
+        ])
+        
+        container.layoutIfNeeded()
+        
+        self.platterBottomConstraint?.constant = -5
+        dimmingOverlayView?.isHidden = false
+        dimmingOverlayView?.isUserInteractionEnabled = true
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
+            self.tabBarController?.tabBar.alpha = 0
+            self.dimmingOverlayView?.alpha = 0.3
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc private func dismissPlatter() {
+        guard let vc = platterViewController else { return }
+        
+        platterHeightConstraint?.constant = 280
+        platterViewController?.animateMaskPath(toHeight: 280, duration: 0)
+        view.layoutIfNeeded()
+        
+        self.platterBottomConstraint?.constant = 400
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.tabBarController?.tabBar.alpha = 1
+            self.dimmingOverlayView?.alpha = 0
+            self.view.layoutIfNeeded()
+        }) { _ in
+            self.dimmingOverlayView?.isHidden = true
+            self.dimmingOverlayView?.isUserInteractionEnabled = false
+            
+            vc.willMove(toParent: nil)
+            vc.view.removeFromSuperview()
+            vc.removeFromParent()
+            
+            if let gestures = self.platterContainerView?.gestureRecognizers {
+                gestures.forEach { self.platterContainerView?.removeGestureRecognizer($0) }
+            }
+            
+            self.platterViewController = nil
+            self.platterBottomConstraint = nil
+            self.platterHeightConstraint = nil
+            self.platterContainerView?.isUserInteractionEnabled = false
+        }
+    }
+    
+    private func showAddReadingPlatter() {
+        guard let container = platterContainerView else { return }
+        guard platterViewController == nil, addReadingPlatterViewController == nil else { return }
+        
+        container.isUserInteractionEnabled = true
+        
+        let storyboard = UIStoryboard(name: "Vital", bundle: nil)
+        guard let platterVC = storyboard.instantiateViewController(withIdentifier: "AddReadingViewController") as? AddReadingViewController else {
+            return
+        }
+        
+        platterVC.onHeartRateTap = { [weak self] in
+            self?.dismissAddReadingPlatter()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self?.presentAddReadingAlert(
+                    title: "Heart Rate",
+                    message: "Enter your current heart rate\nMeasure after sitting calmly for 1-2 minutes.",
+                    placeholders: ["78"],
+                    units: ["BPM"]
+                )
+            }
+        }
+        
+        platterVC.onBloodPressureTap = { [weak self] in
+            self?.dismissAddReadingPlatter()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self?.presentAddReadingAlert(
+                    title: "Blood Pressure",
+                    message: "Enter your current blood pressure\nMeasure while seated with your arm resting at heart level.",
+                    placeholders: ["Systolic", "Diastolic"],
+                    units: ["mmHg", "mmHg"]
+                )
+            }
+        }
+        
+        platterVC.onBloodGlucoseTap = { [weak self] in
+            self?.dismissAddReadingPlatter()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self?.presentAddReadingAlert(
+                    title: "Blood Glucose",
+                    message: "Enter your blood glucose level\nBest measured either fasting (8+ hours) or 2 hours post-meal.",
+                    placeholders: ["98"],
+                    units: ["mg/dL"]
+                )
+            }
+        }
+        
+        platterVC.onBodyWeightTap = { [weak self] in
+            self?.dismissAddReadingPlatter()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self?.presentAddReadingAlert(
+                    title: "Body Weight",
+                    message: "Enter your current body weight\nFor best consistency, weigh yourself at the same time every day.",
+                    placeholders: ["80.6"],
+                    units: ["kg"]
+                )
+            }
+        }
+        
+        platterVC.view.translatesAutoresizingMaskIntoConstraints = false
+        addChild(platterVC)
+        container.addSubview(platterVC.view)
+        platterVC.didMove(toParent: self)
+        
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleAddReadingPlatterPan(_:)))
+        platterVC.view.addGestureRecognizer(panGesture)
+        
+        let containerTap = UITapGestureRecognizer(target: self, action: #selector(addReadingContainerBackgroundTapped(_:)))
+        containerTap.cancelsTouchesInView = false
+        container.addGestureRecognizer(containerTap)
+        
+        self.addReadingPlatterViewController = platterVC
+        
+        let bottomConstraint = platterVC.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 500)
+        self.addReadingPlatterBottomConstraint = bottomConstraint
+        
+        NSLayoutConstraint.activate([
+            platterVC.view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 5),
+            platterVC.view.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -5),
+            bottomConstraint
+        ])
+        
+        container.layoutIfNeeded()
+        
+        self.addReadingPlatterBottomConstraint?.constant = -5
+        dimmingOverlayView?.alpha = 0
+        dimmingOverlayView?.isHidden = false
+        dimmingOverlayView?.isUserInteractionEnabled = true
+        if let dimmingOverlayView {
+            view.bringSubviewToFront(dimmingOverlayView)
+        }
+        view.bringSubviewToFront(container)
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
+            self.dimmingOverlayView?.alpha = 0.3
+            self.tabBarController?.tabBar.alpha = 0
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc private func dismissAddReadingPlatter() {
+        guard let vc = addReadingPlatterViewController else { return }
+        
+        self.addReadingPlatterBottomConstraint?.constant = 500
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.dimmingOverlayView?.alpha = 0
+            self.tabBarController?.tabBar.alpha = 1
+            self.view.layoutIfNeeded()
+        }) { _ in
+            self.dimmingOverlayView?.isHidden = true
+            self.dimmingOverlayView?.isUserInteractionEnabled = false
+            
+            vc.willMove(toParent: nil)
+            vc.view.removeFromSuperview()
+            vc.removeFromParent()
+            
+            if let gestures = self.platterContainerView?.gestureRecognizers {
+                gestures.forEach { self.platterContainerView?.removeGestureRecognizer($0) }
+            }
+            
+            self.addReadingPlatterViewController = nil
+            self.addReadingPlatterBottomConstraint = nil
+            self.platterContainerView?.isUserInteractionEnabled = false
+        }
+    }
+    
+    @objc private func addReadingContainerBackgroundTapped(_ gesture: UITapGestureRecognizer) {
+        guard let platterView = addReadingPlatterViewController?.view else { return }
+        let location = gesture.location(in: platterContainerView)
+        if !platterView.frame.contains(location) {
+            dismissAddReadingPlatter()
+        }
+    }
+    
+    @objc private func handleAddReadingPlatterPan(_ gesture: UIPanGestureRecognizer) {
+        guard let view = gesture.view else { return }
+        let translation = gesture.translation(in: view)
+        let velocity = gesture.velocity(in: view)
+        
+        switch gesture.state {
+        case .changed:
+            if translation.y > 0 {
+                self.addReadingPlatterBottomConstraint?.constant = translation.y - 5
+                let progress = min(translation.y / 200, 1.0)
+                self.dimmingOverlayView?.alpha = 0.3 * (1 - progress)
+                self.view.layoutIfNeeded()
+            }
+        case .ended, .cancelled:
+            if translation.y > 150 || velocity.y > 1000 {
+                dismissAddReadingPlatter()
+            } else {
+                self.addReadingPlatterBottomConstraint?.constant = -5
+                UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
+                    self.dimmingOverlayView?.alpha = 0.3
+                    self.view.layoutIfNeeded()
+                }
+            }
+        default:
+            break
+        }
+    }
+    
+    @objc private func containerBackgroundTapped(_ gesture: UITapGestureRecognizer) {
+        guard let platterView = platterViewController?.view else { return }
+        let location = gesture.location(in: platterContainerView)
+        if !platterView.frame.contains(location) {
+            dismissPlatter()
+        }
+    }
+    
+    @objc private func handlePlatterPan(_ gesture: UIPanGestureRecognizer) {
+        guard let view = gesture.view else { return }
+        let translation = gesture.translation(in: view)
+        let velocity = gesture.velocity(in: view)
+        
+        switch gesture.state {
+        case .changed:
+            if translation.y > 0 {
+                self.platterBottomConstraint?.constant = translation.y - 5
+                let progress = min(translation.y / 200, 1.0)
+                self.dimmingOverlayView?.alpha = 0.3 * (1 - progress)
+                self.view.layoutIfNeeded()
+            }
+        case .ended, .cancelled:
+            if translation.y > 150 || velocity.y > 1000 {
+                dismissPlatter()
+            } else {
+                self.platterBottomConstraint?.constant = -5
+                UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
+                    self.dimmingOverlayView?.alpha = 0.3
+                    self.view.layoutIfNeeded()
+                }
+            }
+        default:
+            break
+        }
+    }
+    
+    private func openCamera() {
+        guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
+            print("Camera is not available on this device.")
+            return
+        }
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+    
+    private func openGallery() {
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 0
+        config.filter = .images
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+    
+    private func openDocumentPicker() {
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.pdf, .image, .plainText], asCopy: true)
+        picker.delegate = self
+        picker.allowsMultipleSelection = true
+        present(picker, animated: true)
+    }
+    
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        let group = DispatchGroup()
+        var fetchedAttachments: [RecordAttachmentDraft?] = Array(repeating: nil, count: results.count)
+        
+        for (index, result) in results.enumerated() {
+            group.enter()
+            result.itemProvider.loadObject(ofClass: UIImage.self) { object, _ in
+                if let image = object as? UIImage {
+                    fetchedAttachments[index] = .image(image)
+                }
+                group.leave()
+            }
+        }
+        
+        picker.dismiss(animated: true) {
+            group.notify(queue: .main) {
+                let attachments = fetchedAttachments.compactMap { $0 }
+                self.presentPreview(with: attachments)
+            }
+        }
+    }
+    
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        var fetchedAttachments: [RecordAttachmentDraft] = []
+        
+        for url in urls {
+            if url.pathExtension.lowercased() == "pdf" {
+                if let pdfImage = pdfToImage(url: url) {
+                    fetchedAttachments.append(.pdf(url: url, thumbnail: pdfImage))
+                }
+            } else if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
+                fetchedAttachments.append(.image(image, fileURL: url))
+            }
+        }
+        
+        presentPreview(with: fetchedAttachments)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let image = info[.originalImage] as? UIImage {
+            picker.dismiss(animated: true) {
+                self.presentPreview(with: [.image(image)])
+            }
+        } else {
+            picker.dismiss(animated: true)
+        }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
+    
+    private func presentAddReadingAlert(title: String, message: String, placeholders: [String], units: [String]) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        for (index, placeholder) in placeholders.enumerated() {
+            alertController.addTextField { textField in
+                textField.placeholder = placeholder
+                if placeholder.contains("Systolic") || placeholder.contains("Diastolic") || title.contains("Heart Rate") {
+                    textField.keyboardType = .numberPad
+                } else {
+                    textField.keyboardType = .decimalPad
+                }
+                
+                if index < units.count {
+                    let unitLabel = UILabel()
+                    unitLabel.text = units[index]
+                    unitLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+                    unitLabel.textColor = .black
+                    unitLabel.sizeToFit()
+                    
+                    let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: unitLabel.frame.width + 10, height: unitLabel.frame.height))
+                    unitLabel.center = CGPoint(x: paddingView.frame.width / 2 - 5, y: paddingView.frame.height / 2)
+                    paddingView.addSubview(unitLabel)
+                    
+                    textField.rightView = paddingView
+                    textField.rightViewMode = .always
+                }
+            }
+        }
+        
+        alertController.addTextField { textField in
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd-MM-yyyy"
+            textField.text = formatter.string(from: Date())
+            
+            let iconImage = UIImage(systemName: "calendar")
+            let iconView = UIImageView(image: iconImage)
+            iconView.tintColor = .black
+            iconView.contentMode = .scaleAspectFit
+            iconView.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+            
+            let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
+            paddingView.addSubview(iconView)
+            paddingView.isUserInteractionEnabled = false
+            iconView.isUserInteractionEnabled = false
+            
+            textField.rightView = paddingView
+            textField.rightViewMode = .always
+            
+            let datePicker = UIDatePicker()
+            datePicker.datePickerMode = .date
+            datePicker.maximumDate = Date()
+            if #available(iOS 14.0, *) {
+                datePicker.preferredDatePickerStyle = .wheels
+            }
+            
+            datePicker.addAction(UIAction { _ in
+                textField.text = formatter.string(from: datePicker.date)
+            }, for: .valueChanged)
+            
+            textField.inputView = datePicker
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        let addAction = UIAlertAction(title: "Add Reading", style: .default) { _ in
+            var values = [String]()
+            for index in 0..<placeholders.count {
+                values.append(alertController.textFields?[index].text ?? "")
+            }
+            let dateText = alertController.textFields?.last?.text ?? ""
+            print("Added \(title): \(values.joined(separator: " / ")) on \(dateText)")
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(addAction)
+        
+        present(alertController, animated: true)
+    }
+    
+    private func processPlatterAssets(_ assets: [PHAsset]) {
+        let manager = PHImageManager.default()
+        let options = PHImageRequestOptions()
+        options.isSynchronous = false
+        options.deliveryMode = .highQualityFormat
+        options.isNetworkAccessAllowed = true
+        
+        var fetchedAttachments: [RecordAttachmentDraft?] = Array(repeating: nil, count: assets.count)
+        let group = DispatchGroup()
+        
+        for (index, asset) in assets.enumerated() {
+            group.enter()
+            let targetSize = CGSize(width: 1500, height: 1500)
+            manager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFit, options: options) { image, _ in
+                if let image {
+                    fetchedAttachments[index] = .image(image)
+                }
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main) {
+            let attachments = fetchedAttachments.compactMap { $0 }
+            self.presentPreview(with: attachments)
+        }
+    }
+    
+    private func presentPreview(with attachments: [RecordAttachmentDraft]) {
+        guard !attachments.isEmpty else { return }
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let previewVC = storyboard.instantiateViewController(withIdentifier: "PreviewViewController") as? PreviewViewController else {
+            return
+        }
+        
+        previewVC.attachments = attachments
+        navigationController?.pushViewController(previewVC, animated: true)
+    }
+    
+    private func pdfToImage(url: URL) -> UIImage? {
+        guard let document = CGPDFDocument(url as CFURL),
+              let page = document.page(at: 1) else { return nil }
+        
+        let pageRect = page.getBoxRect(.mediaBox)
+        let renderer = UIGraphicsImageRenderer(size: pageRect.size)
+        
+        return renderer.image { context in
+            UIColor.white.set()
+            context.fill(pageRect)
+            
+            context.cgContext.translateBy(x: 0.0, y: pageRect.size.height)
+            context.cgContext.scaleBy(x: 1.0, y: -1.0)
+            context.cgContext.drawPDFPage(page)
         }
     }
 
@@ -469,9 +1015,26 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
                     heightDimension: .estimated(180)
                 )
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
+                
+                let isMultiple = (self?.pendingConsultations.count ?? 0) > 1
+                let groupSize = NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(isMultiple ? 0.85 : 1.0),
+                    heightDimension: .estimated(180)
+                )
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                
                 let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = NSDirectionalEdgeInsets(top: 64, leading: 16, bottom: 4, trailing: 16)
+                section.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 16, bottom: 4, trailing: 16)
+                section.contentInsetsReference = .safeArea
+                section.interGroupSpacing = 16
+                section.orthogonalScrollingBehavior = isMultiple ? .groupPaging : .none
+                
+                let header = NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(40)),
+                    elementKind: UICollectionView.elementKindSectionHeader,
+                    alignment: .top
+                )
+                section.boundarySupplementaryItems = [header]
                 return section
 
             case .medicineReminders:
@@ -489,7 +1052,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.interGroupSpacing = 10
-                section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+                section.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 16, bottom: 0, trailing: 16)
 
                 let header = NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(40)), elementKind: UICollectionView.elementKindSectionHeader,
@@ -511,7 +1074,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
                 group.interItemSpacing = .fixed(10)
 
                 let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16)
+                section.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 16, bottom: 4, trailing: 16)
 
                 let header = NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(40)), elementKind: UICollectionView.elementKindSectionHeader,
@@ -534,7 +1097,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
 
                 let section = NSCollectionLayoutSection(group: group)
                 section.contentInsets = NSDirectionalEdgeInsets(
-                    top: 0, leading: 16, bottom: 0, trailing: 16)
+                    top: 2, leading: 16, bottom: 16, trailing: 16)
                 section.interGroupSpacing = 10
                 
                 let header = NSCollectionLayoutBoundarySupplementaryItem(

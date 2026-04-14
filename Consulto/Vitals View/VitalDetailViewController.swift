@@ -48,6 +48,8 @@ class VitalDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.largeTitleDisplayMode = .never
+        
         view.backgroundColor = UIColor(hex: "#F5F5F5")
         
         if let scrollView = view.subviews.first(where: { $0 is UIScrollView }) {

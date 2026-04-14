@@ -31,8 +31,28 @@ class InputTextFieldTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+    }
+    
+    func setupPasswordToggle() {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "eye.slash.fill"), for: .normal)
+        button.tintColor = .lightGray
+        button.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+        button.addTarget(self, action: #selector(togglePasswordView(_:)), for: .touchUpInside)
+        
+        let rightView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 30))
+        button.center = CGPoint(x: 20, y: 15)
+        rightView.addSubview(button)
+        
+        inputTextField.rightView = rightView
+        inputTextField.rightViewMode = .always
+        inputTextField.isSecureTextEntry = true
+    }
 
-        // Configure the view for the selected state
+    @objc func togglePasswordView(_ sender: UIButton) {
+        inputTextField.isSecureTextEntry.toggle()
+        let icon = inputTextField.isSecureTextEntry ? "eye.slash.fill" : "eye.fill"
+        sender.setImage(UIImage(systemName: icon), for: .normal)
     }
 
 }

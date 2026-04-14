@@ -2,6 +2,8 @@ import UIKit
 
 final class MedicationCardTableViewCell: UITableViewCell, UICollectionViewDataSource, UICollectionViewDelegate {
 
+    static let preferredHeight: CGFloat = 70
+
     private let collectionView: UICollectionView
     private var cardData: (name: String, dosage: String, frequency: String, duration: String)?
 
@@ -9,13 +11,13 @@ final class MedicationCardTableViewCell: UITableViewCell, UICollectionViewDataSo
         let layout = UICollectionViewCompositionalLayout { _, _ in
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(91)
+                heightDimension: .absolute(Self.preferredHeight)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
             let groupSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(91)
+                heightDimension: .absolute(Self.preferredHeight)
             )
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
@@ -32,13 +34,13 @@ final class MedicationCardTableViewCell: UITableViewCell, UICollectionViewDataSo
         let layout = UICollectionViewCompositionalLayout { _, _ in
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(91)
+                heightDimension: .absolute(Self.preferredHeight)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
             let groupSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(91)
+                heightDimension: .absolute(Self.preferredHeight)
             )
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
             group.interItemSpacing = .fixed(16)

@@ -12,7 +12,7 @@ struct AddMedicineFormData {
 }
 
 class AddMedicineTableViewController: UITableViewController {
-    
+
     var medicationToEdit: Medication?
     var times: [Date] = []
     var inactiveTimes: [Date] = []
@@ -33,13 +33,27 @@ class AddMedicineTableViewController: UITableViewController {
         setupUI()
         setupNavigationItems()
 
-        tableView.register(UINib(nibName: "NameInputTableViewCell", bundle: nil), forCellReuseIdentifier: "NameInputCell")
-        tableView.register(UINib(nibName: "DosageValueTableViewCell", bundle: nil), forCellReuseIdentifier: "DosageValueCell")
-        tableView.register(UINib(nibName: "DosageUnitTableViewCell", bundle: nil), forCellReuseIdentifier: "DosageUnitCell")
-        tableView.register(UINib(nibName: "AddActionTableViewCell", bundle: nil), forCellReuseIdentifier: "AddActionCell")
-        tableView.register(UINib(nibName: "ReminderTimeTableViewCell", bundle: nil), forCellReuseIdentifier: "TimeCell")
-        tableView.register(UINib(nibName: "ScheduleOptionsTableViewCell", bundle: nil), forCellReuseIdentifier: "OptionsCell")
-        tableView.register(UINib(nibName: "SnoozeTableViewCell", bundle: nil), forCellReuseIdentifier: "SnoozeCell")
+        tableView.register(
+            UINib(nibName: "NameInputTableViewCell", bundle: nil),
+            forCellReuseIdentifier: "NameInputCell")
+        tableView.register(
+            UINib(nibName: "DosageValueTableViewCell", bundle: nil),
+            forCellReuseIdentifier: "DosageValueCell")
+        tableView.register(
+            UINib(nibName: "DosageUnitTableViewCell", bundle: nil),
+            forCellReuseIdentifier: "DosageUnitCell")
+        tableView.register(
+            UINib(nibName: "AddActionTableViewCell", bundle: nil),
+            forCellReuseIdentifier: "AddActionCell")
+        tableView.register(
+            UINib(nibName: "ReminderTimeTableViewCell", bundle: nil),
+            forCellReuseIdentifier: "TimeCell")
+        tableView.register(
+            UINib(nibName: "ScheduleOptionsTableViewCell", bundle: nil),
+            forCellReuseIdentifier: "OptionsCell")
+        tableView.register(
+            UINib(nibName: "SnoozeTableViewCell", bundle: nil), forCellReuseIdentifier: "SnoozeCell"
+        )
     }
 
     private func populateExistingValuesIfNeeded() {
@@ -66,7 +80,7 @@ class AddMedicineTableViewController: UITableViewController {
     private func setupUI() {
         tableView.delegate = self
         tableView.dataSource = self
-        
+
         view.backgroundColor = UIColor(hex: "F5F5F5")
         tableView.backgroundColor = UIColor(hex: "F5F5F5")
         tableView.keyboardDismissMode = .interactive
@@ -94,7 +108,7 @@ class AddMedicineTableViewController: UITableViewController {
         guard isFormValid else {
             return
         }
-        
+
         guard let mealTiming = mealTiming else {
             return
         }
@@ -112,9 +126,10 @@ class AddMedicineTableViewController: UITableViewController {
         onSave?(formData)
         dismiss(animated: true)
     }
-    
+
     func showTimePicker() {
-        let alert = UIAlertController(title: "Select Time", message: "\n\n\n\n\n", preferredStyle: .alert)
+        let alert = UIAlertController(
+            title: "Select Time", message: "\n\n\n\n\n", preferredStyle: .alert)
 
         let picker = UIDatePicker()
         picker.datePickerMode = .time
@@ -139,11 +154,11 @@ class AddMedicineTableViewController: UITableViewController {
 
         present(alert, animated: true)
     }
-    
+
     @objc private func dismissPickers() {
         view.endEditing(true)
     }
-    
+
     func formatTime(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
@@ -166,19 +181,24 @@ class AddMedicineTableViewController: UITableViewController {
         }
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath)
+        -> UITableViewCell
+    {
         if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "NameInputCell", for: indexPath) as! NameInputTableViewCell
+            let cell =
+                tableView.dequeueReusableCell(withIdentifier: "NameInputCell", for: indexPath)
+                as! NameInputTableViewCell
             cell.configure(placeholder: "Name of Medicine", text: medicineName)
             cell.didChangeText = { [weak self] text in
                 self?.medicineName = text
                 self?.updateDoneButtonState()
             }
             return cell
-        }
-        else if indexPath.section == 1 {
+        } else if indexPath.section == 1 {
             if indexPath.row == 0 {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "DosageValueCell", for: indexPath) as! DosageValueTableViewCell
+                let cell =
+                    tableView.dequeueReusableCell(withIdentifier: "DosageValueCell", for: indexPath)
+                    as! DosageValueTableViewCell
                 cell.configure(text: dosageValue)
                 cell.didChangeText = { [weak self] text in
                     self?.dosageValue = text
@@ -186,17 +206,20 @@ class AddMedicineTableViewController: UITableViewController {
                 return cell
             }
             if indexPath.row == 1 {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "DosageUnitCell", for: indexPath) as! DosageUnitTableViewCell
+                let cell =
+                    tableView.dequeueReusableCell(withIdentifier: "DosageUnitCell", for: indexPath)
+                    as! DosageUnitTableViewCell
                 cell.configure(unit: selectedUnit) { [weak self] unit in
                     self?.selectedUnit = unit
                     self?.tableView.reloadRows(at: [IndexPath(row: 1, section: 1)], with: .none)
                 }
                 return cell
             }
-        }
-        else if indexPath.section == 2 {
+        } else if indexPath.section == 2 {
             if indexPath.row < times.count {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "TimeCell", for: indexPath) as! ReminderTimeTableViewCell
+                let cell =
+                    tableView.dequeueReusableCell(withIdentifier: "TimeCell", for: indexPath)
+                    as! ReminderTimeTableViewCell
                 cell.selectionStyle = .none
 
                 let time = times[indexPath.row]
@@ -221,7 +244,9 @@ class AddMedicineTableViewController: UITableViewController {
                 return cell
 
             } else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "AddActionCell", for: indexPath) as! AddActionTableViewCell
+                let cell =
+                    tableView.dequeueReusableCell(withIdentifier: "AddActionCell", for: indexPath)
+                    as! AddActionTableViewCell
                 cell.selectionStyle = .none
                 cell.actionLabel?.text = "add time"
                 cell.didTapAction = { [weak self] in
@@ -229,73 +254,86 @@ class AddMedicineTableViewController: UITableViewController {
                 }
                 return cell
             }
-        }
-        else if indexPath.section == 3 {
+        } else if indexPath.section == 3 {
             switch indexPath.row {
-                case 0, 1:
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "OptionsCell", for: indexPath) as! ScheduleOptionsTableViewCell
+            case 0, 1:
+                let cell =
+                    tableView.dequeueReusableCell(withIdentifier: "OptionsCell", for: indexPath)
+                    as! ScheduleOptionsTableViewCell
 
-                    if indexPath.row == 0 {
-                        cell.configure(
-                            title: "Meal Time",
-                            value: mealText(mealTiming ?? .afterMeal),
-                            actions: mealActions()
-                        )
-                    } else {
-                        cell.configureStatic(title: "Repeat", value: repeatText())
-                        cell.onTap = { [weak self] in
-                            self?.showRepeatDaysPicker()
-                        }
-                    }
-                    return cell
-                
-                case 2:
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "SnoozeCell", for: indexPath) as! SnoozeTableViewCell
-
-                    cell.titleLabel.text = "Snooze"
-                    cell.switchControl.isOn = isSnoozeOn
-
-                    cell.onSwitchChanged = { [weak self] isOn in
-                        self?.isSnoozeOn = isOn
-                        self?.tableView.reloadSections(IndexSet(integer: 3), with: .automatic)
-                    }
-                    return cell
-
-                case 3:
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "OptionsCell", for: indexPath) as! ScheduleOptionsTableViewCell
-
+                if indexPath.row == 0 {
                     cell.configure(
-                        title: "Snooze Time",
-                        value: snoozeTime.isEmpty ? "10 mins" : snoozeTime,
-                        actions: snoozeActions()
+                        title: "Meal Time",
+                        value: mealText(mealTiming ?? .afterMeal),
+                        actions: mealActions()
                     )
-                    return cell
-                default:
-                    return UITableViewCell()
+                } else {
+                    cell.configureStatic(title: "Repeat", value: repeatText())
+                    cell.onTap = { [weak self] in
+                        self?.showRepeatDaysPicker()
+                    }
+                }
+                return cell
+
+            case 2:
+                let cell =
+                    tableView.dequeueReusableCell(withIdentifier: "SnoozeCell", for: indexPath)
+                    as! SnoozeTableViewCell
+
+                cell.titleLabel.text = "Snooze"
+                cell.switchControl.isOn = isSnoozeOn
+
+                cell.onSwitchChanged = { [weak self] isOn in
+                    self?.isSnoozeOn = isOn
+                    self?.tableView.reloadSections(IndexSet(integer: 3), with: .automatic)
+                }
+                return cell
+
+            case 3:
+                let cell =
+                    tableView.dequeueReusableCell(withIdentifier: "OptionsCell", for: indexPath)
+                    as! ScheduleOptionsTableViewCell
+
+                cell.configure(
+                    title: "Snooze Time",
+                    value: snoozeTime.isEmpty ? "10 mins" : snoozeTime,
+                    actions: snoozeActions()
+                )
+                return cell
+            default:
+                return UITableViewCell()
             }
         }
         return UITableViewCell()
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Tapped section: \(indexPath.section), row: \(indexPath.row)")
         if indexPath.section == 2 && indexPath.row == times.count {
             showTimePicker()
+        } else if indexPath.section == 3 && indexPath.row == 1 {
+            showRepeatDaysPicker()
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int)
+        -> CGFloat
+    {
         return 6
     }
 
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int)
+        -> UIView?
+    {
         let view = UIView()
         view.backgroundColor = .clear
         return view
     }
 
-    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int)
+        -> CGFloat
+    {
         return 6
     }
 
@@ -356,21 +394,26 @@ class AddMedicineTableViewController: UITableViewController {
             menuAction(title: "After Meal", isSelected: mealTiming == .afterMeal) { [weak self] in
                 self?.mealTiming = .afterMeal
             },
-            menuAction(title: "Empty Stomach", isSelected: mealTiming == .emptyStomach) { [weak self] in
+            menuAction(title: "Empty Stomach", isSelected: mealTiming == .emptyStomach) {
+                [weak self] in
                 self?.mealTiming = .emptyStomach
-            }
+            },
         ]
     }
 
     private func snoozeActions() -> [UIAction] {
         ["5 mins", "10 mins", "15 mins", "30 mins"].map { value in
-            menuAction(title: value, isSelected: (snoozeTime.isEmpty ? "10 mins" : snoozeTime) == value) { [weak self] in
+            menuAction(
+                title: value, isSelected: (snoozeTime.isEmpty ? "10 mins" : snoozeTime) == value
+            ) { [weak self] in
                 self?.snoozeTime = value
             }
         }
     }
 
-    private func menuAction(title: String, isSelected: Bool, onSelect: @escaping () -> Void) -> UIAction {
+    private func menuAction(title: String, isSelected: Bool, onSelect: @escaping () -> Void)
+        -> UIAction
+    {
         UIAction(title: title, state: isSelected ? .on : .off) { [weak self] _ in
             onSelect()
             self?.updateDoneButtonState()
@@ -393,7 +436,9 @@ class AddMedicineTableViewController: UITableViewController {
         if repeatDays.count == 7 { return "Every Day" }
         if repeatDays.isEmpty { return "Select Days" }
 
-        let orderedDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        let orderedDays = [
+            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+        ]
         return orderedDays.filter { repeatDays.contains($0) }.joined(separator: ", ")
     }
 

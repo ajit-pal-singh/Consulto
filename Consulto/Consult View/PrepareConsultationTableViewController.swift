@@ -539,7 +539,7 @@ class PrepareConsultationTableViewController: UITableViewController {
     {
         switch getFormSection(for: section) {
         case .medication, .addMedication:
-            return 8
+            return 6
         default:
             break
         }
@@ -551,7 +551,7 @@ class PrepareConsultationTableViewController: UITableViewController {
     {
         switch getFormSection(for: section) {
         case .medication, .addMedication:
-            return 8
+            return 6
         default:
             break
         }
@@ -566,7 +566,7 @@ class PrepareConsultationTableViewController: UITableViewController {
             return CGFloat(height)
         }
         if case .medication = getFormSection(for: indexPath.section) {
-            return 91
+            return MedicationCardTableViewCell.preferredHeight
         }
         return UITableView.automaticDimension
     }

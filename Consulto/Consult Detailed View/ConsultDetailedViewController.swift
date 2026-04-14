@@ -49,6 +49,13 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     @IBAction func doneTapped(_ sender: Any) {
         // 1. Mark the session as completed
         if var session = consultSession {
+            session.title = self.sessionTitle
+            session.symptoms = self.symptoms
+            session.medications = self.medications
+            session.records = self.records
+            session.questions = self.questions
+            session.notes = self.notes
+            
             session.status = .completed
             ConsultSessionStore.shared.updateSession(session)
             
@@ -209,8 +216,9 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 10
+        let isLast = visibleSections.last == .questions
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0, leading: 16, bottom: 0, trailing: 16)
+            top: 0, leading: 16, bottom: isLast ? 100 : 0, trailing: 16)
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
@@ -236,8 +244,9 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
         let section = NSCollectionLayoutSection(group: group)
+        let isLast = visibleSections.last == .questions
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0, leading: 16, bottom: 0, trailing: 16)
+            top: 0, leading: 16, bottom: isLast ? 100 : 0, trailing: 16)
         section.interGroupSpacing = 10
 
         let headerSize = NSCollectionLayoutSize(
@@ -270,10 +279,9 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         group.interItemSpacing = .fixed(16)
 
         let section = NSCollectionLayoutSection(group: group)
-
+        let isLast = visibleSections.last == .questions
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0, leading: 16, bottom: 0,
-            trailing: 16)
+            top: 0, leading: 16, bottom: isLast ? 100 : 0, trailing: 16)
         section.interGroupSpacing = 16
 
         let headerSize = NSCollectionLayoutSize(
@@ -306,7 +314,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         section.interGroupSpacing = 10
         let isLast = visibleSections.last == .questions
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0, leading: 16, bottom: isLast ? 100 : 20, trailing: 16)
+            top: 0, leading: 16, bottom: isLast ? 100 : 0, trailing: 16)
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -337,7 +345,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         section.interGroupSpacing = 10
         let isLast = visibleSections.last == .notes
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0, leading: 16, bottom: isLast ? 100 : 20, trailing: 16)
+            top: 0, leading: 16, bottom: isLast ? 100 : 0, trailing: 16)
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),

@@ -1,13 +1,6 @@
-//
-//  HomeSectionHeaderCollectionViewCell.swift
-//  Consulto
-//
-//  Created by Tevika Kumbhawat on 04/04/26.
-//
-
 import UIKit
 
-class HomeSectionHeaderCollectionViewCell: UICollectionViewCell {
+class HomeSectionHeaderCollectionReusableView: UICollectionReusableView {
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var viewAllButton: UIButton!
@@ -33,9 +26,13 @@ class HomeSectionHeaderCollectionViewCell: UICollectionViewCell {
 
         let font = UIFont.systemFont(ofSize: 13, weight: .medium).rounded
         let color = UIColor(white: 0.33, alpha: 1)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 8, weight: .semibold)
 
         var config = UIButton.Configuration.plain()
-        config.title = "View All >"
+        config.title = "View All"
+        config.image = UIImage(systemName: "chevron.right", withConfiguration: symbolConfig)
+        config.imagePlacement = .trailing
+        config.imagePadding = 3
         config.baseForegroundColor = color
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 0)
         config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
@@ -48,8 +45,9 @@ class HomeSectionHeaderCollectionViewCell: UICollectionViewCell {
 
         viewAllButton.configurationUpdateHandler = { button in
             var c = button.configuration ?? .plain()
-            c.title = "View All >"
+            c.title = "View All"
             c.baseForegroundColor = color
+            c.image = UIImage(systemName: "chevron.right", withConfiguration: symbolConfig)
             c.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
                 var outgoing = incoming
                 outgoing.font = font

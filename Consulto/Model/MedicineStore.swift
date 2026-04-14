@@ -19,13 +19,19 @@ class MedicineStore {
 
     private(set) var medicines: [Medicine] = []
 
+    private var doneMeds: [String: Date] {
+        get { UserDefaults.standard.dictionary(forKey: "doneMedsStore") as? [String: Date] ?? [:] }
+        set { UserDefaults.standard.set(newValue, forKey: "doneMedsStore") }
+    }
+
+    private func isDosedToday(key: String) -> Bool {
+        guard let date = doneMeds[key] else { return false }
+        return Calendar.current.isDateInToday(date)
+    }
+
     func syncFromMedications(_ medications: [Medication]) {
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "h:mm a"
-
-        let oldKeysToDone: [String: Bool] = Dictionary(uniqueKeysWithValues: medicines.map {
-            (doseKey(medicationId: $0.medicationId, doseTime: $0.doseTime), $0.isDone)
-        })
 
         var newRows: [Medicine] = []
 
@@ -33,7 +39,7 @@ class MedicineStore {
             let activeTimes = activeTimes(for: med).sorted()
             for dose in activeTimes {
                 let key = doseKey(medicationId: med.id, doseTime: dose)
-                let isDone = oldKeysToDone[key] ?? false
+                let isDone = isDosedToday(key: key)
 
                 newRows.append(
                     Medicine(
@@ -57,6 +63,16 @@ class MedicineStore {
 
     func toggleDone(rowId: UUID) {
         guard let idx = medicines.firstIndex(where: { $0.rowId == rowId }) else { return }
+        let med = medicines[idx]
+        let key = doseKey(medicationId: med.medicationId, doseTime: med.doseTime)
+        
+        var dict = doneMeds
+        if med.isDone {
+            dict[key] = nil
+        } else {
+            dict[key] = Date()
+        }
+        doneMeds = dict
         medicines[idx].isDone.toggle()
         sortMedicinesForHomeDisplay()
     }

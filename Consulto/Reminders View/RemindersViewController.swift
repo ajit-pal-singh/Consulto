@@ -94,6 +94,9 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        title = "Reminders"
+        navigationItem.largeTitleDisplayMode = .never
 
         consultationReminders = ConsultationReminderStore.shared.reminders
 
@@ -120,6 +123,12 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
             name: NSNotification.Name("ConsultationReminderUpdated"),
             object: nil
         )
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.largeTitleDisplayMode = .never
     }
 
     private func configureAddMenu() {
