@@ -5,7 +5,7 @@ struct VitalsHeaderActionsView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-    
+
             Button(action: {
                 onAddAction?()
             }) {

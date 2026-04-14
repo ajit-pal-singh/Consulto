@@ -23,7 +23,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         let tintColor: UIColor
     }
     
-    private var vitalReadings: [VitalReading] = VitalData.generateMockData()
+    private var vitalReadings: [VitalReading] = VitalDataStore.shared.loadReadings()
     
     private struct RecentVitals {
         let assetName: String?
@@ -153,7 +153,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
         MedicineStore.shared.syncFromMedications(MedicationReminderStore.shared.medications)
-        vitalReadings = VitalData.generateMockData()
+        vitalReadings = VitalDataStore.shared.loadReadings()
         homeCollectionView.reloadData()
     }
 
@@ -210,7 +210,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
     }
     
     @objc private func handleVitalsUpdate() {
-        vitalReadings = VitalData.generateMockData()
+        vitalReadings = VitalDataStore.shared.loadReadings()
         homeCollectionView.reloadData()
     }
 

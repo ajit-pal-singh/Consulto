@@ -15,7 +15,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		C3A7A25E2F1CFC9F006572F5 /* Exceptions for "Consulto" folder in "Consulto" target */ = {
+		C3E9F7A52F8EC3CC007B2B8B /* Exceptions for "Consulto" folder in "Consulto" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -28,7 +28,7 @@
 		C3A7A24E2F1CFC9E006572F5 /* Consulto */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				C3A7A25E2F1CFC9F006572F5 /* Exceptions for "Consulto" folder in "Consulto" target */,
+				C3E9F7A52F8EC3CC007B2B8B /* Exceptions for "Consulto" folder in "Consulto" target */,
 			);
 			path = Consulto;
 			sourceTree = "<group>";

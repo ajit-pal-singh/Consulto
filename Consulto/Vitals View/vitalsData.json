@@ -1,0 +1,6812 @@
+{
+  "readings": [
+    {
+      "title": "Heart Rate",
+      "value": "--",
+      "unit": "BPM",
+      "subtitle": "Resting Rate",
+      "iconImageName": "HeartSymbol",
+      "detailIconImageName": "HeartFill",
+      "iconTintHex": "#CC1111",
+      "chartType": "line",
+      "chartColor": "red",
+      "chartData": [],
+      "weeklyChartData": [],
+      "monthlyChartData": [],
+      "hourlyChartData": [
+        {
+          "hour": 7.5,
+          "value": 72,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 78,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 70,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 80,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 68,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 76,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 17.5,
+          "value": 82,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 71,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 75,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 84,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 69,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 77,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": 83,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 73,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 78,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "20-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 72,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 80,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 70,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 85,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 76,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 67,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 79,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 73,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "26-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 77,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": 82,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 71,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 75,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 81,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 69,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 83,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 76,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 72,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 70,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 78,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": 84,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 73,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 77,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 85,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 68,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 75,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 82,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 71,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 76,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 80,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 69,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": 83,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 72,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 78,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 86,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 70,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": 81,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 73,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "20-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 77,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 84,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 68,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 75,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 83,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 71,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 76,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 80,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "26-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 70,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 82,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 73,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 77,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "29-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": 85,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "29-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 69,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "30-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "31-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 83,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "31-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 72,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 78,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 84,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 71,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 75,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 81,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 73,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 76,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 85,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 70,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": 82,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 72,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 77,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 83,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 69,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 75,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 80,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        }
+      ],
+      "persistedHourlyChartData": [
+        {
+          "hour": 7.5,
+          "value": 72,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 78,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 70,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 80,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 68,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 76,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 17.5,
+          "value": 82,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 71,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 75,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 84,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 69,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 77,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": 83,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 73,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 78,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "20-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 72,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 80,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 70,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 85,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 76,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 67,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 79,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 73,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "26-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 77,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": 82,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 71,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 75,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 81,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 69,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 83,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 76,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 72,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 70,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 78,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": 84,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 73,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 77,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 85,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 68,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 75,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 82,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 71,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 76,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 80,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 69,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": 83,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 72,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 78,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 86,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 70,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": 81,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 73,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "20-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 77,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 84,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 68,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 75,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 83,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 71,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 76,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 80,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "26-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 70,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 82,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 73,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 77,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "29-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": 85,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "29-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 69,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "30-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "31-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 83,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "31-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 72,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 78,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 84,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 71,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 75,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 81,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 73,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 76,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 85,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 70,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 74,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": 82,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 72,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 77,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": 83,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": 69,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": 75,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": 80,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        }
+      ],
+      "baselineValue": null
+    },
+    {
+      "title": "Blood Glucose",
+      "value": "--",
+      "unit": "mg/dL",
+      "subtitle": "Fasting Glucose",
+      "iconImageName": "Glucometer",
+      "detailIconImageName": "GlucometerFill",
+      "iconTintHex": "#1163C7",
+      "chartType": "line",
+      "chartColor": "blue",
+      "chartData": [],
+      "weeklyChartData": [],
+      "monthlyChartData": [],
+      "hourlyChartData": [
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.0,
+          "value": 128,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 112,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 86,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.5,
+          "value": 135,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 93,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 118,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 89,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.5,
+          "value": 130,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 95,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 9.5,
+          "value": 110,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 125,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 92,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 12.0,
+          "value": 115,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.0,
+          "value": 132,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 94,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "20-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 86,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 120,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 128,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 89,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 116,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 93,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.5,
+          "value": 130,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 96,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "26-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.5,
+          "value": 113,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 126,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 92,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 119,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 85,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.0,
+          "value": 133,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 94,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 117,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.5,
+          "value": 127,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 93,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.5,
+          "value": 114,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 89,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.0,
+          "value": 131,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 95,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 120,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 86,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 124,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 92,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 116,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.5,
+          "value": 129,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 94,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.5,
+          "value": 118,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 89,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 132,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 93,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "20-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 86,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 115,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.0,
+          "value": 126,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 92,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 113,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 128,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 94,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "26-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 89,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.5,
+          "value": 117,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.5,
+          "value": 130,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 86,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "29-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 93,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "30-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 121,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "30-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "31-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 129,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-04-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 92,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 114,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-04-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.0,
+          "value": 127,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-04-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 95,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.5,
+          "value": 119,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-04-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 89,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 93,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 131,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-04-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 116,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-04-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.5,
+          "value": 124,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-04-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 94,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 118,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-04-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 92,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.5,
+          "value": 128,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-04-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        }
+      ],
+      "persistedHourlyChartData": [
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.0,
+          "value": 128,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 112,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 86,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.5,
+          "value": 135,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 93,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 118,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 89,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.5,
+          "value": 130,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 95,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 9.5,
+          "value": 110,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 125,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 92,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 12.0,
+          "value": 115,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.0,
+          "value": 132,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 94,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "20-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 86,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 120,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 128,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 89,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 116,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 93,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.5,
+          "value": 130,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 96,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "26-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.5,
+          "value": 113,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-02-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-02-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 126,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-02-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 92,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 119,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 85,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.0,
+          "value": 133,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 94,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 117,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.5,
+          "value": 127,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 93,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.5,
+          "value": 114,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 89,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.0,
+          "value": 131,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 95,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 120,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 86,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 124,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 92,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 116,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.5,
+          "value": 129,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 94,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.5,
+          "value": 118,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 89,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 132,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 93,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "20-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 86,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 115,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.0,
+          "value": 126,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 92,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 113,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 128,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 94,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "26-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 89,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.5,
+          "value": 117,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.5,
+          "value": 130,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-03-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 86,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "29-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 93,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "30-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 121,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "30-03-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "31-03-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 129,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-04-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 92,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 114,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-04-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 91,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.0,
+          "value": 127,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-04-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 95,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.5,
+          "value": 119,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-04-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 89,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 93,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 15.0,
+          "value": 131,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-04-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 88,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 10.0,
+          "value": 116,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-04-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 90,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.5,
+          "value": 124,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-04-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 94,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 87,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 11.0,
+          "value": 118,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-04-2026",
+          "glucoseType": "Random",
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 92,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-04-2026",
+          "glucoseType": "Fasting",
+          "baselineValue": null
+        },
+        {
+          "hour": 14.5,
+          "value": 128,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-04-2026",
+          "glucoseType": "After meal",
+          "baselineValue": null
+        }
+      ],
+      "baselineValue": null
+    },
+    {
+      "title": "Blood Pressure",
+      "value": "--",
+      "unit": "mmHg",
+      "subtitle": "Daily Blood Pressure",
+      "iconImageName": "Blood Symbol",
+      "detailIconImageName": "DropFill",
+      "iconTintHex": "#D43C2F",
+      "chartType": "rangeBar",
+      "chartColor": "red",
+      "chartData": [],
+      "weeklyChartData": [],
+      "monthlyChartData": [],
+      "hourlyChartData": [
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 122,
+          "dateString": "10-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 128,
+          "dateString": "10-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 120,
+          "dateString": "11-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 124,
+          "dateString": "12-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 82,
+          "maxValue": 130,
+          "dateString": "12-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 74,
+          "maxValue": 118,
+          "dateString": "13-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 126,
+          "dateString": "14-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 132,
+          "dateString": "14-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 75,
+          "maxValue": 119,
+          "dateString": "15-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 123,
+          "dateString": "16-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 129,
+          "dateString": "16-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 72,
+          "maxValue": 116,
+          "dateString": "17-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 81,
+          "maxValue": 128,
+          "dateString": "18-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 85,
+          "maxValue": 134,
+          "dateString": "18-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 77,
+          "maxValue": 121,
+          "dateString": "19-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 125,
+          "dateString": "20-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": null,
+          "minValue": 82,
+          "maxValue": 130,
+          "dateString": "20-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 73,
+          "maxValue": 117,
+          "dateString": "21-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 126,
+          "dateString": "22-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 132,
+          "dateString": "22-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 120,
+          "dateString": "23-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 124,
+          "dateString": "24-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 131,
+          "dateString": "24-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 75,
+          "maxValue": 119,
+          "dateString": "25-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 125,
+          "dateString": "26-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": null,
+          "minValue": 82,
+          "maxValue": 128,
+          "dateString": "26-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 74,
+          "maxValue": 118,
+          "dateString": "27-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 126,
+          "dateString": "28-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": null,
+          "minValue": 86,
+          "maxValue": 134,
+          "dateString": "28-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 120,
+          "dateString": "01-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 122,
+          "dateString": "02-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 130,
+          "dateString": "02-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 73,
+          "maxValue": 117,
+          "dateString": "03-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 127,
+          "dateString": "04-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": null,
+          "minValue": 85,
+          "maxValue": 133,
+          "dateString": "04-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 77,
+          "maxValue": 121,
+          "dateString": "05-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 124,
+          "dateString": "06-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 130,
+          "dateString": "06-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 75,
+          "maxValue": 118,
+          "dateString": "07-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 81,
+          "maxValue": 128,
+          "dateString": "08-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 86,
+          "maxValue": 135,
+          "dateString": "08-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 74,
+          "maxValue": 119,
+          "dateString": "09-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 123,
+          "dateString": "10-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": null,
+          "minValue": 82,
+          "maxValue": 128,
+          "dateString": "10-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 121,
+          "dateString": "11-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 125,
+          "dateString": "12-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 132,
+          "dateString": "12-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 72,
+          "maxValue": 116,
+          "dateString": "13-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 127,
+          "dateString": "14-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 85,
+          "maxValue": 133,
+          "dateString": "14-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 77,
+          "maxValue": 122,
+          "dateString": "15-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 126,
+          "dateString": "16-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 130,
+          "dateString": "16-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 74,
+          "maxValue": 118,
+          "dateString": "17-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 124,
+          "dateString": "18-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 131,
+          "dateString": "18-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 120,
+          "dateString": "19-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 81,
+          "maxValue": 128,
+          "dateString": "20-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 86,
+          "maxValue": 136,
+          "dateString": "20-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 73,
+          "maxValue": 117,
+          "dateString": "21-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 122,
+          "dateString": "22-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 130,
+          "dateString": "22-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 75,
+          "maxValue": 119,
+          "dateString": "23-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 124,
+          "dateString": "24-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 132,
+          "dateString": "24-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 71,
+          "maxValue": 116,
+          "dateString": "25-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 126,
+          "dateString": "26-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 85,
+          "maxValue": 134,
+          "dateString": "26-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 77,
+          "maxValue": 122,
+          "dateString": "27-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 125,
+          "dateString": "28-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": null,
+          "minValue": 82,
+          "maxValue": 129,
+          "dateString": "28-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 74,
+          "maxValue": 118,
+          "dateString": "29-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 127,
+          "dateString": "30-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 132,
+          "dateString": "30-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 121,
+          "dateString": "31-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 123,
+          "dateString": "01-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 130,
+          "dateString": "01-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 75,
+          "maxValue": 119,
+          "dateString": "02-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 125,
+          "dateString": "03-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 132,
+          "dateString": "03-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 73,
+          "maxValue": 117,
+          "dateString": "04-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 126,
+          "dateString": "05-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": null,
+          "minValue": 85,
+          "maxValue": 133,
+          "dateString": "05-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 77,
+          "maxValue": 122,
+          "dateString": "06-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 124,
+          "dateString": "07-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 131,
+          "dateString": "07-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 120,
+          "dateString": "08-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 127,
+          "dateString": "09-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": null,
+          "minValue": 85,
+          "maxValue": 134,
+          "dateString": "09-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 74,
+          "maxValue": 118,
+          "dateString": "10-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 123,
+          "dateString": "11-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 130,
+          "dateString": "11-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 121,
+          "dateString": "12-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": null,
+          "minValue": 81,
+          "maxValue": 128,
+          "dateString": "12-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        }
+      ],
+      "persistedHourlyChartData": [
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 122,
+          "dateString": "10-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 128,
+          "dateString": "10-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 120,
+          "dateString": "11-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 124,
+          "dateString": "12-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 82,
+          "maxValue": 130,
+          "dateString": "12-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 74,
+          "maxValue": 118,
+          "dateString": "13-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 126,
+          "dateString": "14-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 132,
+          "dateString": "14-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 75,
+          "maxValue": 119,
+          "dateString": "15-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 123,
+          "dateString": "16-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 129,
+          "dateString": "16-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 72,
+          "maxValue": 116,
+          "dateString": "17-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 81,
+          "maxValue": 128,
+          "dateString": "18-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 85,
+          "maxValue": 134,
+          "dateString": "18-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 77,
+          "maxValue": 121,
+          "dateString": "19-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 125,
+          "dateString": "20-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": null,
+          "minValue": 82,
+          "maxValue": 130,
+          "dateString": "20-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 73,
+          "maxValue": 117,
+          "dateString": "21-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 126,
+          "dateString": "22-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 132,
+          "dateString": "22-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 120,
+          "dateString": "23-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 124,
+          "dateString": "24-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 131,
+          "dateString": "24-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 75,
+          "maxValue": 119,
+          "dateString": "25-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 125,
+          "dateString": "26-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": null,
+          "minValue": 82,
+          "maxValue": 128,
+          "dateString": "26-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 74,
+          "maxValue": 118,
+          "dateString": "27-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 126,
+          "dateString": "28-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": null,
+          "minValue": 86,
+          "maxValue": 134,
+          "dateString": "28-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 120,
+          "dateString": "01-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 122,
+          "dateString": "02-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 130,
+          "dateString": "02-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 73,
+          "maxValue": 117,
+          "dateString": "03-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 127,
+          "dateString": "04-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": null,
+          "minValue": 85,
+          "maxValue": 133,
+          "dateString": "04-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 77,
+          "maxValue": 121,
+          "dateString": "05-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 124,
+          "dateString": "06-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 130,
+          "dateString": "06-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 75,
+          "maxValue": 118,
+          "dateString": "07-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 81,
+          "maxValue": 128,
+          "dateString": "08-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 86,
+          "maxValue": 135,
+          "dateString": "08-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 74,
+          "maxValue": 119,
+          "dateString": "09-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 123,
+          "dateString": "10-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": null,
+          "minValue": 82,
+          "maxValue": 128,
+          "dateString": "10-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 121,
+          "dateString": "11-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 125,
+          "dateString": "12-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 132,
+          "dateString": "12-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 72,
+          "maxValue": 116,
+          "dateString": "13-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 127,
+          "dateString": "14-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 85,
+          "maxValue": 133,
+          "dateString": "14-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 77,
+          "maxValue": 122,
+          "dateString": "15-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 126,
+          "dateString": "16-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 130,
+          "dateString": "16-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 74,
+          "maxValue": 118,
+          "dateString": "17-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 124,
+          "dateString": "18-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 131,
+          "dateString": "18-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 120,
+          "dateString": "19-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 81,
+          "maxValue": 128,
+          "dateString": "20-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 86,
+          "maxValue": 136,
+          "dateString": "20-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 73,
+          "maxValue": 117,
+          "dateString": "21-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 122,
+          "dateString": "22-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 130,
+          "dateString": "22-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 75,
+          "maxValue": 119,
+          "dateString": "23-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 124,
+          "dateString": "24-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 132,
+          "dateString": "24-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 71,
+          "maxValue": 116,
+          "dateString": "25-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 126,
+          "dateString": "26-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 85,
+          "maxValue": 134,
+          "dateString": "26-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 77,
+          "maxValue": 122,
+          "dateString": "27-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 125,
+          "dateString": "28-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": null,
+          "minValue": 82,
+          "maxValue": 129,
+          "dateString": "28-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 74,
+          "maxValue": 118,
+          "dateString": "29-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 127,
+          "dateString": "30-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 132,
+          "dateString": "30-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 121,
+          "dateString": "31-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 123,
+          "dateString": "01-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 130,
+          "dateString": "01-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 75,
+          "maxValue": 119,
+          "dateString": "02-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 125,
+          "dateString": "03-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 132,
+          "dateString": "03-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 73,
+          "maxValue": 117,
+          "dateString": "04-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 126,
+          "dateString": "05-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.5,
+          "value": null,
+          "minValue": 85,
+          "maxValue": 133,
+          "dateString": "05-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 77,
+          "maxValue": 122,
+          "dateString": "06-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 79,
+          "maxValue": 124,
+          "dateString": "07-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": null,
+          "minValue": 84,
+          "maxValue": 131,
+          "dateString": "07-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 120,
+          "dateString": "08-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 80,
+          "maxValue": 127,
+          "dateString": "09-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.0,
+          "value": null,
+          "minValue": 85,
+          "maxValue": 134,
+          "dateString": "09-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.5,
+          "value": null,
+          "minValue": 74,
+          "maxValue": 118,
+          "dateString": "10-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 78,
+          "maxValue": 123,
+          "dateString": "11-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 19.0,
+          "value": null,
+          "minValue": 83,
+          "maxValue": 130,
+          "dateString": "11-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 8.0,
+          "value": null,
+          "minValue": 76,
+          "maxValue": 121,
+          "dateString": "12-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 18.5,
+          "value": null,
+          "minValue": 81,
+          "maxValue": 128,
+          "dateString": "12-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        }
+      ],
+      "baselineValue": null
+    },
+    {
+      "title": "Body Weight",
+      "value": "--",
+      "unit": "kg",
+      "subtitle": "Weekly Change",
+      "iconImageName": "Body Symbol",
+      "detailIconImageName": "BodyFill",
+      "iconTintHex": "#5A8E38",
+      "chartType": "baselineBar",
+      "chartColor": "green",
+      "chartData": [],
+      "weeklyChartData": [],
+      "monthlyChartData": [],
+      "hourlyChartData": [
+        {
+          "hour": 7.0,
+          "value": 76.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.1,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.0,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "20-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.1,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 75.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "26-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 75.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.1,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 75.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 75.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.0,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.0,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.0,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.1,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.0,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "20-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.1,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "26-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "29-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "30-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "31-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 77.0,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        }
+      ],
+      "persistedHourlyChartData": [
+        {
+          "hour": 7.0,
+          "value": 76.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.1,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.0,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "20-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.1,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 75.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "26-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 75.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-02-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.1,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 75.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 75.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.0,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.0,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "13-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "14-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.0,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "15-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "16-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.1,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "17-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 75.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "18-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "19-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.0,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "20-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "21-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "22-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "23-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.1,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "24-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "25-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "26-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "27-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "28-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "29-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "30-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "31-03-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "01-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "02-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "03-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.3,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "04-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "05-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.2,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "06-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 77.0,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "07-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.8,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "08-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.5,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "09-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.7,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "10-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.4,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "11-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 7.0,
+          "value": 76.6,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        },
+        {
+          "hour": 20.0,
+          "value": 76.9,
+          "minValue": null,
+          "maxValue": null,
+          "dateString": "12-04-2026",
+          "glucoseType": null,
+          "baselineValue": null
+        }
+      ],
+      "baselineValue": 76.5
+    }
+  ]
+}

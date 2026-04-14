@@ -1,3 +1,4 @@
+
 import UIKit
 import SwiftUI
 
@@ -5,9 +6,13 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
 
     @IBOutlet weak var headerActionsContainerView: UIView!
     @IBOutlet weak var vitalsCollectionView: UICollectionView!
+    @IBOutlet weak var blurEffectView: UIVisualEffectView!
     
     var vitalsData: [VitalReading] = []
     var shouldShowAddReadingPlatterOnAppear = false
+    private let glucoseTypeOptions = ["Fasting", "Random", "After meal"]
+    private weak var activeGlucoseTypeField: UITextField?
+    var activeGlucoseFilterType: String = "Fasting"
     
     var platterViewController: AddReadingViewController?
     var overlayDimmingView: UIView?
@@ -28,10 +33,33 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         navigationController?.delegate = self
         
-        vitalsData = VitalData.generateMockData()
+        vitalsData = VitalDataStore.shared.loadReadings()
         
         setupCollectionView()
         setupHeaderActions()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleGlucoseFilterChange(_:)),
+            name: .glucoseFilterTypeDidChange,
+            object: nil
+        )
+    }
+
+    @objc private func handleGlucoseFilterChange(_ notification: Notification) {
+        guard let type = notification.userInfo?["glucoseFilterType"] as? String else { return }
+        activeGlucoseFilterType = type
+        if let idx = vitalsData.firstIndex(where: { $0.title == "Blood Glucose" }) {
+            let ip = IndexPath(item: idx, section: 0)
+            vitalsCollectionView?.reloadItems(at: [ip])
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        vitalsData = VitalDataStore.shared.loadReadings()
+        vitalsCollectionView?.reloadData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -84,6 +112,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         hostingController.didMove(toParent: self)
     }
+
     
     func showAddReadingPlatter() {
         let container = self.view! 
@@ -117,7 +146,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
                 self?.presentAddReadingAlert(
                     title: "Heart Rate",
                     message: "Enter your current heart rate\nMeasure after sitting calmly for 1-2 minutes.",
-                    placeholders: ["78"],
+                    placeholders: ["Enter Value"],
                     units: ["BPM"]
                 )
             }
@@ -129,7 +158,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
                 self?.presentAddReadingAlert(
                     title: "Blood Pressure",
                     message: "Enter your current blood pressure\nMeasure while seated with your arm resting at heart level.",
-                    placeholders: ["Systolic", "Diastolic"],
+                    placeholders: ["Enter Systolic", "Enter Diastolic"],
                     units: ["mmHg", "mmHg"]
                 )
             }
@@ -141,7 +170,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
                 self?.presentAddReadingAlert(
                     title: "Blood Glucose",
                     message: "Enter your blood glucose level\nBest measured either fasting (8+ hours) or 2 hours post-meal.",
-                    placeholders: ["98"],
+                    placeholders: ["Enter Value"],
                     units: ["mg/dL"]
                 )
             }
@@ -153,7 +182,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
                 self?.presentAddReadingAlert(
                     title: "Body Weight",
                     message: "Enter your current body weight\nFor best consistency, weigh yourself at the same time every day.",
-                    placeholders: ["80.6"],
+                    placeholders: ["Enter Value"],
                     units: ["kg"]
                 )
             }
@@ -170,7 +199,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         self.platterViewController = platterVC
         
-        let bottomConstraint = platterVC.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 500) // Start below screen
+        let bottomConstraint = platterVC.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 500) 
         self.platterBottomConstraint = bottomConstraint
         
         NSLayoutConstraint.activate([
@@ -242,99 +271,266 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     private func presentAddReadingAlert(title: String, message: String, placeholders: [String], units: [String]) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let isBloodGlucose = title == "Blood Glucose"
         
         for (index, placeholder) in placeholders.enumerated() {
             alertController.addTextField { textField in
                 textField.placeholder = placeholder
-                if placeholder.contains("Systolic") || placeholder.contains("Diastolic") {
-                    textField.keyboardType = .numberPad
-                } else if title.contains("Heart Rate") {
-                    textField.keyboardType = .numberPad
-                } else {
-                    textField.keyboardType = .decimalPad
-                }
+                textField.keyboardType = (title.contains("Heart Rate") || placeholder.contains("Systolic") || placeholder.contains("Diastolic")) ? .numberPad : .decimalPad
                 
                 if index < units.count {
                     let unitLabel = UILabel()
                     unitLabel.text = units[index]
-                    unitLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-                    unitLabel.textColor = .black
-                    
+                    unitLabel.font = .systemFont(ofSize: 14)
+                    unitLabel.textColor = .label
                     unitLabel.sizeToFit()
-                    let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: unitLabel.frame.width + 10, height: unitLabel.frame.height))
-                    unitLabel.center = CGPoint(x: paddingView.frame.width / 2 - 5, y: paddingView.frame.height / 2)
-                    paddingView.addSubview(unitLabel)
-                    
-                    textField.rightView = paddingView
+                    let padding = UIView(frame: CGRect(x: 0, y: 0, width: unitLabel.frame.width + 10, height: unitLabel.frame.height))
+                    unitLabel.center = CGPoint(x: padding.frame.width/2 - 5, y: padding.frame.height/2)
+                    padding.addSubview(unitLabel)
+                    textField.rightView = padding
                     textField.rightViewMode = .always
                 }
             }
         }
-        
-        // Date Picker Field
-        alertController.addTextField { textField in
-            let formatter = DateFormatter()
-            formatter.dateFormat = "dd-MM-yyyy"
-            textField.text = formatter.string(from: Date())
-            
-            let iconImage = UIImage(systemName: "calendar")
-            let iconView = UIImageView(image: iconImage)
-            iconView.tintColor = .black
-            iconView.contentMode = .scaleAspectFit
-            iconView.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-            
-            let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
-            paddingView.addSubview(iconView)
-            
-            paddingView.isUserInteractionEnabled = false
-            iconView.isUserInteractionEnabled = false
-            
-            textField.rightView = paddingView
-            textField.rightViewMode = .always
-            
-            let datePicker = UIDatePicker()
-            datePicker.datePickerMode = .date
-            datePicker.maximumDate = Date()
-            if #available(iOS 14.0, *) {
-                datePicker.preferredDatePickerStyle = .wheels
+
+        if isBloodGlucose {
+            let typePicker = UIPickerView()
+            typePicker.dataSource = self
+            typePicker.delegate = self
+
+            alertController.addTextField { [weak self] textField in
+                guard let self = self else { return }
+                textField.text = self.glucoseTypeOptions[0]
+                textField.placeholder = "Select type"
+                textField.tintColor = .clear
+                self.activeGlucoseTypeField = textField
+
+                let icon = UIImageView(image: UIImage(systemName: "chevron.down"))
+                icon.tintColor = .secondaryLabel
+                icon.contentMode = .scaleAspectFit
+                icon.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+                let pad = UIView(frame: CGRect(x: 0, y: 0, width: 28, height: 20))
+                pad.addSubview(icon)
+                textField.rightView = pad
+                textField.rightViewMode = .always
+                textField.inputView = typePicker
             }
+
+            typePicker.selectRow(0, inComponent: 0, animated: false)
+        }
+        
+        let datePicker = UIDatePicker()
+        let timePicker = UIDatePicker()
+        let dFormatter = DateFormatter(); dFormatter.dateFormat = "dd-MM-yyyy"
+        let tFormatter = DateFormatter(); tFormatter.dateFormat = "hh:mm a"
+
+        alertController.addTextField { textField in
+            textField.text = dFormatter.string(from: Date())
+            textField.tintColor = .clear
             
+            textField.addAction(UIAction { [weak textField] _ in
+                textField?.text = dFormatter.string(from: datePicker.date)
+            }, for: .editingChanged)
+            
+            let icon = UIImageView(image: UIImage(systemName: "calendar"))
+            icon.tintColor = .secondaryLabel; icon.contentMode = .scaleAspectFit
+            icon.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+            let pad = UIView(frame: CGRect(x: 0, y: 0, width: 28, height: 20)); pad.addSubview(icon)
+            textField.rightView = pad; textField.rightViewMode = .always
+            
+            datePicker.datePickerMode = .date; datePicker.maximumDate = Date(); datePicker.preferredDatePickerStyle = .wheels
             datePicker.addAction(UIAction { _ in
-                textField.text = formatter.string(from: datePicker.date)
+                textField.text = dFormatter.string(from: datePicker.date)
+                let isToday = Calendar.current.isDateInToday(datePicker.date)
+                timePicker.maximumDate = isToday ? Date() : nil
+                if isToday && timePicker.date > Date() { timePicker.setDate(Date(), animated: true) }
+                let tIdx = placeholders.count + (isBloodGlucose ? 2 : 1)
+                alertController.textFields?[tIdx].text = tFormatter.string(from: timePicker.date)
             }, for: .valueChanged)
-            
             textField.inputView = datePicker
         }
         
-        // Cancel Action
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
-            print("Cancelled \(title)")
+        alertController.addTextField { textField in
+            textField.text = tFormatter.string(from: Date())
+            textField.tintColor = .clear
+            textField.addAction(UIAction { [weak textField] _ in
+                textField?.text = tFormatter.string(from: timePicker.date)
+            }, for: .editingChanged)
+            
+            let icon = UIImageView(image: UIImage(systemName: "clock"))
+            icon.tintColor = .secondaryLabel; icon.contentMode = .scaleAspectFit
+            icon.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+            let pad = UIView(frame: CGRect(x: 0, y: 0, width: 28, height: 20)); pad.addSubview(icon)
+            textField.rightView = pad; textField.rightViewMode = .always
+            
+            timePicker.datePickerMode = .time; timePicker.preferredDatePickerStyle = .wheels
+            timePicker.maximumDate = Date() 
+            timePicker.addAction(UIAction { _ in
+                textField.text = tFormatter.string(from: timePicker.date)
+            }, for: .valueChanged)
+            textField.inputView = timePicker
         }
         
-        // Add Reading Action
-        let addAction = UIAlertAction(title: "Add Reading", style: .default) { _ in
-            var values = [String]()
-            for i in 0..<placeholders.count {
-                values.append(alertController.textFields?[i].text ?? "")
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        let addAction = UIAlertAction(title: "Add Reading", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+
+            var vals = [String]()
+            for i in 0..<placeholders.count { vals.append(alertController.textFields?[i].text ?? "") }
+
+            let fields = alertController.textFields ?? []
+            let glucoseTypeIndex = placeholders.count
+            let dateFieldIndex = placeholders.count + (isBloodGlucose ? 1 : 0)
+            let timeFieldIndex = dateFieldIndex + 1
+            let glucoseType = isBloodGlucose ? (fields.count > glucoseTypeIndex ? fields[glucoseTypeIndex].text ?? self.glucoseTypeOptions[0] : self.glucoseTypeOptions[0]) : nil
+            let dText = fields.count > dateFieldIndex ? fields[dateFieldIndex].text ?? "" : ""
+            let tText = fields.count > timeFieldIndex ? fields[timeFieldIndex].text ?? "" : ""
+
+            let dayLetter: String = {
+                let df = DateFormatter()
+                df.dateFormat = "dd-MM-yyyy"
+                if let date = df.date(from: dText) {
+                    let cal = Calendar.current
+                    let weekdaySymbols = ["S", "M", "T", "W", "T", "F", "S"]
+                    let idx = cal.component(.weekday, from: date) - 1
+                    return weekdaySymbols[idx]
+                }
+                return "?"
+            }()
+
+            let recordedDate: Date = {
+                let dateFmt = DateFormatter(); dateFmt.dateFormat = "dd-MM-yyyy"
+                let timeFmt = DateFormatter(); timeFmt.dateFormat = "hh:mm a"
+                timeFmt.locale = Locale(identifier: "en_US_POSIX")
+                guard let d = dateFmt.date(from: dText),
+                      let t = timeFmt.date(from: tText) else { return Date() }
+                let cal = Calendar.current
+                let tc = cal.dateComponents([.hour, .minute], from: t)
+                return cal.date(bySettingHour: tc.hour ?? 0, minute: tc.minute ?? 0, second: 0, of: d) ?? Date()
+            }()
+
+            switch title {
+            case "Heart Rate":
+                let bpm = vals.first ?? ""
+                VitalDataStore.shared.saveNewPoint(forTitle: title, value: bpm, day: dayLetter, recordedAt: recordedDate)
+
+            case "Blood Pressure":
+                let sys = vals.first ?? ""
+                let dia = vals.count > 1 ? vals[1] : ""
+                let combined = "\(sys)/\(dia)"
+                let sysD = Double(sys) ?? 0
+                let diaD = Double(dia) ?? 0
+                VitalDataStore.shared.saveNewPoint(
+                    forTitle: title, value: combined, day: dayLetter,
+                    minValue: diaD, maxValue: sysD, recordedAt: recordedDate
+                )
+
+            case "Blood Glucose":
+                let mg = vals.first ?? ""
+                let subtitle = "\(glucoseType ?? self.glucoseTypeOptions[0]) Glucose"
+                VitalDataStore.shared.saveNewPoint(
+                    forTitle: title,
+                    value: mg,
+                    day: dayLetter,
+                    recordedAt: recordedDate,
+                    subtitleOverride: subtitle,
+                    glucoseType: glucoseType
+                )
+
+            case "Body Weight":
+                let kg = vals.first ?? ""
+                VitalDataStore.shared.saveNewPoint(forTitle: title, value: kg, day: dayLetter, recordedAt: recordedDate)
+
+            default:
+                break
             }
-            let dateText = alertController.textFields?.last?.text ?? ""
-            print("Added \(title): \(values.joined(separator: " / ")) on \(dateText)")
+
+            self.vitalsData = VitalDataStore.shared.loadReadings()
+            self.vitalsCollectionView.reloadData()
+
+            NotificationCenter.default.post(
+                name: .vitalDataDidUpdate,
+                object: nil,
+                userInfo: [
+                    "title": title,
+                    "recordedAt": recordedDate
+                ]
+            )
         }
         
         alertController.addAction(cancelAction)
         alertController.addAction(addAction)
         
+        alertController.preferredAction = addAction
+        alertController.view.tintColor  = .systemBlue
+        
         self.present(alertController, animated: true)
     }
     
-    // MARK: - Navigation Handler
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if blurEffectView != nil {
+           setupBlurGradientMask()
+        }
+    }
+    
+    func setupBlurGradientMask() {
+        let gradientMask = CAGradientLayer()
+        gradientMask.frame = blurEffectView.bounds
+        
+        gradientMask.colors = [
+            UIColor.black.cgColor,      
+            UIColor.black.cgColor,     
+            UIColor.clear.cgColor      
+        ]
+        
+        gradientMask.locations = [0.0, 0.8, 1.0] 
+        
+        blurEffectView.layer.mask = gradientMask
+        
+        if let existingOverlay = blurEffectView.layer.sublayers?.first(where: { $0.name == "SolidOverlay" }) {
+            existingOverlay.frame = blurEffectView.bounds
+        } else {
+            let overlayLayer = CALayer()
+            overlayLayer.name = "SolidOverlay"
+            overlayLayer.frame = blurEffectView.bounds
+            overlayLayer.backgroundColor = UIColor(hex: "#f5f5f5").withAlphaComponent(0.5).cgColor
+            
+            let overlayMask = CAGradientLayer()
+            overlayMask.frame = overlayLayer.bounds
+            overlayMask.colors = gradientMask.colors
+            overlayMask.locations = gradientMask.locations
+            overlayLayer.mask = overlayMask
+            
+            blurEffectView.layer.addSublayer(overlayLayer)
+        }
+    }
+    
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         let isVitalsScreen = (viewController === self)
         navigationController.setNavigationBarHidden(isVitalsScreen, animated: animated)
     }
 }
 
-// MARK: - Collection View Setup
+extension ViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        1
+    }
+
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        glucoseTypeOptions.count
+    }
+
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        glucoseTypeOptions[row]
+    }
+
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        activeGlucoseTypeField?.text = glucoseTypeOptions[row]
+    }
+}
+
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -346,7 +542,9 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
             return UICollectionViewCell()
         }
         
-        cell.configure(with: vitalsData[indexPath.item])
+        let reading = vitalsData[indexPath.item]
+        let filterType = reading.title == "Blood Glucose" ? activeGlucoseFilterType : nil
+        cell.configure(with: reading, glucoseFilterType: filterType)
         
         return cell
     }
@@ -357,8 +555,22 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 10, left: 20, bottom: 90, right: 20) 
+        return UIEdgeInsets(top: 65, left: 20, bottom: 20, right: 20) 
     }
     
-
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedVital = vitalsData[indexPath.item]
+        
+        let storyboard = UIStoryboard(name: "Vital", bundle: nil)
+        guard let detailVC = storyboard.instantiateViewController(withIdentifier: "VitalDetailViewController") as? VitalDetailViewController else {
+            print("Could not instantiate VitalDetailViewController")
+            return
+        }
+        
+        detailVC.reading = selectedVital
+        if selectedVital.title == "Blood Glucose" {
+            detailVC.initialGlucoseFilterType = activeGlucoseFilterType
+        }
+        navigationController?.pushViewController(detailVC, animated: true)
+    }
 }
