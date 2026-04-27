@@ -3,20 +3,80 @@ import FoundationModels
 
 // MARK: - User
 
-struct UserProfile {
+struct UserProfile: Codable {
     let id: UUID
     var firstName: String
     var lastName: String
     var dateOfBirth: Date
     var gender: Gender
+    var email: String = "demouser@gmail.com"
     var createdAt: Date
+
+    init(
+        id: UUID,
+        firstName: String,
+        lastName: String,
+        dateOfBirth: Date,
+        gender: Gender,
+        email: String = "demouser@gmail.com",
+        createdAt: Date
+    ) {
+        self.id = id
+        self.firstName = firstName
+        self.lastName = lastName
+        self.dateOfBirth = dateOfBirth
+        self.gender = gender
+        self.email = email
+        self.createdAt = createdAt
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        firstName = try container.decode(String.self, forKey: .firstName)
+        lastName = try container.decode(String.self, forKey: .lastName)
+        dateOfBirth = try container.decode(Date.self, forKey: .dateOfBirth)
+        gender = try container.decode(Gender.self, forKey: .gender)
+        email = try container.decodeIfPresent(String.self, forKey: .email) ?? "demouser@gmail.com"
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+    }
 }
 
-enum Gender: String {
+enum Gender: String, Codable {
     case male
     case female
     case preferNotToSay
 }
+
+extension Gender {
+    var displayName: String {
+        switch self {
+        case .male: return "Male"
+        case .female: return "Female"
+        case .preferNotToSay: return "Prefer not to say"
+        }
+    }
+
+    var formOptionName: String {
+        switch self {
+        case .male: return "Male"
+        case .female: return "Female"
+        case .preferNotToSay: return "Prefer Not To Say"
+        }
+    }
+
+    init(displayName: String) {
+        switch displayName.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "male":
+            self = .male
+        case "female":
+            self = .female
+        default:
+            self = .preferNotToSay
+        }
+    }
+}
+
 
 // MARK: - Health Records
 
@@ -201,6 +261,7 @@ struct ConsultSession: Codable {
     }
 
     var notes: String?
+    var postConsultationNotes: String? = nil
     var status: ConsultStatus
     var createdAt: Date
 }
@@ -265,5 +326,4 @@ struct ConsultationReminder {
     var snoozeTime: String?
     var isPaused: Bool
 }
-
 

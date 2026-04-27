@@ -1,28 +1,23 @@
-
 import UIKit
 
-var user = UserProfile(
-    id: UUID(),
-    firstName: "Demo",
-    lastName: "User",
-    dateOfBirth: Date(),
-    gender: .preferNotToSay,
-    createdAt: Date()
-)
 
 class ProfileSettingsViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
 
+    private var profile: UserProfile {
+        UserProfileStore.shared.current
+    }
+
     var sections: [[(title: String, value: String, icon: String?)]] {
         return [
             [
-                ("Name", "\(user.firstName) \(user.lastName)", nil),
-                ("Gender", genderText(user.gender), nil),
-                ("Date of Birth", formatDate(user.dateOfBirth), nil),
+                ("Name", "\(profile.firstName) \(profile.lastName)", nil),
+                ("Gender", profile.gender.displayName, nil),
+                ("Date of Birth", formatDate(profile.dateOfBirth), nil),
             ],
             [
-                ("Email", "demouser@gmail.com", nil),
+                ("Email", profile.email, nil),
                 ("Change Password", "", nil),
             ],
             [
@@ -35,13 +30,6 @@ class ProfileSettingsViewController: UIViewController {
         ]
     }
 
-    func genderText(_ gender: Gender) -> String {
-        switch gender {
-        case .male: return "Male"
-        case .female: return "Female"
-        case .preferNotToSay: return "Prefer not to say"
-        }
-    }
 
     func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
@@ -54,6 +42,12 @@ class ProfileSettingsViewController: UIViewController {
 
         navigationItem.rightBarButtonItem?.target = self
         navigationItem.rightBarButtonItem?.action = #selector(editProfileTapped)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(profileDidChange),
+            name: .userProfileDidChange,
+            object: nil
+        )
 
         tableView.register(
             UINib(nibName: "ProfileDetailsTableViewCell", bundle: nil),
@@ -74,34 +68,29 @@ class ProfileSettingsViewController: UIViewController {
         setupFooterView()
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+
     @objc func editProfileTapped() {
         let storyboard = UIStoryboard(name: "Home_Screen", bundle: nil)
         if let editVC = storyboard.instantiateViewController(
             withIdentifier: "ProfileEditViewController") as? ProfileEditViewController
         {
-            editVC.firstName = user.firstName
-            editVC.lastName = user.lastName
-            editVC.dateOfBirth = user.dateOfBirth
-
-            if user.gender == .preferNotToSay {
-                editVC.selectedGender = "Prefer Not To Say"
-            } else {
-                editVC.selectedGender = self.genderText(user.gender)
-            }
+            editVC.firstName = profile.firstName
+            editVC.lastName = profile.lastName
+            editVC.dateOfBirth = profile.dateOfBirth
+            editVC.selectedGender = profile.gender.formOptionName
 
             editVC.onSave = { [weak self] newFirstName, newLastName, newDOB, newGenderText in
-                user.firstName = newFirstName
-                user.lastName = newLastName
-                if let dob = newDOB {
-                    user.dateOfBirth = dob
-                }
-
-                if newGenderText == "Male" {
-                    user.gender = .male
-                } else if newGenderText == "Female" {
-                    user.gender = .female
-                } else {
-                    user.gender = .preferNotToSay
+                UserProfileStore.shared.update { profile in
+                    profile.firstName = newFirstName
+                    profile.lastName = newLastName
+                    if let dob = newDOB {
+                        profile.dateOfBirth = dob
+                    }
+                    profile.gender = Gender(displayName: newGenderText)
                 }
 
                 self?.setupHeaderView()
@@ -111,6 +100,12 @@ class ProfileSettingsViewController: UIViewController {
             navigationController?.pushViewController(editVC, animated: true)
         }
     }
+
+    @objc private func profileDidChange() {
+        setupHeaderView()
+        tableView.reloadData()
+    }
+
 
     @objc func logoutTapped() {
         let alert = UIAlertController(
@@ -156,7 +151,7 @@ class ProfileSettingsViewController: UIViewController {
         imgView.translatesAutoresizingMaskIntoConstraints = false
 
         let nLabel = UILabel()
-        nLabel.text = "\(user.firstName) \(user.lastName)"
+        nLabel.text = "\(profile.firstName) \(profile.lastName)"
         nLabel.font = .systemFont(ofSize: 24, weight: .bold).rounded
         nLabel.textAlignment = .center
         nLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -248,6 +243,7 @@ extension ProfileSettingsViewController: UITableViewDelegate, UITableViewDataSou
                 as! IconDetailsTableViewCell
             cell.configure(
                 title: item.title, icon: UIImage(systemName: item.icon ?? ""), tintColor: .black)
+            cell.titleLabel.textColor = .black
             cell.chevronImageView.isHidden = false
             cell.selectionStyle = .none
             return cell

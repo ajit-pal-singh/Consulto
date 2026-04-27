@@ -162,6 +162,20 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
             name: NSNotification.Name("VitalsUpdated"),
             object: nil
         )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refreshMedicineStatusesForCurrentDay),
+            name: .NSCalendarDayChanged,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refreshMedicineStatusesForCurrentDay),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
     }
 
     override func viewDidLayoutSubviews() {
@@ -236,6 +250,11 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         }
         homeCollectionView.reloadData()
     }
+
+    @objc private func refreshMedicineStatusesForCurrentDay() {
+        MedicineStore.shared.syncFromMedications(MedicationReminderStore.shared.medications)
+        handleMedicineUpdate()
+    }
     
     @objc private func handleVitalsUpdate() {
         vitalReadings = VitalDataStore.shared.loadReadings()
@@ -279,7 +298,6 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
     private func openRemindersScreen() {
         let storyboard = UIStoryboard(name: "RemindersScreen", bundle: nil)
         guard let remindersVC = storyboard.instantiateViewController(withIdentifier: "RemindersVC") as? RemindersViewController else { return }
-        remindersVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(remindersVC, animated: true)
     }
     
@@ -391,9 +409,11 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         let section = HomeSection(rawValue: indexPath.section)!
         switch section {
         case .consultation:
-            header.configure(title: "Upcoming Consultation", showsViewAll: false)
+            let title = pendingConsultations.count == 1 ? "Upcoming Consultation" : "Upcoming Consultations"
+            header.configure(title: title, showsViewAll: false)
         case .medicineReminders:
-            header.configure(title: "Today's Medicines", showsViewAll: true)
+            let title = MedicineStore.shared.medicines.count == 1 ? "Today's Medicine" : "Today's Medicines"
+            header.configure(title: title, showsViewAll: true)
             header.onViewAllTapped = { [weak self] in
                 self?.openRemindersScreen()
             }

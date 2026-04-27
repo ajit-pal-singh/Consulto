@@ -1,8 +1,3 @@
-//
-//  ChangePasswordViewController.swift
-//  Consulto
-//
-
 import UIKit
 
 class ChangePasswordViewController: UIViewController {

@@ -5,6 +5,8 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     @IBOutlet weak var collectionView: UICollectionView!
 
     private var screenGradientLayer: CAGradientLayer?
+    private let lastSectionBottomInset: CGFloat = 100
+    private let noteButtonBottomSpacing: CGFloat = 16
 
     //Session passed from previous screen
     var consultSession: ConsultSession?
@@ -16,6 +18,38 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     var records: [HealthRecord] = []
     var questions: [Question] = []
     var notes: String? = nil
+    var postConsultationNotes: String? = nil
+
+    private lazy var noteButtonContainerView: UIVisualEffectView = {
+        let effectView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
+        effectView.translatesAutoresizingMaskIntoConstraints = false
+        effectView.clipsToBounds = true
+        effectView.layer.cornerRadius = 23
+        effectView.layer.cornerCurve = .continuous
+        effectView.layer.borderWidth = 1
+        effectView.layer.borderColor = UIColor.white.withAlphaComponent(0.35).cgColor
+        effectView.layer.shadowColor = UIColor.black.withAlphaComponent(0.14).cgColor
+        effectView.layer.shadowOpacity = 1
+        effectView.layer.shadowRadius = 18
+        effectView.layer.shadowOffset = CGSize(width: 0, height: 8)
+        effectView.contentView.backgroundColor = UIColor.white.withAlphaComponent(0.12)
+        return effectView
+    }()
+
+    private lazy var noteButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(noteButtonTapped), for: .touchUpInside)
+
+        var configuration = UIButton.Configuration.plain()
+        configuration.title = "Note"
+        configuration.image = UIImage(systemName: "square.and.pencil")
+        configuration.imagePadding = 8
+        configuration.cornerStyle = .capsule
+        configuration.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 14, bottom: 12, trailing: 16)
+        button.configuration = configuration
+        return button
+    }()
     
     enum DetailSection {
         case header, symptoms, medications, records, questions, notes
@@ -55,6 +89,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
             session.records = self.records
             session.questions = self.questions
             session.notes = self.notes
+            session.postConsultationNotes = self.postConsultationNotes
             
             session.status = .completed
             ConsultSessionStore.shared.updateSession(session)
@@ -73,7 +108,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(hex: "F5F5F5")
+        view.backgroundColor = UIColor(hex: "F1F6FF")
         collectionView.backgroundColor = .clear
         collectionView.showsVerticalScrollIndicator = false
 
@@ -81,6 +116,8 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         loadSessionData()
 
         setupCollectionView()
+        setupNoteButton()
+        updateNoteButtonAppearance()
         collectionView.reloadData()
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleSessionUpdate(_:)), name: NSNotification.Name("ConsultSessionUpdated"), object: nil)
@@ -92,6 +129,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
             if self.consultSession == nil || self.consultSession?.id == updatedSession.id {
                 self.consultSession = updatedSession
                 self.loadSessionData()
+                self.updateNoteButtonAppearance()
                 self.collectionView.reloadData()
             }
         }
@@ -111,6 +149,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
             records = session.records
             questions = session.questions
             notes = session.notes
+            postConsultationNotes = session.postConsultationNotes
         } else {
             let sampleSession = SampleData.consultSessions.first!
             sessionTitle = sampleSession.title
@@ -119,6 +158,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
             records = sampleSession.records
             questions = sampleSession.questions
             notes = sampleSession.notes
+            postConsultationNotes = sampleSession.postConsultationNotes
         }
         buildVisibleSections()
     }
@@ -170,6 +210,64 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         collectionView.collectionViewLayout = generateLayout()
     }
 
+    private func setupNoteButton() {
+        view.addSubview(noteButtonContainerView)
+        noteButtonContainerView.contentView.addSubview(noteButton)
+
+        NSLayoutConstraint.activate([
+            noteButtonContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            noteButtonContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -noteButtonBottomSpacing),
+
+            noteButton.topAnchor.constraint(equalTo: noteButtonContainerView.contentView.topAnchor),
+            noteButton.bottomAnchor.constraint(equalTo: noteButtonContainerView.contentView.bottomAnchor),
+            noteButton.leadingAnchor.constraint(equalTo: noteButtonContainerView.contentView.leadingAnchor),
+            noteButton.trailingAnchor.constraint(equalTo: noteButtonContainerView.contentView.trailingAnchor),
+            noteButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 46)
+        ])
+    }
+
+    private func updateNoteButtonAppearance() {
+        let hasNote = !(postConsultationNotes?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        var configuration = noteButton.configuration ?? UIButton.Configuration.plain()
+        configuration.title = "Note"
+        configuration.image = UIImage(systemName: "square.and.pencil")
+        configuration.baseForegroundColor = .label
+        noteButton.configuration = configuration
+
+        noteButtonContainerView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
+        noteButtonContainerView.contentView.backgroundColor = hasNote
+            ? UIColor.white.withAlphaComponent(0.18)
+            : UIColor.white.withAlphaComponent(0.12)
+        noteButtonContainerView.layer.borderColor = hasNote
+            ? UIColor.white.withAlphaComponent(0.45).cgColor
+            : UIColor.white.withAlphaComponent(0.35).cgColor
+    }
+
+    @objc private func noteButtonTapped() {
+        let notesVC = PostConsultationNotesViewController()
+        notesVC.initialText = postConsultationNotes
+        notesVC.onSave = { [weak self] text in
+            guard let self = self else { return }
+            self.postConsultationNotes = text
+            self.updateNoteButtonAppearance()
+        }
+
+        let navigationController = UINavigationController(rootViewController: notesVC)
+        navigationController.modalPresentationStyle = .pageSheet
+
+        if let sheet = navigationController.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 28
+        }
+
+        present(navigationController, animated: true)
+    }
+
+    private func bottomInset(for section: DetailSection) -> CGFloat {
+        visibleSections.last == section ? lastSectionBottomInset : 0
+    }
+
 
     private func generateLayout() -> UICollectionViewCompositionalLayout {
         UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
@@ -218,7 +316,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         section.interGroupSpacing = 10
         let isLast = visibleSections.last == .questions
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0, leading: 16, bottom: isLast ? 100 : 0, trailing: 16)
+            top: 0, leading: 16, bottom: bottomInset(for: .symptoms), trailing: 16)
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
@@ -246,7 +344,7 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         let section = NSCollectionLayoutSection(group: group)
         let isLast = visibleSections.last == .questions
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0, leading: 16, bottom: isLast ? 100 : 0, trailing: 16)
+            top: 0, leading: 16, bottom: bottomInset(for: .medications), trailing: 16)
         section.interGroupSpacing = 10
 
         let headerSize = NSCollectionLayoutSize(
@@ -279,9 +377,8 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         group.interItemSpacing = .fixed(16)
 
         let section = NSCollectionLayoutSection(group: group)
-        let isLast = visibleSections.last == .questions
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0, leading: 16, bottom: isLast ? 100 : 0, trailing: 16)
+            top: 0, leading: 16, bottom: bottomInset(for: .records), trailing: 16)
         section.interGroupSpacing = 16
 
         let headerSize = NSCollectionLayoutSize(
@@ -312,9 +409,8 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 10
-        let isLast = visibleSections.last == .questions
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0, leading: 16, bottom: isLast ? 100 : 0, trailing: 16)
+            top: 0, leading: 16, bottom: bottomInset(for: .questions), trailing: 16)
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -343,9 +439,8 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 10
-        let isLast = visibleSections.last == .notes
         section.contentInsets = NSDirectionalEdgeInsets(
-            top: 0, leading: 16, bottom: isLast ? 100 : 0, trailing: 16)
+            top: 0, leading: 16, bottom: bottomInset(for: .notes), trailing: 16)
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),

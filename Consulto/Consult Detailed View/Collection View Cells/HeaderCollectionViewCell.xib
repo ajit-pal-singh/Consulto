@@ -28,7 +28,7 @@
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Session Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nfU-3c-sEZ">
-                                <rect key="frame" x="26" y="0.0" width="125" height="120"/>
+                                <rect key="frame" x="26" y="0.0" width="131" height="86"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="24"/>
                                 <color key="textColor" systemColor="systemBackgroundColor"/>
                                 <nil key="highlightedColor"/>
@@ -36,13 +36,13 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="3PL-Yq-umW"/>
                         <constraints>
+                            <constraint firstItem="nfU-3c-sEZ" firstAttribute="top" secondItem="ZPc-WU-jqH" secondAttribute="top" id="EC1-Ye-IB0"/>
                             <constraint firstAttribute="trailing" secondItem="AuF-gn-HuW" secondAttribute="trailing" constant="16" id="JOo-J6-41V"/>
-                            <constraint firstItem="nfU-3c-sEZ" firstAttribute="top" secondItem="ZPc-WU-jqH" secondAttribute="top" id="gVI-z7-MoW"/>
+                            <constraint firstItem="3PL-Yq-umW" firstAttribute="bottom" secondItem="nfU-3c-sEZ" secondAttribute="bottom" id="Ta1-kz-chG"/>
                             <constraint firstItem="nfU-3c-sEZ" firstAttribute="leading" secondItem="ZPc-WU-jqH" secondAttribute="leading" constant="26" id="gyM-JX-q7t"/>
                             <constraint firstAttribute="height" constant="120" id="mgI-hT-QAD"/>
                             <constraint firstItem="AuF-gn-HuW" firstAttribute="top" secondItem="ZPc-WU-jqH" secondAttribute="top" constant="10" id="vSc-Os-JpW"/>
-                            <constraint firstAttribute="bottom" secondItem="nfU-3c-sEZ" secondAttribute="bottom" id="yiQ-O6-okr"/>
-                            <constraint firstItem="AuF-gn-HuW" firstAttribute="leading" secondItem="nfU-3c-sEZ" secondAttribute="trailing" constant="32" id="yvz-RO-D3k"/>
+                            <constraint firstItem="AuF-gn-HuW" firstAttribute="leading" secondItem="nfU-3c-sEZ" secondAttribute="trailing" constant="26" id="yvz-RO-D3k"/>
                         </constraints>
                     </view>
                 </subviews>

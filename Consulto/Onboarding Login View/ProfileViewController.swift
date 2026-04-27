@@ -20,6 +20,7 @@ class ProfileViewController: UIViewController {
     private var lastName: String = ""
     private var dateOfBirth: Date?
     private var selectedGender: String = ""
+    private var selectedProfileImage: UIImage?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,6 +75,22 @@ class ProfileViewController: UIViewController {
 
     // MARK: - Actions
     @IBAction func doneButtonTapped(_ sender: UIButton) {
+        let existingProfile = UserProfileStore.shared.current
+        let profile = UserProfile(
+            id: existingProfile.id,
+            firstName: firstName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? existingProfile.firstName : firstName,
+            lastName: lastName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? existingProfile.lastName : lastName,
+            dateOfBirth: dateOfBirth ?? existingProfile.dateOfBirth,
+            gender: Gender(displayName: selectedGender),
+            email: existingProfile.email,
+            createdAt: existingProfile.createdAt
+        )
+        UserProfileStore.shared.save(profile)
+
+        if let selectedProfileImage {
+            ProfileImageManager.shared.saveImage(selectedProfileImage)
+        }
+
         // Find the LoginViewController in our stack and pop directly to it
         if let nav = navigationController {
             for controller in nav.viewControllers {
@@ -99,6 +116,7 @@ extension ProfileViewController: PHPickerViewControllerDelegate {
             guard let image = image as? UIImage else { return }
             DispatchQueue.main.async {
                 self?.profileImageView.image = image
+                self?.selectedProfileImage = image
             }
         }
     }

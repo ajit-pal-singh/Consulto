@@ -373,7 +373,7 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
     private func medicineCell(for indexPath: IndexPath, tableView: UITableView) -> UITableViewCell {
         if !currentRows.isEmpty && indexPath.row == 1 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "HeaderCell", for: indexPath) as! HeaderTableViewCell
-            cell.titleLabel.text = "Active Medicines"
+            cell.titleLabel.text = currentRows.count == 1 ? "Active Medicine" : "Active Medicines"
             return cell
         }
 
@@ -388,7 +388,7 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
 
         if !pausedRows.isEmpty && indexPath.row == pausedHeaderRow {
             let cell = tableView.dequeueReusableCell(withIdentifier: "HeaderCell", for: indexPath) as! HeaderTableViewCell
-            cell.titleLabel.text = "Paused Medicines"
+            cell.titleLabel.text = pausedRows.count == 1 ? "Paused Medicine" : "Paused Medicines"
             return cell
         }
 
@@ -401,7 +401,7 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
     private func consultationCell(for indexPath: IndexPath, tableView: UITableView) -> UITableViewCell {
         if !currentConsultationRows.isEmpty && indexPath.row == 1 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "HeaderCell", for: indexPath) as! HeaderTableViewCell
-            cell.titleLabel.text = "Upcoming Consultations"
+            cell.titleLabel.text = currentConsultationRows.count == 1 ? "Upcoming Consultation" : "Upcoming Consultations"
             return cell
         }
 
@@ -416,7 +416,7 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
 
         if !pausedConsultationRows.isEmpty && indexPath.row == pausedHeaderRow {
             let cell = tableView.dequeueReusableCell(withIdentifier: "HeaderCell", for: indexPath) as! HeaderTableViewCell
-            cell.titleLabel.text = "Paused Consultations"
+            cell.titleLabel.text = pausedConsultationRows.count == 1 ? "Paused Consultation" : "Paused Consultations"
             return cell
         }
 

@@ -8,6 +8,11 @@
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="Montserrat.ttf">
+            <string>Montserrat-Bold</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--Home View Controller-->
         <scene sceneID="s0d-6b-0kx">
@@ -52,13 +57,13 @@
                                 <rect key="frame" x="0.0" y="65" width="393" height="50"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Home" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n0T-sQ-Sjm">
-                                        <rect key="frame" x="15.999999999999993" y="4.6666666666666714" width="96.333333333333314" height="41"/>
-                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="34"/>
+                                        <rect key="frame" x="16" y="5.3333333333333286" width="101" height="39.333333333333336"/>
+                                        <fontDescription key="fontDescription" name="Montserrat-Bold" family="Montserrat" pointSize="32"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kb8-5J-zaR" userLabel="Header Actions Container View">
-                                        <rect key="frame" x="128.33333333333337" y="4" width="248.66666666666663" height="42"/>
+                                        <rect key="frame" x="133" y="4" width="244" height="42"/>
                                     </view>
                                 </subviews>
                                 <constraints>
@@ -205,9 +210,9 @@
                                         </connections>
                                     </button>
                                     <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Forgot your Password?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yOy-fW-tAo">
-                                        <rect key="frame" x="22" y="391.33333333333331" width="174" height="21"/>
+                                        <rect key="frame" x="26" y="391.33333333333331" width="147.66666666666666" height="17"/>
                                         <gestureRecognizers/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <color key="textColor" systemColor="linkColor"/>
                                         <nil key="highlightedColor"/>
                                         <connections>
@@ -219,7 +224,7 @@
                                 </subviews>
                                 <gestureRecognizers/>
                                 <constraints>
-                                    <constraint firstItem="yOy-fW-tAo" firstAttribute="leading" secondItem="Ke7-dX-oH8" secondAttribute="leading" constant="22" id="7km-Gw-I2L"/>
+                                    <constraint firstItem="yOy-fW-tAo" firstAttribute="leading" secondItem="Ke7-dX-oH8" secondAttribute="leading" constant="26" id="7km-Gw-I2L"/>
                                     <constraint firstItem="XJA-xk-rUd" firstAttribute="leading" secondItem="Ke7-dX-oH8" secondAttribute="leading" constant="22" id="DXq-OV-lY9"/>
                                     <constraint firstItem="Inp-CY-KYc" firstAttribute="top" secondItem="Ke7-dX-oH8" secondAttribute="top" constant="110" id="GWJ-L8-JPM"/>
                                     <constraint firstAttribute="trailing" secondItem="DIa-sc-dIo" secondAttribute="trailing" id="Gti-ty-5u3"/>
