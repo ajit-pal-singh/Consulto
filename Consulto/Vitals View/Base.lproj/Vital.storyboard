@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="kQM-KN-uas">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="kQM-KN-uas">
     <device id="retina6_3" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
@@ -10,13 +10,12 @@
     </dependencies>
     <customFonts key="customFonts">
         <array key="Montserrat.ttf">
-            <string>Montserrat-Bold</string>
             <string>Montserrat-Medium</string>
             <string>Montserrat-SemiBold</string>
         </array>
     </customFonts>
     <scenes>
-        <!--View Controller-->
+        <!--Vitals-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController storyboardIdentifier="VitalViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" customClass="ViewController" customModule="Consulto" customModuleProvider="target" sceneMemberID="viewController">
@@ -54,31 +53,6 @@
                                 </constraints>
                                 <blurEffect style="regular"/>
                             </visualEffectView>
-                            <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P5R-ML-X5a" userLabel="Custom Navigation">
-                                <rect key="frame" x="0.0" y="65" width="402" height="50"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vitals" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZKH-fd-f4a">
-                                        <rect key="frame" x="16" y="4.3333333333333286" width="99" height="41.666666666666664"/>
-                                        <fontDescription key="fontDescription" name="Montserrat-Bold" family="Montserrat" pointSize="34"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qbl-aI-8ry">
-                                        <rect key="frame" x="115" y="0.0" width="271" height="50"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="50" id="kiv-Mh-ZwF"/>
-                                        </constraints>
-                                    </view>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="ZKH-fd-f4a" firstAttribute="leading" secondItem="P5R-ML-X5a" secondAttribute="leading" constant="16" id="5Qz-M6-thm"/>
-                                    <constraint firstAttribute="trailing" secondItem="Qbl-aI-8ry" secondAttribute="trailing" constant="16" id="G7O-ht-vKo"/>
-                                    <constraint firstAttribute="height" constant="50" id="SWb-Wl-bFc"/>
-                                    <constraint firstItem="ZKH-fd-f4a" firstAttribute="centerY" secondItem="P5R-ML-X5a" secondAttribute="centerY" id="aO3-J4-of8"/>
-                                    <constraint firstItem="Qbl-aI-8ry" firstAttribute="centerY" secondItem="P5R-ML-X5a" secondAttribute="centerY" id="cto-Gq-0Fw"/>
-                                    <constraint firstItem="Qbl-aI-8ry" firstAttribute="leading" secondItem="ZKH-fd-f4a" secondAttribute="trailing" id="xr2-aX-boi"/>
-                                </constraints>
-                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="calibratedRGB"/>
@@ -87,18 +61,20 @@
                             <constraint firstItem="aMp-cq-4gr" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="EqN-1N-lMg"/>
                             <constraint firstAttribute="bottom" secondItem="aMp-cq-4gr" secondAttribute="bottom" id="FAa-8A-1a1"/>
                             <constraint firstAttribute="trailing" secondItem="hVm-1E-Ufa" secondAttribute="trailing" id="MaM-xp-XPI"/>
-                            <constraint firstItem="P5R-ML-X5a" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="OgA-36-Bd1"/>
                             <constraint firstItem="hVm-1E-Ufa" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="SRV-Fm-bD1"/>
-                            <constraint firstAttribute="trailing" secondItem="P5R-ML-X5a" secondAttribute="trailing" id="XGL-eg-nAw"/>
                             <constraint firstItem="hVm-1E-Ufa" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="f8T-0H-skz"/>
                             <constraint firstItem="aMp-cq-4gr" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="lKO-51-Gll"/>
-                            <constraint firstItem="P5R-ML-X5a" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="65" id="oh3-pI-BQG"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="en7-lG-G5U"/>
+                    <navigationItem key="navigationItem" title="Vitals" id="en7-lG-G5U">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="q1s-cb-3It">
+                            <connections>
+                                <action selector="addReadingButtonTapped:" destination="BYZ-38-t0r" id="xWA-q3-bZL"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="blurEffectView" destination="hVm-1E-Ufa" id="Jmt-py-vRY"/>
-                        <outlet property="headerActionsContainerView" destination="Qbl-aI-8ry" id="ZT4-iv-SMA"/>
                         <outlet property="vitalsCollectionView" destination="aMp-cq-4gr" id="gvu-MZ-ihS"/>
                         <segue destination="e2o-OE-6t9" kind="show" identifier="toVitalDetail" id="NTB-J0-ms5"/>
                     </connections>

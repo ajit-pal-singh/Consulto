@@ -105,8 +105,6 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        navigationController?.delegate = self
 
         homeCollectionView.delegate = self
         homeCollectionView.dataSource = self
@@ -187,6 +185,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.delegate = self
         navigationController?.setNavigationBarHidden(true, animated: animated)
         MedicineStore.shared.syncFromMedications(MedicationReminderStore.shared.medications)
         vitalReadings = VitalDataStore.shared.loadReadings()
@@ -195,12 +194,18 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        if navigationController?.delegate === self {
+            navigationController?.delegate = nil
+        }
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        let isHomeScreen = (viewController === self)
-        navigationController.setNavigationBarHidden(isHomeScreen, animated: animated)
+        navigationController.setNavigationBarHidden(shouldHideNavigationBar(for: viewController), animated: animated)
+    }
+
+    private func shouldHideNavigationBar(for viewController: UIViewController) -> Bool {
+        viewController is HomeViewController || viewController is ViewController
     }
 
     // MARK: - Blur Gradient Mask
@@ -308,6 +313,28 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         ) as? ViewController else {
             return }
         navigationController?.pushViewController(vc, animated: true)
+    }
+
+    private func openVitalDetail(for title: String) {
+        let latestReadings = VitalDataStore.shared.loadReadings()
+        guard let reading = latestReadings.first(where: { $0.title == title }) else {
+            openVitalsScreen()
+            return
+        }
+
+        let storyboard = UIStoryboard(name: "Vital", bundle: nil)
+        guard let detailVC = storyboard.instantiateViewController(
+            withIdentifier: "VitalDetailViewController"
+        ) as? VitalDetailViewController else {
+            return
+        }
+
+        detailVC.reading = reading
+        if reading.title == "Blood Glucose" {
+            detailVC.initialGlucoseFilterType = BloodGlucoseType.from(subtitle: reading.subtitle).rawValue
+        }
+
+        navigationController?.pushViewController(detailVC, animated: true)
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -440,7 +467,8 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         case .quickActions:
             handleQuickActionTap(at: indexPath.item)
         case .recentVitals:
-            break
+            guard indexPath.item < recentVitals.count else { return }
+            openVitalDetail(for: recentVitals[indexPath.item].title)
         }
     }
 

@@ -2,7 +2,6 @@ import Foundation
 import FoundationModels
 
 // MARK: - User
-
 struct UserProfile: Codable {
     let id: UUID
     var firstName: String
@@ -84,16 +83,16 @@ struct HealthRecord: Codable {
     let id: UUID
     var userID: UUID
 
-    let title: String
-    let recordType: RecordType
-    let healthFacilityName: String?
-    let summary: String?
+    var title: String
+    var recordType: RecordType
+    var healthFacilityName: String?
+    var summary: String?
 
-    let dateAdded: Date
-    let documentDate: Date?
+    var dateAdded: Date
+    var documentDate: Date?
 
     let files: [RecordFile]
-    let extractedData: ExtractedMedicalData?
+    var extractedData: ExtractedMedicalData?
 }
 
 struct RecordFile: Codable {

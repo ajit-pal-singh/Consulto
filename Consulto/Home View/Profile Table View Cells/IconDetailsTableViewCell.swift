@@ -21,9 +21,16 @@ class IconDetailsTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.textColor = .label
+        chevronImageView.isHidden = false
+    }
     
     func configure(title: String, icon: UIImage?, tintColor: UIColor) {
         titleLabel.text = title
+        titleLabel.textColor = .label
         iconImageView.image = icon
         iconImageView.tintColor = tintColor
     }

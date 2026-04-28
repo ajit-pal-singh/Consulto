@@ -29,17 +29,13 @@ class MedicalIntelligenceService {
     static let shared = MedicalIntelligenceService()
     
     private init() {}
-    
-    /// Parses the priority queue of documents (PDF first, images last) ensuring it stays under 12,000 characters to fit flawlessly inside the Apple Foundation Model limits.
+
     func extractData(from imageUploads: [UIImage], pdfUploads: [URL] = []) async throws -> FormDataExtraction? {
-        // 1. Let the system gracefully handle availability via try await session.respond catching.
-        
-        // 2. Safely extract raw text from up to 3 prioritized assets
+
         let rawTranscript = await Task.detached {
             return await self.extractSafeTranscript(images: imageUploads, pdfs: pdfUploads)
         }.value
-        
-        // Limit to roughly 12,000 chars for extreme safety margin to ensure no context window crashes
+
         let safeString = String(rawTranscript.prefix(12000))
         
         print("======== EXTRACTED OCR TEXT ========")
@@ -95,14 +91,13 @@ class MedicalIntelligenceService {
         var itemsParsed = 0
         let parsingLimit = 3
         
-        // --- 1. ALWAYS EXAMINE THE PDF FIRST ---
         for url in pdfs {
             if itemsParsed >= parsingLimit { break }
             guard let document = PDFDocument(url: url) else { continue }
             
             let totalPages = document.pageCount
-            let pagesToScan = [0, 1, totalPages - 1].filter { $0 < totalPages && $0 >= 0 } // Safely grab page 1, 2, and the Last Page
-            let uniquePages = Array(Set(pagesToScan)).sorted() // Remove duplicates if it's a 1-page PDF
+            let pagesToScan = [0, 1, totalPages - 1].filter { $0 < totalPages && $0 >= 0 }
+            let uniquePages = Array(Set(pagesToScan)).sorted()
             
             for pageIndex in uniquePages {
                 if itemsParsed >= parsingLimit { break }
@@ -112,7 +107,7 @@ class MedicalIntelligenceService {
                 if let text = page.string, text.trimmingCharacters(in: .whitespacesAndNewlines).count > 50 {
                     transcript += " [PDF Page \(pageIndex + 1)]: \(text) "
                 } else {
-                    // Fallback to Image Vision OCR if the PDF page is actually just a scanned photo
+
                     let thumbnail = page.thumbnail(of: CGSize(width: 1000, height: 1000), for: .mediaBox)
                     let text = extractText(from: thumbnail)
                     transcript += " [PDF Scanned Page \(pageIndex + 1)]: \(text) "
@@ -121,7 +116,6 @@ class MedicalIntelligenceService {
             }
         }
         
-        // --- 2. EXAMINE IMAGES NEXT IF QUOTA NOT MET ---
         for image in images {
             if itemsParsed >= parsingLimit { break }
             
@@ -134,7 +128,6 @@ class MedicalIntelligenceService {
         return transcript
     }
     
-    /// Standard Vision processing pipeline
     private func extractText(from image: UIImage) -> String {
         guard let cgImage = image.cgImage else { return "" }
         var recognizedText = ""

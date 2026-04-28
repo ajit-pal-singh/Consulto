@@ -1,72 +1,37 @@
 import UIKit
 import SwiftUI
-import Combine
 import PhotosUI
 import UniformTypeIdentifiers
 
 class RecordsViewController: UIViewController, UINavigationControllerDelegate, PHPickerViewControllerDelegate, UIDocumentPickerDelegate, UIImagePickerControllerDelegate {
-
+    // Outlets
     @IBOutlet weak var recordsCollectionView: UICollectionView!
-        
     @IBOutlet weak var chipsContainerView: UIView!
-
     @IBOutlet weak var blurEffectView: UIVisualEffectView!
-    @IBOutlet weak var headerActionsContainerView: UIView! 
-    
-
-    var records: [HealthRecord] = []
-    private var allRecords: [HealthRecord] = []
-    
-    // Selection Mode
-    var selectionMode: Bool = false
-    var alreadySelectedRecordIDs: Set<UUID> = []
-    var selectedRecords: [HealthRecord] = []
-    var didSelectRecords: (([HealthRecord]) -> Void)?
-    var shouldShowAttachmentPlatterOnAppear = false
-    
+    @IBOutlet weak var headerActionsContainerView: UIView!
     @IBOutlet weak var platterContainerView: UIView!
-
     @IBOutlet weak var dimmingOverlayView: UIView!
 
-    // Platter Properties
+    private var allRecords: [HealthRecord] = []
+    var records: [HealthRecord] = []
+    var currentChipFilter: String = "All"
+    
+    // Select Records
+    var selectionMode: Bool = false
+    var selectedRecords: [HealthRecord] = []
+    var didSelectRecords: (([HealthRecord]) -> Void)?
+    var alreadySelectedRecordIDs: Set<UUID> = []
+
+    
+    // Platter 
+    var shouldShowAttachmentPlatterOnAppear = false
     var platterViewController: AttachmentPlatterViewController?
     var platterBottomConstraint: NSLayoutConstraint?
     var platterHeightConstraint: NSLayoutConstraint?
     
-    // Segue Identifier
-    let detailSegueIdentifier = "Card-Details"
-    
-    // View Model for Filters
-    var filterViewModel = FilterViewModel()
-    var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.delegate = self
-        
-        platterContainerView?.isUserInteractionEnabled = false
-        
-        // Dimming overlay: hidden and non-interactive until the platter is shown
-        dimmingOverlayView?.alpha = 0
-        dimmingOverlayView?.isHidden = true
-        dimmingOverlayView?.isUserInteractionEnabled = false
-        
-        // Prevent background elements from turning gray/black when popover is presented
-        self.view.tintAdjustmentMode = .normal
-        self.view.backgroundColor = UIColor(hex: "#F1F6FF")
-        recordsCollectionView?.backgroundColor = UIColor(hex: "#F1F6FF")
-                setupCollectionView()
-        setupChipsView()
-        setupHeaderActions()
-        
-        filterViewModel.$selectedFilter
-            .receive(on: RunLoop.main)
-            .sink { [weak self] newFilter in
-                print("Filter Changed to: \(newFilter)")
-                self?.filterRecords(by: newFilter)
-            }
-            .store(in: &cancellables)
-        
         if selectionMode {
             self.title = "Select Records"
             navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -78,6 +43,13 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             headerActionsContainerView?.superview?.isHidden = true
             blurEffectView?.isHidden = true
         }
+
+        navigationController?.delegate = self
+        self.view.tintAdjustmentMode = .normal
+
+        setupCollectionView()
+        setupChipsView()
+        setupHeaderActions()    
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -187,8 +159,11 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
         container.backgroundColor = .clear 
         container.clipsToBounds = false
         
-        // Create SwiftUI View with ViewModel
-        let swiftUIView = ChipsView(viewModel: filterViewModel)
+        // Create SwiftUI View with initial state and callback
+        let swiftUIView = ChipsView(selectedFilter: currentChipFilter) { [weak self] newFilter in
+            self?.currentChipFilter = newFilter
+            self?.filterRecords(by: newFilter)
+        }
         let hostingController = UIHostingController(rootView: swiftUIView)
         hostingController.view.backgroundColor = .clear
         hostingController.view.clipsToBounds = false
@@ -232,7 +207,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             print("Failed to load records: \(error)")
         }
         setupHeaderActions()
-        filterRecords(by: filterViewModel.selectedFilter)
+        filterRecords(by: currentChipFilter)
     }
     
     func filterRecords(by filter: String) {
@@ -241,7 +216,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     
     func applyFilters() {
         var filtered = allRecords
-        let chipFilter = filterViewModel.selectedFilter
+        let chipFilter = currentChipFilter
         
         if chipFilter != "All" {
             filtered = filtered.filter { record in
@@ -385,7 +360,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             try HealthRecordStore.shared.deleteRecord(id: record.id)
             allRecords.removeAll { $0.id == record.id }
             selectedRecords.removeAll { $0.id == record.id }
-            filterRecords(by: filterViewModel.selectedFilter)
+            filterRecords(by: currentChipFilter)
         } catch {
             let alert = UIAlertController(
                 title: "Unable to Delete",
@@ -468,7 +443,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == detailSegueIdentifier,
+        if segue.identifier == "Card-Details",
            let destinationVC = segue.destination as? RecordDetailedViewController,
            let record = sender as? HealthRecord {
             destinationVC.record = record
@@ -866,7 +841,7 @@ extension RecordsViewController: UICollectionViewDelegate, UICollectionViewDataS
             }
             collectionView.reloadItems(at: [indexPath])
         } else {
-            performSegue(withIdentifier: detailSegueIdentifier, sender: tappedRecord)
+            performSegue(withIdentifier: "Card-Details", sender: tappedRecord)
         }
     }
 
@@ -916,6 +891,7 @@ extension RecordsViewController: UIPopoverPresentationControllerDelegate {
     }
 }
 
+// Filteration Code
 class DateFilterViewController: UIViewController {
     var onFilterSingleDate: ((Date) -> Void)?
     var onFilterDateRange: ((Date, Date) -> Void)?

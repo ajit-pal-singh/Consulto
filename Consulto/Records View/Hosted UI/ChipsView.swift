@@ -1,8 +1,9 @@
 import SwiftUI
 
 struct ChipsView: View {
-    // Observable Object for State
-    @ObservedObject var viewModel: FilterViewModel
+    // Local State
+    @State var selectedFilter: String = "All"
+    var onFilterChanged: ((String) -> Void)?
     
     // Data (matches Model RecordTypes + "All")
     let filters = ["All", "Prescription", "Lab Report", "Discharge", "Scan", "Other"]
@@ -11,11 +12,12 @@ struct ChipsView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
                 ForEach(filters, id: \.self) { filter in
-                    ChipButton(title: filter, isSelected: viewModel.selectedFilter == filter) {
+                    ChipButton(title: filter, isSelected: selectedFilter == filter) {
                         // Action: Update selection
                         withAnimation {
-                            viewModel.selectedFilter = filter
+                            selectedFilter = filter
                         }
+                        onFilterChanged?(filter)
                     }
                 }
             }

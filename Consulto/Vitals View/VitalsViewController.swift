@@ -1,10 +1,7 @@
-
 import UIKit
-import SwiftUI
 
 class ViewController: UIViewController, UINavigationControllerDelegate {
 
-    @IBOutlet weak var headerActionsContainerView: UIView!
     @IBOutlet weak var vitalsCollectionView: UICollectionView!
     @IBOutlet weak var blurEffectView: UIVisualEffectView!
     
@@ -17,6 +14,11 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     var platterViewController: AddReadingViewController?
     var overlayDimmingView: UIView?
     var platterBottomConstraint: NSLayoutConstraint?
+
+    // MARK: - Actions
+    @IBAction func addReadingButtonTapped(_ sender: Any) {
+        showAddReadingPlatter()
+    }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -31,13 +33,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationController?.delegate = self
-        
         vitalsData = VitalDataStore.shared.loadReadings()
         
         setupCollectionView()
-        setupHeaderActions()
 
+        navigationItem.largeTitleDisplayMode = .never
+        
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleGlucoseFilterChange(_:)),
@@ -57,9 +58,17 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        navigationController?.delegate = self
+        navigationController?.setNavigationBarHidden(false, animated: animated)
         vitalsData = VitalDataStore.shared.loadReadings()
         vitalsCollectionView?.reloadData()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if navigationController?.delegate === self {
+            navigationController?.delegate = nil
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -80,37 +89,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         cv.dataSource = self
         cv.backgroundColor = .clear
         cv.showsVerticalScrollIndicator = false
-    }
-
-    func setupHeaderActions() {
-        guard let container = headerActionsContainerView else { return }
-        
-        container.subviews.forEach { $0.removeFromSuperview() }
-        container.backgroundColor = .clear
-        container.clipsToBounds = false 
-        
-        let swiftUIView = VitalsHeaderActionsView(
-            onAddAction: { [weak self] in
-                self?.showAddReadingPlatter()
-            }
-        )
-        
-        let hostingController = UIHostingController(rootView: swiftUIView)
-        hostingController.view.backgroundColor = .clear
-        hostingController.view.clipsToBounds = false 
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        
-        addChild(hostingController)
-        container.addSubview(hostingController.view)
-        
-        NSLayoutConstraint.activate([
-            hostingController.view.topAnchor.constraint(equalTo: container.topAnchor),
-            hostingController.view.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-            hostingController.view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            hostingController.view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
-        ])
-        
-        hostingController.didMove(toParent: self)
     }
 
     
@@ -508,8 +486,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     }
     
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        let isVitalsScreen = (viewController === self)
-        navigationController.setNavigationBarHidden(isVitalsScreen, animated: animated)
+        navigationController.setNavigationBarHidden(false, animated: animated)
     }
 }
 
@@ -555,7 +532,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 65, left: 20, bottom: 20, right: 20) 
+        return UIEdgeInsets(top: 16, left: 20, bottom: 20, right: 20)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

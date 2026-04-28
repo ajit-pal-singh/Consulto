@@ -22,7 +22,7 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
 
         setupTableView()
-        setupCreateAccountButton()
+//        setupCreateAccountButton()
         
         // Hide keyboard when tapping outside
         let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
@@ -46,17 +46,17 @@ class LoginViewController: UIViewController {
         tableView.register(nib, forCellReuseIdentifier: "InputTextFieldCell")
     }
     
-    private func setupCreateAccountButton() {
-        // Use the existing hex extension, fallback if it fails
-        
-        var config = createAccountButton.configuration ?? UIButton.Configuration.plain()
-        config.baseForegroundColor = UIColor(hex: "#1A90FF") 
-        config.background.strokeColor = UIColor(hex: "#1A90FF") 
-        config.background.strokeWidth = 2
-        config.cornerStyle = .capsule
-        
-        createAccountButton.configuration = config
-    }
+//    private func setupCreateAccountButton() {
+//        // Use the existing hex extension, fallback if it fails
+//        
+//        var config = createAccountButton.configuration ?? UIButton.Configuration.plain()
+//        config.baseForegroundColor = UIColor(hex: "#1A90FF") 
+//        config.background.strokeColor = UIColor(hex: "#1A90FF") 
+//        config.background.strokeWidth = 2
+//        config.cornerStyle = .capsule
+//        
+//        createAccountButton.configuration = config
+//    }
     
     @IBAction func loginButtonTapped(_ sender: UIButton) {
         // 1. Check Dummy Credentials
