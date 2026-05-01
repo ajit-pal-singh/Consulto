@@ -91,12 +91,8 @@ class ConsultViewController: UIViewController,
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-          
-          if segue.identifier == "prepare_consultation" {
-              let navVC = segue.destination as! UINavigationController
-              let prepareVC = navVC.topViewController as! PrepareConsultationTableViewController
-          }
-      }
+        // No additional setup needed for "prepare_consultation" segue
+    }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

@@ -59,6 +59,14 @@ final class VitalChartView: UIView {
     private var highlightTooltip: UIView?
     private var highlightedPointIndex: Int?
     private var pointIndexByID: [UUID: Int] = [:]
+    /// Stores the actual tap x (in plotCanvas coords) for step-line charts so the
+    /// highlight line and tooltip appear exactly where the user tapped.
+    private var lastStepLineTapX: CGFloat?
+
+    // Watch HR daily "latest reading" intro animation
+    private var latestHighlightWorkItem: DispatchWorkItem?
+    private var watchHRLatestDotLayer: CAShapeLayer?
+    private var watchHRLatestLabel: UILabel?
 
     private static let sharedDF: DateFormatter = {
         let df = DateFormatter()
@@ -373,6 +381,12 @@ final class VitalChartView: UIView {
         gridPathLayer = nil
         horizontalGridLayer = nil
         monthSeparatorLayer = nil
+        latestHighlightWorkItem?.cancel()
+        latestHighlightWorkItem = nil
+        watchHRLatestDotLayer?.removeFromSuperlayer()
+        watchHRLatestDotLayer = nil
+        watchHRLatestLabel?.removeFromSuperview()
+        watchHRLatestLabel = nil
         yAxisView.subviews.forEach              { $0.removeFromSuperview() }
         yAxisView.layer.sublayers?.forEach      { $0.removeFromSuperlayer() }
         plotCanvas.subviews.forEach             { $0.removeFromSuperview() }
@@ -431,11 +445,18 @@ final class VitalChartView: UIView {
     private func xCenter(_ i: Int) -> CGFloat {
         if config.isContinuousDaily {
             let pt = dataPoints[i]
-            guard let fd = pt.fullDate, let d = chartDate(from: fd), let h = pt.hourOfDay else {
-                return config.plotInset + (CGFloat(i) + 0.5) * config.columnWidth 
+            guard let fd = pt.fullDate, let d = chartDate(from: fd) else {
+                return config.plotInset + (CGFloat(i) + 0.5) * config.columnWidth
             }
             let dayOffset = Calendar.current.dateComponents([.day], from: minDate, to: d).day ?? 0
             let cWidth = continuousColumnWidth
+            // Step line: position at center of the day (no hourOfDay needed)
+            if config.chartType == .stepLine {
+                return config.plotInset + CGFloat(dayOffset * 4 + 2) * cWidth
+            }
+            guard let h = pt.hourOfDay else {
+                return config.plotInset + (CGFloat(i) + 0.5) * config.columnWidth
+            }
             let xOffset = CGFloat(dayOffset * 4) * cWidth + CGFloat(h / 6.0) * cWidth
             return config.plotInset + xOffset
         } else if config.isContinuousWeekly {
@@ -921,6 +942,7 @@ final class VitalChartView: UIView {
         case .line:        drawLine(using: points)
         case .rangeBar:    drawRangeBar(using: points)
         case .baselineBar: drawBaselineBar(using: points)
+        case .stepLine:    drawStepLine(using: points)
         }
     }
 
@@ -977,6 +999,71 @@ final class VitalChartView: UIView {
         }
     }
 
+    // MARK: - Step Line (Resting HR daily)
+    /// Draws one flat horizontal segment per day, connected by vertical steps between days.
+    /// Puts a filled circle at the centre of each day as a tap target.
+    private func drawStepLine(using points: [ChartDataPoint]) {
+        guard !points.isEmpty else { return }
+        let color = config.tintColor
+        let cal   = Calendar.current
+        let cWidth = continuousColumnWidth
+        let df = DateFormatter()
+        df.dateFormat = "dd-MM-yyyy"
+
+        struct DaySegment {
+            let startX: CGFloat
+            let endX:   CGFloat
+            let centerX: CGFloat
+            let y:      CGFloat
+            let point:  ChartDataPoint
+        }
+
+        var segments: [DaySegment] = []
+        for dp in points {
+            guard let fd = dp.fullDate,
+                  let d  = chartDate(from: fd),
+                  let val = dp.value else { continue }
+            let dayOffset = cal.dateComponents([.day], from: minDate, to: d).day ?? 0
+            let startX  = config.plotInset + CGFloat(dayOffset * 4) * cWidth
+            let endX    = config.plotInset + CGFloat((dayOffset + 1) * 4) * cWidth
+            let centerX = (startX + endX) / 2
+            segments.append(DaySegment(startX: startX, endX: endX, centerX: centerX,
+                                       y: yPos(val), point: dp))
+        }
+        guard !segments.isEmpty else { return }
+        segments.sort { $0.startX < $1.startX }
+
+        // Build step path
+        let path = UIBezierPath()
+        for (i, seg) in segments.enumerated() {
+            if i == 0 {
+                path.move(to: CGPoint(x: seg.startX, y: seg.y))
+            } else if seg.startX > segments[i - 1].endX {
+                // Gap between days — lift pen and continue
+                path.move(to: CGPoint(x: seg.startX, y: seg.y))
+            }
+            // Horizontal span across the day
+            path.addLine(to: CGPoint(x: seg.endX, y: seg.y))
+            // Vertical connector to next segment
+            if i + 1 < segments.count {
+                let next = segments[i + 1]
+                if next.startX <= seg.endX + 1 {   // consecutive days
+                    path.addLine(to: CGPoint(x: seg.endX, y: next.y))
+                }
+            }
+        }
+
+        let sl = CAShapeLayer()
+        sl.path        = path.cgPath
+        sl.strokeColor = color.cgColor
+        sl.fillColor   = UIColor.clear.cgColor
+        sl.lineWidth   = 2.5
+        sl.lineJoin    = .miter
+        sl.lineCap     = .square
+        plotCanvas.layer.addSublayer(sl)
+        // No dots — the whole line is tappable via x-range detection
+    }
+
     private var activeBarWidth: CGFloat {
         if config.isContinuousMonthly {
             return max(4, monthlyDayWidth * 0.68)
@@ -985,9 +1072,17 @@ final class VitalChartView: UIView {
             if config.title == "Blood Pressure" || config.title == "Body Weight" {
                 return max(6, continuousColumnWidth * 0.15)
             }
+            // Watch HR pills — slimmer
+            if config.title == "Heart Rate" && config.chartType == .rangeBar {
+                return max(5, weeklyColumnWidth * 0.26)
+            }
             return max(6, weeklyColumnWidth * 0.40)
         }
         if config.isContinuousDaily {
+            if config.title == "Heart Rate" && config.chartType == .rangeBar {
+                // Narrower Apple-Health-style hourly pill
+                return max(5, continuousColumnWidth * 0.13)
+            }
             return max(6, continuousColumnWidth * 0.15)
         }
         return config.columnWidth * 0.25
@@ -995,10 +1090,26 @@ final class VitalChartView: UIView {
 
 
     private func drawRangeBar(using points: [ChartDataPoint]) {
-        let color = config.tintColor
-        let barW  = activeBarWidth
-        let h     = chartH()
-        let bgCol = color.withAlphaComponent(0.12)
+        let color    = config.tintColor
+        let barW     = activeBarWidth
+        let h        = chartH()
+        let bgCol    = color.withAlphaComponent(0.12)
+        let isHRPill = config.title == "Heart Rate"
+        // Watch HR daily intro animation: show latest pill in colour, rest in grey
+        let isWatchHRDaily = isHRPill && config.isContinuousDaily
+
+        // Find the most-recent hourly bucket (latest date + highest hour)
+        let latestPoint: ChartDataPoint? = isWatchHRDaily ? points.max(by: { a, b in
+            let df = DateFormatter()
+            df.dateFormat = "dd-MM-yyyy"
+            let da = df.date(from: a.fullDate ?? "") ?? .distantPast
+            let db = df.date(from: b.fullDate ?? "") ?? .distantPast
+            if da == db { return (a.hourOfDay ?? 0) < (b.hourOfDay ?? 0) }
+            return da < db
+        }) : nil
+
+        let greyFill = UIColor.systemGray2.withAlphaComponent(0.45).cgColor
+        var greyLayers: [CAShapeLayer] = []
 
         for dp in points {
             guard let sourceIndex = pointIndexByID[dp.id] else { continue }
@@ -1007,18 +1118,90 @@ final class VitalChartView: UIView {
             guard let lo = dp.minValue, let hi = dp.maxValue else { continue }
             let top  = yPos(hi)
             let barH = max(yPos(lo) - top, 4)
-            let bgR  = expandedPillRect(forDarkPill: CGRect(x: cx - barW/2, y: top, width: barW, height: barH), withinHeight: h)
-            let bg   = CAShapeLayer()
-            bg.path      = UIBezierPath(roundedRect: bgR, cornerRadius: barW/2).cgPath
-            bg.fillColor = bgCol.cgColor
-            plotCanvas.layer.addSublayer(bg)
 
-            let fgR  = CGRect(x: cx - barW/2, y: top, width: barW, height: barH)
-            let fg   = CAShapeLayer()
+            // Skip translucent background pill for Heart Rate (cleaner look)
+            if !isHRPill {
+                let bgR = expandedPillRect(forDarkPill: CGRect(x: cx - barW/2, y: top, width: barW, height: barH), withinHeight: h)
+                let bg  = CAShapeLayer()
+                bg.path      = UIBezierPath(roundedRect: bgR, cornerRadius: barW/2).cgPath
+                bg.fillColor = bgCol.cgColor
+                plotCanvas.layer.addSublayer(bg)
+            }
+
+            let isLatest   = isWatchHRDaily && dp.id == latestPoint?.id
+            let pillColor  = isWatchHRDaily ? (isLatest ? color.cgColor : greyFill) : color.cgColor
+
+            let fgR = CGRect(x: cx - barW/2, y: top, width: barW, height: barH)
+            let fg  = CAShapeLayer()
             fg.path      = UIBezierPath(roundedRect: fgR, cornerRadius: barW/2).cgPath
-            fg.fillColor = color.cgColor
+            fg.fillColor = pillColor
             plotCanvas.layer.addSublayer(fg)
+
+            if isWatchHRDaily && !isLatest { greyLayers.append(fg) }
+
+            // ── Latest pill: dot + value label ──
+            if isLatest {
+                let avgBPM = (hi + lo) / 2
+                let dotY   = yPos(avgBPM)
+                let dotR: CGFloat = 5
+
+                let dot = CAShapeLayer()
+                dot.path        = UIBezierPath(ovalIn: CGRect(x: cx - dotR, y: dotY - dotR,
+                                                              width: dotR * 2, height: dotR * 2)).cgPath
+                dot.fillColor   = color.cgColor
+                dot.strokeColor = UIColor.white.cgColor
+                dot.lineWidth   = 1
+                plotCanvas.layer.addSublayer(dot)
+                watchHRLatestDotLayer = dot
+
+                // Convert plotCanvas point → VitalChartView coords for the floating label
+                let ptInSelf = plotCanvas.convert(CGPoint(x: cx, y: dotY), to: self)
+
+                let label = UILabel()
+                label.text      = niceFloat(avgBPM)
+                label.font      = UIFont.systemFont(ofSize: 21, weight: .bold)
+                label.textColor = color
+                label.sizeToFit()
+
+                let labelW = label.frame.width
+                let labelH = label.frame.height
+                // Try placing to the right of the dot; fall back to left if clipped by y-axis
+                var labelX = ptInSelf.x + dotR + 4
+                if labelX + labelW > self.bounds.width - config.yAxisWidth - 4 {
+                    labelX = ptInSelf.x - dotR - 4 - labelW
+                }
+                label.frame = CGRect(x: labelX,
+                                     y: ptInSelf.y - labelH / 2,
+                                     width: labelW, height: labelH)
+                self.addSubview(label)
+                watchHRLatestLabel = label
+            }
         }
+
+        // ── Schedule the "reveal all" animation after 1.5 s ──
+        guard isWatchHRDaily, !greyLayers.isEmpty else { return }
+        let tintCG = color.cgColor
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
+            // Animate grey pills → tint colour
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(0.5)
+            CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: .easeOut))
+            for layer in greyLayers { layer.fillColor = tintCG }
+            CATransaction.commit()
+            // Fade out dot + label
+            UIView.animate(withDuration: 0.3) {
+                self.watchHRLatestDotLayer?.opacity = 0
+                self.watchHRLatestLabel?.alpha = 0
+            } completion: { _ in
+                self.watchHRLatestDotLayer?.removeFromSuperlayer()
+                self.watchHRLatestDotLayer = nil
+                self.watchHRLatestLabel?.removeFromSuperview()
+                self.watchHRLatestLabel = nil
+            }
+        }
+        latestHighlightWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: workItem)
     }
 
 
@@ -1083,6 +1266,9 @@ final class VitalChartView: UIView {
         let expansion: CGFloat
         switch config.title {
         case "Blood Pressure":
+            expansion = rect.height * 0.4
+        case "Heart Rate" where config.chartType == .rangeBar:
+            // Watch HR pills: same tight expansion as Blood Pressure
             expansion = rect.height * 0.4
         case "Body Weight":
             expansion = 3
@@ -1180,6 +1366,32 @@ final class VitalChartView: UIView {
         let visiblePoints = plottedPointsForCurrentViewport()
         guard !visiblePoints.isEmpty else { return }
 
+        // ── Step line (Resting HR daily): match by day x-range, highlight at actual tap x ──
+        if config.chartType == .stepLine && config.isContinuousDaily {
+            let cWidth = continuousColumnWidth
+            let dayW   = cWidth * 4
+            let df = DateFormatter()
+            df.dateFormat = "dd-MM-yyyy"
+            let dayIndex = max(0, Int((tapLocation.x - config.plotInset) / dayW))
+            guard let tapDate = Calendar.current.date(byAdding: .day, value: dayIndex, to: minDate) else { return }
+            let tapDateStr = df.string(from: tapDate)
+            for dp in visiblePoints {
+                guard dp.fullDate == tapDateStr,
+                      let val = dp.value,
+                      let sourceIdx = pointIndexByID[dp.id] else { continue }
+                // Accept tap anywhere along the horizontal step line (whole day width, ±30 pt y)
+                if abs(tapLocation.y - yPos(val)) < 30 {
+                    lastStepLineTapX = tapLocation.x   // remember exact tap position
+                    highlightedPointIndex = sourceIdx
+                    drawHighlight(for: sourceIdx)
+                    scrollDelegate?.vitalChartDidHighlightPoint(dataPoints[sourceIdx])
+                }
+                return
+            }
+            return
+        }
+
+        // ── Default nearest-point matching ──
         var bestIndex: Int?
         var bestDist: CGFloat = .greatestFiniteMagnitude
 
@@ -1212,7 +1424,14 @@ final class VitalChartView: UIView {
 
     private func drawHighlight(for index: Int) {
         let dp = dataPoints[index]
-        let cx = xCenter(index)
+        // For step-line taps use the stored tap x so the line appears under the finger;
+        // for everything else use the computed centre of the data point.
+        let cx: CGFloat
+        if config.chartType == .stepLine, let tapX = lastStepLineTapX {
+            cx = tapX
+        } else {
+            cx = xCenter(index)
+        }
         let h = chartH()
 
         let lineLayer = CAShapeLayer()
@@ -1228,14 +1447,56 @@ final class VitalChartView: UIView {
 
         let valueText: String
         if let hi = dp.maxValue, let lo = dp.minValue {
-            valueText = "\(niceFloat(hi))/\(niceFloat(lo))"
+            if config.title == "Heart Rate" {
+                if hi == lo {
+                    valueText = niceFloat(hi)
+                } else {
+                    valueText = "\(niceFloat(lo))–\(niceFloat(hi))"
+                }
+            } else {
+                valueText = "\(niceFloat(hi))/\(niceFloat(lo))"
+            }
         } else if let val = dp.value {
             valueText = niceFloat(val)
         } else {
             valueText = "--"
         }
 
-        let dateText = tooltipDateString(for: dp)
+        // For step-line use the tapped x to derive the hour so the tooltip shows
+        // "d MMM, H–H+1 AM/PM" instead of just the date.
+        let dateText: String
+        if config.chartType == .stepLine, let tapX = lastStepLineTapX {
+            let cWidth = continuousColumnWidth
+            let dayW   = cWidth * 4
+            let posInDay = (tapX - config.plotInset).truncatingRemainder(dividingBy: dayW)
+            let rawHour  = max(0, min(23, Int(posInDay / cWidth * 6)))
+
+            let df = DateFormatter(); df.dateFormat = "dd-MM-yyyy"
+            let displayDf = DateFormatter(); displayDf.dateFormat = "d MMM"
+            let baseDate: String = {
+                if let fdStr = dp.fullDate, let d = df.date(from: fdStr) {
+                    return displayDf.string(from: d)
+                }
+                return tooltipDateString(for: dp)
+            }()
+
+            let startH   = rawHour
+            let isPM     = startH >= 12
+            let h12      = startH == 0 ? 12 : (startH > 12 ? startH - 12 : startH)
+            let suffix   = isPM ? "PM" : "AM"
+            let endRaw   = startH + 1
+            let endIsPM  = endRaw >= 12
+            let endH12   = endRaw == 0 ? 12 : (endRaw > 12 ? endRaw - 12 : endRaw)
+            let endSuffix = endIsPM ? "PM" : "AM"
+
+            if suffix == endSuffix {
+                dateText = "\(baseDate), \(h12)–\(endH12) \(suffix)"
+            } else {
+                dateText = "\(baseDate), \(h12) \(suffix)–\(endH12) \(endSuffix)"
+            }
+        } else {
+            dateText = tooltipDateString(for: dp)
+        }
 
         let tooltip = UIView()
         tooltip.backgroundColor = UIColor.systemGray6
@@ -1269,7 +1530,27 @@ final class VitalChartView: UIView {
         dateLbl.textColor = .secondaryLabel
         dateLbl.textAlignment = .center
 
-        let stack = UIStackView(arrangedSubviews: [valueLbl, dateLbl])
+        // For step-line (Resting HR) add a header label matching Apple Health style
+        // For Watch HR range pills add a "RANGE" header
+        var stackViews: [UIView] = []
+        if config.chartType == .stepLine {
+            let headerLbl = UILabel()
+            headerLbl.text      = "RESTING HEART RATE"
+            headerLbl.font      = UIFont.systemFont(ofSize: 14, weight: .semibold).rounded
+            headerLbl.textColor = .secondaryLabel
+            headerLbl.textAlignment = .center
+            stackViews.append(headerLbl)
+        } else if config.chartType == .rangeBar && config.title == "Heart Rate" {
+            let headerLbl = UILabel()
+            headerLbl.text      = "RANGE"
+            headerLbl.font      = UIFont.systemFont(ofSize: 14, weight: .semibold).rounded
+            headerLbl.textColor = .secondaryLabel
+            headerLbl.textAlignment = .center
+            stackViews.append(headerLbl)
+        }
+        stackViews.append(contentsOf: [valueLbl, dateLbl])
+
+        let stack = UIStackView(arrangedSubviews: stackViews)
         stack.axis = .vertical
         stack.spacing = 2
         stack.alignment = .center
@@ -1309,6 +1590,7 @@ final class VitalChartView: UIView {
         guard highlightedPointIndex != nil else { return }
         highlightLineLayer?.removeFromSuperlayer()
         highlightLineLayer = nil
+        lastStepLineTapX = nil
 
         if let tooltip = highlightTooltip {
             UIView.animate(withDuration: 0.15, animations: {

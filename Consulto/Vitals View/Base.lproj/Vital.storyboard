@@ -42,17 +42,6 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
-                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hVm-1E-Ufa">
-                                <rect key="frame" x="0.0" y="0.0" width="402" height="115"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="2TM-2l-dC8">
-                                    <rect key="frame" x="0.0" y="0.0" width="402" height="115"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                </view>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="115" id="GPh-ta-ezY"/>
-                                </constraints>
-                                <blurEffect style="regular"/>
-                            </visualEffectView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="calibratedRGB"/>
@@ -60,9 +49,6 @@
                             <constraint firstItem="aMp-cq-4gr" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="9qO-dc-fPg"/>
                             <constraint firstItem="aMp-cq-4gr" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="EqN-1N-lMg"/>
                             <constraint firstAttribute="bottom" secondItem="aMp-cq-4gr" secondAttribute="bottom" id="FAa-8A-1a1"/>
-                            <constraint firstAttribute="trailing" secondItem="hVm-1E-Ufa" secondAttribute="trailing" id="MaM-xp-XPI"/>
-                            <constraint firstItem="hVm-1E-Ufa" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="SRV-Fm-bD1"/>
-                            <constraint firstItem="hVm-1E-Ufa" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="f8T-0H-skz"/>
                             <constraint firstItem="aMp-cq-4gr" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="lKO-51-Gll"/>
                         </constraints>
                     </view>
@@ -74,7 +60,6 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="blurEffectView" destination="hVm-1E-Ufa" id="Jmt-py-vRY"/>
                         <outlet property="vitalsCollectionView" destination="aMp-cq-4gr" id="gvu-MZ-ihS"/>
                         <segue destination="e2o-OE-6t9" kind="show" identifier="toVitalDetail" id="NTB-J0-ms5"/>
                     </connections>

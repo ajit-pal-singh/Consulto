@@ -57,7 +57,8 @@ class VitalDataStore {
                       minValue: Double? = nil, maxValue: Double? = nil,
                       recordedAt date: Date = Date(),
                       subtitleOverride: String? = nil,
-                      glucoseType: String? = nil) {
+                      glucoseType: String? = nil,
+                      heartRateSource: String? = nil) {
         var dtos = loadDTOs()
 
         guard let idx = dtos.firstIndex(where: { $0.title == title }) else {
@@ -82,7 +83,8 @@ class VitalDataStore {
             let numVal = Double(value.replacingOccurrences(of: ",", with: "."))
             hourlyPoint = HourlyDataPointDTO(hour: hourFractional, value: numVal,
                                              minValue: nil, maxValue: nil, dateString: dateStr,
-                                             glucoseType: glucoseType, baselineValue: nil)
+                                             glucoseType: glucoseType, baselineValue: nil,
+                                             heartRateSource: heartRateSource)
         }
 
         var allHourlyPoints = dto.hourlyChartData ?? []
@@ -157,15 +159,19 @@ class VitalDataStore {
     }
 
     private static func normalizedHeartRateDTO(_ dto: VitalReadingDTO, cal: Calendar, df: DateFormatter) -> VitalReadingDTO {
-        let hourly  = sortedHourly(dto.hourlyChartData ?? [], df: df)
-        let daily   = buildDailyPoints(from: hourly, hasRange: false, title: dto.title, cal: cal, df: df)
-        let weekly  = buildWeeklyPoints(from: hourly, hasRange: false, title: dto.title, cal: cal, df: df)
-        let monthly = buildMonthlyPoints(from: hourly, hasRange: false, title: dto.title, cal: cal, df: df)
-        let latestValue = hourly.last?.value
+        let preferredSource  = HeartRateSourceType.from(subtitle: dto.subtitle)
+        let hourly           = sortedHourly(dto.hourlyChartData ?? [], df: df)
+        let filteredHourly   = hourly.filter { heartRateSourceString(for: $0) == preferredSource.rawValue }
+        let sourceHourly     = filteredHourly.isEmpty ? hourly : filteredHourly
+
+        let daily   = buildDailyPoints(from: sourceHourly, hasRange: false, title: dto.title, cal: cal, df: df)
+        let weekly  = buildWeeklyPoints(from: sourceHourly, hasRange: false, title: dto.title, cal: cal, df: df)
+        let monthly = buildMonthlyPoints(from: sourceHourly, hasRange: false, title: dto.title, cal: cal, df: df)
+        let latestValue = sourceHourly.last?.value
 
         return VitalReadingDTO(
             title: dto.title, value: latestValue.map(formatValue) ?? dto.value,
-            unit: dto.unit, subtitle: dto.subtitle,
+            unit: dto.unit, subtitle: preferredSource.subtitleText,
             iconImageName: dto.iconImageName, detailIconImageName: dto.detailIconImageName,
             iconTintHex: dto.iconTintHex, chartType: dto.chartType, chartColor: dto.chartColor,
             chartData: daily, weeklyChartData: weekly, monthlyChartData: monthly,
@@ -173,6 +179,10 @@ class VitalDataStore {
             persistedHourlyChartData: dto.persistedHourlyChartData ?? dto.hourlyChartData ?? [],
             baselineValue: dto.baselineValue
         )
+    }
+
+    private static func heartRateSourceString(for point: HourlyDataPointDTO) -> String {
+        point.heartRateSource ?? HeartRateSourceType.manual.rawValue
     }
 
     private static func normalizedBloodPressureDTO(_ dto: VitalReadingDTO, cal: Calendar, df: DateFormatter) -> VitalReadingDTO {
@@ -587,6 +597,69 @@ class VitalDataStore {
         }
     }
 
+    func saveHealthKitPoints(samples: [(bpm: Double, date: Date)],
+                             source: HeartRateSourceType) {
+        var dtos = loadDTOs()
+        guard let idx = dtos.firstIndex(where: { $0.title == "Heart Rate" }) else { return }
+
+        let dto = dtos[idx]
+        let cal = Calendar.current
+        let df  = DateFormatter(); df.dateFormat = "dd-MM-yyyy"
+
+        var existingPoints = dto.hourlyChartData ?? []
+
+        let existingKeys: Set<String> = Set(existingPoints.map {
+            "\($0.dateString)_\(Int($0.hour))_\($0.heartRateSource ?? HeartRateSourceType.manual.rawValue)"
+        })
+
+        var added = false
+        for sample in samples {
+            let h        = cal.component(.hour, from: sample.date)
+            let m        = cal.component(.minute, from: sample.date)
+            let hourFrac = Double(h) + Double(m) / 60.0
+            let dateStr  = df.string(from: sample.date)
+            let key      = "\(dateStr)_\(h)_\(source.rawValue)"
+
+            guard !existingKeys.contains(key) else { continue }
+
+            let newPoint = HourlyDataPointDTO(
+                hour: hourFrac,
+                value: sample.bpm,
+                minValue: nil,
+                maxValue: nil,
+                dateString: dateStr,
+                glucoseType: nil,
+                baselineValue: nil,
+                heartRateSource: source.rawValue
+            )
+            existingPoints.append(newPoint)
+            added = true
+        }
+
+        guard added else { return }
+
+        let updatedDTO = VitalReadingDTO(
+            title: dto.title, value: dto.value, unit: dto.unit,
+            subtitle: source.subtitleText,
+            iconImageName: dto.iconImageName, detailIconImageName: dto.detailIconImageName,
+            iconTintHex: dto.iconTintHex, chartType: dto.chartType, chartColor: dto.chartColor,
+            chartData: dto.chartData,
+            weeklyChartData: dto.weeklyChartData,
+            monthlyChartData: dto.monthlyChartData,
+            hourlyChartData: existingPoints,
+            persistedHourlyChartData: existingPoints,
+            baselineValue: dto.baselineValue
+        )
+
+        dtos[idx] = Self.normalizedDTO(updatedDTO, cal: cal, df: df)
+        persist(dtos)
+
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .vitalDataDidUpdate, object: nil,
+                                            userInfo: ["title": "Heart Rate"])
+        }
+    }
+
     static func convert(_ dto: VitalReadingDTO) -> VitalReading {
         let cType: ChartType
         switch dto.chartType {
@@ -620,15 +693,20 @@ class VitalDataStore {
             }
         }
 
+        let isHeartRate = dto.title == "Heart Rate"
         let hourlyPoints = (dto.hourlyChartData ?? []).map { hp -> ChartDataPoint in
             cType == .rangeBar
                 ? ChartDataPoint(hour: hp.hour, min: hp.minValue ?? 0, max: hp.maxValue ?? 0, fullDate: hp.dateString, baselineValue: hp.baselineValue)
-                : ChartDataPoint(hour: hp.hour, value: hp.value ?? 0, fullDate: hp.dateString, glucoseType: hp.glucoseType, baselineValue: hp.baselineValue)
+                : ChartDataPoint(hour: hp.hour, value: hp.value ?? 0, fullDate: hp.dateString,
+                                 glucoseType: isHeartRate ? (hp.heartRateSource ?? HeartRateSourceType.manual.rawValue) : hp.glucoseType,
+                                 baselineValue: hp.baselineValue)
         }
         let persistedHourlyPoints = (dto.persistedHourlyChartData ?? dto.hourlyChartData ?? []).map { hp -> ChartDataPoint in
             cType == .rangeBar
                 ? ChartDataPoint(hour: hp.hour, min: hp.minValue ?? 0, max: hp.maxValue ?? 0, fullDate: hp.dateString, baselineValue: hp.baselineValue)
-                : ChartDataPoint(hour: hp.hour, value: hp.value ?? 0, fullDate: hp.dateString, glucoseType: hp.glucoseType, baselineValue: hp.baselineValue)
+                : ChartDataPoint(hour: hp.hour, value: hp.value ?? 0, fullDate: hp.dateString,
+                                 glucoseType: isHeartRate ? (hp.heartRateSource ?? HeartRateSourceType.manual.rawValue) : hp.glucoseType,
+                                 baselineValue: hp.baselineValue)
         }
 
         return VitalReading(
@@ -652,6 +730,7 @@ class VitalDataStore {
 }
 
 extension Notification.Name {
-    static let vitalDataDidUpdate         = Notification.Name("vitalDataDidUpdate")
-    static let glucoseFilterTypeDidChange = Notification.Name("glucoseFilterTypeDidChange")
+    static let vitalDataDidUpdate          = Notification.Name("vitalDataDidUpdate")
+    static let glucoseFilterTypeDidChange  = Notification.Name("glucoseFilterTypeDidChange")
+    static let heartRateSourceDidChange    = Notification.Name("heartRateSourceDidChange")
 }

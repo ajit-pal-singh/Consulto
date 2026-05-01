@@ -314,7 +314,6 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 10
-        let isLast = visibleSections.last == .questions
         section.contentInsets = NSDirectionalEdgeInsets(
             top: 0, leading: 16, bottom: bottomInset(for: .symptoms), trailing: 16)
 
@@ -342,7 +341,6 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
         let section = NSCollectionLayoutSection(group: group)
-        let isLast = visibleSections.last == .questions
         section.contentInsets = NSDirectionalEdgeInsets(
             top: 0, leading: 16, bottom: bottomInset(for: .medications), trailing: 16)
         section.interGroupSpacing = 10

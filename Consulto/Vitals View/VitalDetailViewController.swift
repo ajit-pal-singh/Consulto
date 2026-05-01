@@ -42,8 +42,9 @@ class VitalDetailViewController: UIViewController {
     private var currentChartPoints: [ChartDataPoint] = []
 
 
-    var reading: VitalReading? 
+    var reading: VitalReading?
     var initialGlucoseFilterType: String?
+    var initialHeartRateSourceType: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,9 +66,9 @@ class VitalDetailViewController: UIViewController {
             }
         }
         
+        setupGraphSection()
         setupHeroSection()
         setupCollectionView()
-        setupGraphSection()
 
         NotificationCenter.default.addObserver(
             self,
@@ -123,10 +124,13 @@ class VitalDetailViewController: UIViewController {
             
             if currentReading.title == "Blood Glucose" {
                 filteredHourly = currentReading.hourlyChartData.filter { ($0.glucoseType ?? BloodGlucoseType.fasting.rawValue) == currentFilterType }
-                filteredDaily = currentReading.chartData.filter { ($0.glucoseType ?? BloodGlucoseType.fasting.rawValue) == currentFilterType }
+                filteredDaily  = currentReading.chartData.filter { ($0.glucoseType ?? BloodGlucoseType.fasting.rawValue) == currentFilterType }
+            } else if currentReading.title == "Heart Rate" {
+                filteredHourly = currentReading.hourlyChartData.filter { ($0.glucoseType ?? HeartRateSourceType.manual.rawValue) == currentFilterType }
+                filteredDaily  = currentReading.chartData.filter { ($0.glucoseType ?? HeartRateSourceType.manual.rawValue) == currentFilterType }
             } else {
                 filteredHourly = currentReading.hourlyChartData
-                filteredDaily = currentReading.chartData
+                filteredDaily  = currentReading.chartData
             }
 
             let lastPoint = filteredHourly.last ?? filteredDaily.last
@@ -136,7 +140,7 @@ class VitalDetailViewController: UIViewController {
                 } else if let val = point.value {
                     latestValueStr = val.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(val)) : String(format: "%.1f", val)
                 }
-            } else if currentReading.title == "Blood Glucose" {
+            } else if currentReading.title == "Blood Glucose" || currentReading.title == "Heart Rate" {
                 latestValueStr = "--"
             }
             
@@ -184,6 +188,8 @@ class VitalDetailViewController: UIViewController {
             } else {
                 if currentReading.title == "Blood Glucose" {
                     subtitleStr = "No logged readings"
+                } else if currentReading.title == "Heart Rate" {
+                    subtitleStr = "No logged readings"
                 }
             }
         }
@@ -220,30 +226,40 @@ class VitalDetailViewController: UIViewController {
     private func setupGraphSection() {
         if reading?.title == "Blood Glucose" {
             currentFilterType = initialGlucoseFilterType ?? BloodGlucoseType.from(subtitle: reading?.subtitle).rawValue
-            graphFilterButton?.superview?.isHidden = false
-            
-            let fasting = UIAction(title: "Fasting") { _ in self.updateFilterTitle("Fasting") }
-            let afterMeal = UIAction(title: "After meal") { _ in self.updateFilterTitle("After meal") }
-            let random = UIAction(title: "Random") { _ in self.updateFilterTitle("Random") }
-            
-            graphFilterButton?.menu = UIMenu(title: "", children: [fasting, afterMeal, random])
-            graphFilterButton?.showsMenuAsPrimaryAction = true
-            graphFilterButton?.setTitle(currentFilterType, for: .normal)
-            graphFilterButton?.semanticContentAttribute = .forceRightToLeft
-            graphFilterButton?.contentHorizontalAlignment = .right
-            graphFilterButton?.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
-            graphFilterButton?.titleEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
+            configureFilterButton(options: [
+                ("Fasting",    { self.updateFilterTitle("Fasting")    }),
+                ("After meal", { self.updateFilterTitle("After meal") }),
+                ("Random",     { self.updateFilterTitle("Random")     })
+            ])
+        } else if reading?.title == "Heart Rate" {
+            currentFilterType = initialHeartRateSourceType
+                ?? HeartRateSourceType.from(subtitle: reading?.subtitle).rawValue
+            configureFilterButton(options: [
+                ("Manual",      { self.updateFilterTitle(HeartRateSourceType.manual.rawValue)  }),
+                ("Apple Watch", { self.updateFilterTitle(HeartRateSourceType.watch.rawValue)   }),
+                ("Resting HR",  { self.updateFilterTitle(HeartRateSourceType.resting.rawValue) })
+            ])
         } else {
             graphFilterButton?.superview?.isHidden = true
         }
-        
+
         let font = UIFont(name: "Montserrat-Medium", size: 13) ?? .systemFont(ofSize: 13)
         graphSegmentedControl?.setTitleTextAttributes([.font: font], for: .normal)
         graphSegmentedControl?.setTitleTextAttributes([.font: font], for: .selected)
         graphSegmentedControl?.selectedSegmentIndex = selectedPeriod
-
         graphSegmentedControl?.addTarget(self, action: #selector(periodChanged(_:)), for: .valueChanged)
-        
+    }
+
+    private func configureFilterButton(options: [(title: String, action: () -> Void)]) {
+        graphFilterButton?.superview?.isHidden = false
+        let actions = options.map { opt in UIAction(title: opt.title) { _ in opt.action() } }
+        graphFilterButton?.menu = UIMenu(title: "", children: actions)
+        graphFilterButton?.showsMenuAsPrimaryAction = true
+        graphFilterButton?.setTitle(currentFilterType, for: .normal)
+        graphFilterButton?.semanticContentAttribute = .forceRightToLeft
+        graphFilterButton?.contentHorizontalAlignment = .right
+        graphFilterButton?.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
+        graphFilterButton?.titleEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
     }
 
     @objc private func periodChanged(_ sender: UISegmentedControl) {
@@ -284,12 +300,28 @@ class VitalDetailViewController: UIViewController {
                 .max()
         }()
 
+        // Determine effective chart type for Heart Rate sources
+        let isWatchHR = reading.title == "Heart Rate" &&
+            currentFilterType == HeartRateSourceType.watch.rawValue
+        let isRestingHRDaily = reading.title == "Heart Rate" &&
+            currentFilterType == HeartRateSourceType.resting.rawValue &&
+            selectedPeriod == 0
+
+        let effectiveChartType: ChartType
+        if isWatchHR {
+            effectiveChartType = .rangeBar
+        } else if isRestingHRDaily {
+            effectiveChartType = .stepLine
+        } else {
+            effectiveChartType = reading.chartType
+        }
+
         let config = VitalChartView.Config(
             title:       reading.title,
             baselineValue: currentBaseline,
             glucoseTargetRange: glucoseTargetRange,
             viewportAnchorDate: latestRecordedDate,
-            chartType:   reading.chartType,
+            chartType:   effectiveChartType,
             tintColor:   reading.iconTint,
             unit:        reading.unit,
             yAxisWidth:  reading.title == "Body Weight" ? 46 : 30,
@@ -645,6 +677,19 @@ class VitalDetailViewController: UIViewController {
         }
 
         let values = points.compactMap(\.value)
+        // Heart Rate Watch/Resting: points have minValue/maxValue — use those
+        if values.isEmpty && reading.title == "Heart Rate" {
+            let allBPMs = points.compactMap(\.minValue) + points.compactMap(\.maxValue)
+            guard !allBPMs.isEmpty else { return "--" }
+            switch kind {
+            case .average:
+                return niceValue(floor(allBPMs.reduce(0, +) / Double(allBPMs.count)), reading: reading)
+            case .peak:
+                return niceValue(allBPMs.max() ?? 0, reading: reading)
+            case .base:
+                return niceValue(allBPMs.min() ?? 0, reading: reading)
+            }
+        }
         guard !values.isEmpty else { return "--" }
         switch kind {
         case .average:
@@ -754,46 +799,96 @@ class VitalDetailViewController: UIViewController {
         return max - min
     }
 
-    var currentFilterType: String = "Fasting"
-    
+    var currentFilterType: String = HeartRateSourceType.manual.rawValue
+
     private func updateFilterTitle(_ title: String) {
         graphFilterButton?.setTitle(title, for: .normal)
         currentFilterType = title
         setupHeroSection()
         reloadChart()
-        NotificationCenter.default.post(
-            name: .glucoseFilterTypeDidChange,
-            object: nil,
-            userInfo: ["glucoseFilterType": title]
-        )
+        if reading?.title == "Blood Glucose" {
+            NotificationCenter.default.post(
+                name: .glucoseFilterTypeDidChange,
+                object: nil,
+                userInfo: ["glucoseFilterType": title]
+            )
+        } else if reading?.title == "Heart Rate" {
+            NotificationCenter.default.post(
+                name: .heartRateSourceDidChange,
+                object: nil,
+                userInfo: ["heartRateSource": title]
+            )
+        }
     }
 
     private func chartPoints(for reading: VitalReading) -> [ChartDataPoint] {
-        guard reading.title == "Blood Glucose" else {
-            switch selectedPeriod {
-            case 1:
-                return buildDailyPoints(from: reading.hourlyChartData, reading: reading)
-            case 2:
-                return buildDailyPoints(from: reading.persistedHourlyChartData, reading: reading)
-            default:
-                return reading.hourlyChartData.isEmpty ? reading.chartData : reading.hourlyChartData
-            }
-        }
-
-        let filteredHourly = reading.hourlyChartData.filter {
-            ($0.glucoseType ?? BloodGlucoseType.fasting.rawValue) == currentFilterType
-        }
-
-        switch selectedPeriod {
-        case 1:
-            return buildDailyPoints(from: filteredHourly, reading: reading)
-        case 2:
-            let persistedFiltered = reading.persistedHourlyChartData.filter {
+        if reading.title == "Blood Glucose" {
+            let filteredHourly = reading.hourlyChartData.filter {
                 ($0.glucoseType ?? BloodGlucoseType.fasting.rawValue) == currentFilterType
             }
-            return buildDailyPoints(from: persistedFiltered, reading: reading)
+            switch selectedPeriod {
+            case 1:
+                return buildDailyPoints(from: filteredHourly, reading: reading)
+            case 2:
+                let persistedFiltered = reading.persistedHourlyChartData.filter {
+                    ($0.glucoseType ?? BloodGlucoseType.fasting.rawValue) == currentFilterType
+                }
+                return buildDailyPoints(from: persistedFiltered, reading: reading)
+            default:
+                return filteredHourly
+            }
+        }
+
+        if reading.title == "Heart Rate" {
+            let filteredHourly = reading.hourlyChartData.filter {
+                ($0.glucoseType ?? HeartRateSourceType.manual.rawValue) == currentFilterType
+            }
+            // Fall back to all points if selected source has no data
+            let source = filteredHourly.isEmpty ? reading.hourlyChartData : filteredHourly
+
+            let isWatchSource   = currentFilterType == HeartRateSourceType.watch.rawValue
+            let isRestingSource = currentFilterType == HeartRateSourceType.resting.rawValue
+
+            switch selectedPeriod {
+            case 0: // Daily
+                if isWatchSource {
+                    // Hourly min/max buckets → range-bar pills
+                    return buildWatchHourlyRangeBuckets(from: source)
+                }
+                if isRestingSource {
+                    // Per-day average → step line
+                    return buildRestingDailyAverages(from: source)
+                }
+                return source   // Manual: raw hourly scatter
+            case 1: // Weekly
+                if isWatchSource {
+                    return buildWatchDailyRangeBuckets(from: source)
+                }
+                // Resting + Manual weekly: daily averaged line
+                return buildDailyPoints(from: source, reading: reading)
+            case 2: // Monthly
+                let persistedFiltered = reading.persistedHourlyChartData.filter {
+                    ($0.glucoseType ?? HeartRateSourceType.manual.rawValue) == currentFilterType
+                }
+                let persistedSource = persistedFiltered.isEmpty ? reading.persistedHourlyChartData : persistedFiltered
+                if isWatchSource {
+                    return buildWatchDailyRangeBuckets(from: persistedSource)
+                }
+                // Resting + Manual monthly: daily averaged line
+                return buildDailyPoints(from: persistedSource, reading: reading)
+            default:
+                return source
+            }
+        }
+
+        // All other vitals
+        switch selectedPeriod {
+        case 1:
+            return buildDailyPoints(from: reading.hourlyChartData, reading: reading)
+        case 2:
+            return buildDailyPoints(from: reading.persistedHourlyChartData, reading: reading)
         default:
-            return filteredHourly
+            return reading.hourlyChartData.isEmpty ? reading.chartData : reading.hourlyChartData
         }
     }
 
@@ -805,6 +900,92 @@ class VitalDetailViewController: UIViewController {
     private func currentBaseline(for reading: VitalReading, points: [ChartDataPoint]) -> Double {
         guard reading.title == "Body Weight" else { return reading.baselineValue ?? 0 }
         return points.last?.baselineValue ?? reading.baselineValue ?? 0
+    }
+
+    /// One value point per day = floor(average BPM) for all raw samples on that day.
+    /// This drives the step-line renderer for the Resting HR daily view.
+    private func buildRestingDailyAverages(from points: [ChartDataPoint]) -> [ChartDataPoint] {
+        let df = DateFormatter()
+        df.dateFormat = "dd-MM-yyyy"
+        var buckets: [String: [Double]] = [:]
+        for point in points {
+            guard let fullDate = point.fullDate, let bpm = point.value else { continue }
+            buckets[fullDate, default: []].append(bpm)
+        }
+        return buckets.compactMap { (fullDate, values) -> ChartDataPoint? in
+            guard df.date(from: fullDate) != nil else { return nil }
+            let avg = floor(values.reduce(0, +) / Double(values.count))
+            return ChartDataPoint(day: fullDate, value: avg, fullDate: fullDate,
+                                  glucoseType: currentFilterType)
+        }
+        .sorted {
+            (df.date(from: $0.fullDate ?? "") ?? .distantPast) < (df.date(from: $1.fullDate ?? "") ?? .distantPast)
+        }
+    }
+
+    /// Groups raw Watch HR samples into 1-hour buckets, returning a min/max ChartDataPoint per bucket.
+    /// This produces the Apple Health-style pill bars for the Daily view.
+    private func buildWatchHourlyRangeBuckets(from points: [ChartDataPoint]) -> [ChartDataPoint] {
+        let df = DateFormatter()
+        df.dateFormat = "dd-MM-yyyy"
+
+        // Key: "fullDate|hourBucket" (hourBucket = floor(hourOfDay))
+        var buckets: [String: [Double]] = [:]
+        var bucketMeta: [String: (fullDate: String, hour: Int)] = [:]
+
+        for point in points {
+            guard let fullDate = point.fullDate,
+                  let bpm = point.value,
+                  let hourOfDay = point.hourOfDay else { continue }
+            let hourBucket = Int(hourOfDay)
+            let key = "\(fullDate)|\(hourBucket)"
+            buckets[key, default: []].append(bpm)
+            bucketMeta[key] = (fullDate: fullDate, hour: hourBucket)
+        }
+
+        return buckets.compactMap { (key, values) -> ChartDataPoint? in
+            guard let meta = bucketMeta[key],
+                  let minBPM = values.min(),
+                  let maxBPM = values.max() else { return nil }
+            return ChartDataPoint(
+                hour: Double(meta.hour),
+                min: floor(minBPM),
+                max: floor(maxBPM),
+                fullDate: meta.fullDate,
+                glucoseType: currentFilterType
+            )
+        }
+        .sorted {
+            let d0 = df.date(from: $0.fullDate ?? "") ?? .distantPast
+            let d1 = df.date(from: $1.fullDate ?? "") ?? .distantPast
+            if d0 == d1 { return ($0.hourOfDay ?? 0) < ($1.hourOfDay ?? 0) }
+            return d0 < d1
+        }
+    }
+
+    /// Groups raw Watch HR samples into per-day buckets, returning min/max per calendar day.
+    /// Used for Weekly and Monthly views.
+    private func buildWatchDailyRangeBuckets(from points: [ChartDataPoint]) -> [ChartDataPoint] {
+        let df = DateFormatter()
+        df.dateFormat = "dd-MM-yyyy"
+
+        var buckets: [String: [Double]] = [:]
+
+        for point in points {
+            guard let fullDate = point.fullDate,
+                  let bpm = point.value else { continue }
+            buckets[fullDate, default: []].append(bpm)
+        }
+
+        return buckets.compactMap { (fullDate, values) -> ChartDataPoint? in
+            guard df.date(from: fullDate) != nil,
+                  let minBPM = values.min(),
+                  let maxBPM = values.max() else { return nil }
+            return ChartDataPoint(day: fullDate, min: floor(minBPM), max: floor(maxBPM), fullDate: fullDate)
+        }
+        .sorted {
+            (df.date(from: $0.fullDate ?? "") ?? .distantPast) < (df.date(from: $1.fullDate ?? "") ?? .distantPast)
+        }
     }
 
     private func buildDailyPoints(from points: [ChartDataPoint], reading: VitalReading) -> [ChartDataPoint] {

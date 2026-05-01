@@ -6,6 +6,7 @@ enum ChartType {
     case line
     case rangeBar
     case baselineBar
+    case stepLine   // per-day average as a flat horizontal step, consecutive days connected
 }
 
 enum BloodGlucoseType: String, CaseIterable {
@@ -30,6 +31,35 @@ enum BloodGlucoseType: String, CaseIterable {
         if subtitle.contains("after meal") { return .afterMeal }
         if subtitle.contains("random") { return .random }
         return .fasting
+    }
+}
+
+enum HeartRateSourceType: String, CaseIterable {
+    case manual  = "Manual"
+    case watch   = "Watch"
+    case resting = "Resting"
+
+    var subtitleText: String {
+        switch self {
+        case .manual:  return "Manual Heart Rate"
+        case .watch:   return "Watch Heart Rate"
+        case .resting: return "Resting Heart Rate"
+        }
+    }
+
+    var filterDisplayName: String {
+        switch self {
+        case .manual:  return "Manual"
+        case .watch:   return "Apple Watch"
+        case .resting: return "Resting HR"
+        }
+    }
+
+    static func from(subtitle: String?) -> HeartRateSourceType {
+        guard let subtitle = subtitle?.lowercased() else { return .manual }
+        if subtitle.contains("watch")   { return .watch }
+        if subtitle.contains("resting") { return .resting }
+        return .manual
     }
 }
 
@@ -134,6 +164,20 @@ struct HourlyDataPointDTO: Codable {
     let dateString: String
     let glucoseType: String?
     let baselineValue: Double?
+    let heartRateSource: String?
+
+    init(hour: Double, value: Double?, minValue: Double?, maxValue: Double?,
+         dateString: String, glucoseType: String?, baselineValue: Double?,
+         heartRateSource: String? = nil) {
+        self.hour            = hour
+        self.value           = value
+        self.minValue        = minValue
+        self.maxValue        = maxValue
+        self.dateString      = dateString
+        self.glucoseType     = glucoseType
+        self.baselineValue   = baselineValue
+        self.heartRateSource = heartRateSource
+    }
 }
 
 class VitalData {

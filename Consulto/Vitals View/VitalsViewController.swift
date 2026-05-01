@@ -3,13 +3,13 @@ import UIKit
 class ViewController: UIViewController, UINavigationControllerDelegate {
 
     @IBOutlet weak var vitalsCollectionView: UICollectionView!
-    @IBOutlet weak var blurEffectView: UIVisualEffectView!
-    
+
     var vitalsData: [VitalReading] = []
     var shouldShowAddReadingPlatterOnAppear = false
     private let glucoseTypeOptions = ["Fasting", "Random", "After meal"]
     private weak var activeGlucoseTypeField: UITextField?
     var activeGlucoseFilterType: String = "Fasting"
+    var activeHeartRateSourceType: String = HeartRateSourceType.manual.rawValue
     
     var platterViewController: AddReadingViewController?
     var overlayDimmingView: UIView?
@@ -45,6 +45,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             name: .glucoseFilterTypeDidChange,
             object: nil
         )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleHeartRateSourceChange(_:)),
+            name: .heartRateSourceDidChange,
+            object: nil
+        )
     }
 
     @objc private func handleGlucoseFilterChange(_ notification: Notification) {
@@ -55,11 +61,22 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             vitalsCollectionView?.reloadItems(at: [ip])
         }
     }
+
+    @objc private func handleHeartRateSourceChange(_ notification: Notification) {
+        guard let source = notification.userInfo?["heartRateSource"] as? String else { return }
+        activeHeartRateSourceType = source
+        if let idx = vitalsData.firstIndex(where: { $0.title == "Heart Rate" }) {
+            let ip = IndexPath(item: idx, section: 0)
+            vitalsCollectionView?.reloadItems(at: [ip])
+        }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.delegate = self
         navigationController?.setNavigationBarHidden(false, animated: animated)
+        navigationController?.navigationBar.prefersLargeTitles = false
+
         vitalsData = VitalDataStore.shared.loadReadings()
         vitalsCollectionView?.reloadData()
     }
@@ -120,12 +137,13 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         platterVC.onHeartRateTap = { [weak self] in
             self?.dismissPlatter()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                 self?.presentAddReadingAlert(
                     title: "Heart Rate",
                     message: "Enter your current heart rate\nMeasure after sitting calmly for 1-2 minutes.",
                     placeholders: ["Enter Value"],
-                    units: ["BPM"]
+                    units: ["BPM"],
+                    heartRateSource: HeartRateSourceType.manual.rawValue
                 )
             }
         }
@@ -247,7 +265,85 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         }
     }
     
-    private func presentAddReadingAlert(title: String, message: String, placeholders: [String], units: [String]) {
+    /// Fetches both regular and resting heart rate from HealthKit simultaneously.
+    private func presentHeartRateSourcePicker() {
+        performCombinedHealthKitFetch()
+    }
+
+    private func performCombinedHealthKitFetch() {
+        let manager = HeartRateHealthKitManager.shared
+
+        manager.requestAuthorization { [weak self] granted, _ in
+            guard let self = self else { return }
+            guard granted else {
+                self.showSimpleAlert(
+                    title: "Permission Denied",
+                    message: "Please enable Heart Rate access in Settings → Privacy → Health → Consulto."
+                )
+                return
+            }
+
+            let loading = UIAlertController(title: nil, message: "Fetching data from Health...\n\n", preferredStyle: .alert)
+            let indicator = UIActivityIndicatorView(style: .medium)
+            indicator.translatesAutoresizingMaskIntoConstraints = false
+            indicator.startAnimating()
+            loading.view.addSubview(indicator)
+            NSLayoutConstraint.activate([
+                indicator.centerXAnchor.constraint(equalTo: loading.view.centerXAnchor),
+                indicator.bottomAnchor.constraint(equalTo: loading.view.bottomAnchor, constant: -20)
+            ])
+            self.present(loading, animated: true)
+
+            let group = DispatchGroup()
+            
+            var watchSamples: [(bpm: Double, date: Date)] = []
+            var restingSamples: [(bpm: Double, date: Date)] = []
+
+            group.enter()
+            manager.fetchHeartRateSamples(forLastDays: 90) { samples in
+                watchSamples = samples
+                group.leave()
+            }
+
+            group.enter()
+            manager.fetchRestingHeartRateSamples(forLastDays: 90) { samples in
+                restingSamples = samples
+                group.leave()
+            }
+
+            group.notify(queue: .main) {
+                loading.dismiss(animated: true) {
+                    if watchSamples.isEmpty && restingSamples.isEmpty {
+                        self.showSimpleAlert(title: "No Data", message: "No heart rate samples found in the last 90 days from Apple Health.")
+                        return
+                    }
+
+                    if !watchSamples.isEmpty {
+                        VitalDataStore.shared.saveHealthKitPoints(samples: watchSamples, source: .watch)
+                    }
+                    if !restingSamples.isEmpty {
+                        VitalDataStore.shared.saveHealthKitPoints(samples: restingSamples, source: .resting)
+                    }
+
+                    self.vitalsData = VitalDataStore.shared.loadReadings()
+                    self.vitalsCollectionView.reloadData()
+
+                    let totalCount = watchSamples.count + restingSamples.count
+                    let syncMessage = "\(totalCount) heart rate readings imported from Apple Health."
+                    self.showSimpleAlert(title: "Synced ✓", message: syncMessage)
+                }
+            }
+        }
+    }
+
+    private func showSimpleAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+
+    private func presentAddReadingAlert(title: String, message: String, placeholders: [String], units: [String],
+                                        heartRateSource: String? = nil) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let isBloodGlucose = title == "Blood Glucose"
         
@@ -390,7 +486,11 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             switch title {
             case "Heart Rate":
                 let bpm = vals.first ?? ""
-                VitalDataStore.shared.saveNewPoint(forTitle: title, value: bpm, day: dayLetter, recordedAt: recordedDate)
+                VitalDataStore.shared.saveNewPoint(
+                    forTitle: title, value: bpm, day: dayLetter,
+                    recordedAt: recordedDate,
+                    heartRateSource: heartRateSource ?? HeartRateSourceType.manual.rawValue
+                )
 
             case "Blood Pressure":
                 let sys = vals.first ?? ""
@@ -447,42 +547,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
-        if blurEffectView != nil {
-           setupBlurGradientMask()
-        }
-    }
-    
-    func setupBlurGradientMask() {
-        let gradientMask = CAGradientLayer()
-        gradientMask.frame = blurEffectView.bounds
-        
-        gradientMask.colors = [
-            UIColor.black.cgColor,      
-            UIColor.black.cgColor,     
-            UIColor.clear.cgColor      
-        ]
-        
-        gradientMask.locations = [0.0, 0.8, 1.0] 
-        
-        blurEffectView.layer.mask = gradientMask
-        
-        if let existingOverlay = blurEffectView.layer.sublayers?.first(where: { $0.name == "SolidOverlay" }) {
-            existingOverlay.frame = blurEffectView.bounds
-        } else {
-            let overlayLayer = CALayer()
-            overlayLayer.name = "SolidOverlay"
-            overlayLayer.frame = blurEffectView.bounds
-            overlayLayer.backgroundColor = UIColor(hex: "#f5f5f5").withAlphaComponent(0.5).cgColor
-            
-            let overlayMask = CAGradientLayer()
-            overlayMask.frame = overlayLayer.bounds
-            overlayMask.colors = gradientMask.colors
-            overlayMask.locations = gradientMask.locations
-            overlayLayer.mask = overlayMask
-            
-            blurEffectView.layer.addSublayer(overlayLayer)
-        }
     }
     
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
@@ -520,8 +584,9 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         }
         
         let reading = vitalsData[indexPath.item]
-        let filterType = reading.title == "Blood Glucose" ? activeGlucoseFilterType : nil
-        cell.configure(with: reading, glucoseFilterType: filterType)
+        let glucoseFilter = reading.title == "Blood Glucose" ? activeGlucoseFilterType : nil
+        let hrSource = reading.title == "Heart Rate" ? activeHeartRateSourceType : nil
+        cell.configure(with: reading, glucoseFilterType: glucoseFilter, heartRateSourceType: hrSource)
         
         return cell
     }
@@ -547,6 +612,8 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         detailVC.reading = selectedVital
         if selectedVital.title == "Blood Glucose" {
             detailVC.initialGlucoseFilterType = activeGlucoseFilterType
+        } else if selectedVital.title == "Heart Rate" {
+            detailVC.initialHeartRateSourceType = activeHeartRateSourceType
         }
         navigationController?.pushViewController(detailVC, animated: true)
     }

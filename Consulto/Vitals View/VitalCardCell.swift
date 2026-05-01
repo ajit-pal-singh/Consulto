@@ -57,15 +57,24 @@ class VitalCardCell: UICollectionViewCell {
         return systemFont
     }
     
-    func configure(with reading: VitalReading, glucoseFilterType: String? = nil) {
+    func configure(with reading: VitalReading, glucoseFilterType: String? = nil, heartRateSourceType: String? = nil) {
         var latestValueStr = reading.value
 
         let isGlucose = reading.title == "Blood Glucose"
+        let isHeartRate = reading.title == "Heart Rate"
         let activeGlucoseFilter = glucoseFilterType ?? "Fasting"
+        let activeHRSource = heartRateSourceType ?? HeartRateSourceType.manual.rawValue
+
         let sourcePoints = reading.persistedHourlyChartData.isEmpty ? reading.hourlyChartData : reading.persistedHourlyChartData
-        let filteredHourly: [ChartDataPoint] = isGlucose
-            ? sourcePoints.filter { ($0.glucoseType ?? "Fasting") == activeGlucoseFilter }
-            : sourcePoints
+        let filteredHourly: [ChartDataPoint]
+        if isGlucose {
+            filteredHourly = sourcePoints.filter { ($0.glucoseType ?? "Fasting") == activeGlucoseFilter }
+        } else if isHeartRate {
+            let hrFiltered = sourcePoints.filter { ($0.glucoseType ?? HeartRateSourceType.manual.rawValue) == activeHRSource }
+            filteredHourly = hrFiltered.isEmpty ? sourcePoints : hrFiltered
+        } else {
+            filteredHourly = sourcePoints
+        }
 
         let lastPoint = filteredHourly.last ?? reading.chartData.last
         if let point = lastPoint {
@@ -75,11 +84,17 @@ class VitalCardCell: UICollectionViewCell {
                 latestValueStr = val.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(val)) : String(format: "%.1f", val)
             }
         }
-        
+
         nameLabel.text = reading.title
         dataLabel.text = latestValueStr
         unitLabel.text = reading.unit
-        typeLabel.text = isGlucose ? "\(activeGlucoseFilter) Glucose" : reading.subtitle
+        if isGlucose {
+            typeLabel.text = "\(activeGlucoseFilter) Glucose"
+        } else if isHeartRate {
+            typeLabel.text = HeartRateSourceType(rawValue: activeHRSource)?.subtitleText ?? reading.subtitle
+        } else {
+            typeLabel.text = reading.subtitle
+        }
         iconImageView.image = reading.iconImage
         iconImageView.tintColor = reading.iconTint
         
@@ -126,10 +141,16 @@ class VitalCardCell: UICollectionViewCell {
         
         graphContainerView.subviews.forEach { $0.removeFromSuperview() }
         
-        let recentDataPoints = currentWeekCardPoints(from: filteredHourly, chartType: reading.chartType, baseline: reading.baselineValue, title: reading.title)
+        // For Watch HR source override to rangeBar so pills are rendered on the card
+        // Resting HR stays as a line (step-line is detail-view-only)
+        let isWatchHR = isHeartRate &&
+            activeHRSource == HeartRateSourceType.watch.rawValue
+        let effectiveChartType: ChartType = isWatchHR ? .rangeBar : reading.chartType
+
+        let recentDataPoints = currentWeekCardPoints(from: filteredHourly, chartType: effectiveChartType, baseline: reading.baselineValue, title: reading.title)
         
-        switch reading.chartType {
-        case .line:
+        switch effectiveChartType {
+        case .line, .stepLine:   // stepLine only used in detail view; card shows a regular line
             setupLineChart(in: graphContainerView, color: reading.iconTint, dataPoints: recentDataPoints)
         case .rangeBar:
             setupBarChart(in: graphContainerView, color: reading.iconTint, dataPoints: recentDataPoints)
@@ -154,8 +175,16 @@ class VitalCardCell: UICollectionViewCell {
 
             switch chartType {
             case .rangeBar:
-                let mins = dayPoints.compactMap(\.minValue)
-                let maxs = dayPoints.compactMap(\.maxValue)
+                var mins = dayPoints.compactMap(\.minValue)
+                var maxs = dayPoints.compactMap(\.maxValue)
+                if mins.isEmpty && maxs.isEmpty {
+                    let values = dayPoints.compactMap(\.value)
+                    if !values.isEmpty {
+                        mins = [values.min()!]
+                        maxs = [values.max()!]
+                    }
+                }
+                
                 if !mins.isEmpty && !maxs.isEmpty {
                     let avgMin = mins.reduce(0, +) / Double(mins.count)
                     let avgMax = maxs.reduce(0, +) / Double(maxs.count)
@@ -169,7 +198,7 @@ class VitalCardCell: UICollectionViewCell {
                     return ChartDataPoint(day: dateString, value: title == "Body Weight" ? avg : floor(avg), fullDate: dateString, baselineValue: dayPoints.compactMap(\.baselineValue).last ?? baseline)
                 }
                 return ChartDataPoint(day: dateString, value: nil, fullDate: dateString, baselineValue: baseline)
-            case .line:
+            case .line, .stepLine:  // stepLine card falls back to averaged line
                 let values = dayPoints.compactMap(\.value)
                 if !values.isEmpty {
                     let avg = values.reduce(0, +) / Double(values.count)

@@ -116,6 +116,8 @@ class ProfileSettingsViewController: UIViewController {
             UIAlertAction(
                 title: "Sign Out", style: .destructive,
                 handler: { _ in
+                    UserDefaults.standard.removeObject(forKey: "consulto_healthkit_prompt_shown")
+                    
                     let storyboard = UIStoryboard(name: "Onboarding-Login", bundle: nil)
                     if let initialVC = storyboard.instantiateInitialViewController() {
                         if let windowScene = UIApplication.shared.connectedScenes.first

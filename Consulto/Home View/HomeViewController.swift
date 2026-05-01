@@ -52,6 +52,9 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
     
     private var addReadingPlatterViewController: AddReadingViewController?
     private var addReadingPlatterBottomConstraint: NSLayoutConstraint?
+    
+    private let glucoseTypeOptions = ["Fasting", "Random", "After meal"]
+    private weak var activeGlucoseTypeField: UITextField?
 
     private var pendingConsultations: [ConsultSession] {
         ConsultSessionStore.shared.allPendingSessions()
@@ -190,6 +193,15 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         MedicineStore.shared.syncFromMedications(MedicationReminderStore.shared.medications)
         vitalReadings = VitalDataStore.shared.loadReadings()
         homeCollectionView.reloadData()
+        
+        if UserDefaults.standard.bool(forKey: "consulto_healthkit_prompt_shown") {
+            performCombinedSilentHealthKitFetch()
+        }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        showHealthKitOnboardingIfNeeded()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -653,12 +665,13 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         
         platterVC.onHeartRateTap = { [weak self] in
             self?.dismissAddReadingPlatter()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                 self?.presentAddReadingAlert(
                     title: "Heart Rate",
                     message: "Enter your current heart rate\nMeasure after sitting calmly for 1-2 minutes.",
-                    placeholders: ["78"],
-                    units: ["BPM"]
+                    placeholders: ["Enter Value"],
+                    units: ["BPM"],
+                    heartRateSource: HeartRateSourceType.manual.rawValue
                 )
             }
         }
@@ -669,7 +682,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
                 self?.presentAddReadingAlert(
                     title: "Blood Pressure",
                     message: "Enter your current blood pressure\nMeasure while seated with your arm resting at heart level.",
-                    placeholders: ["Systolic", "Diastolic"],
+                    placeholders: ["Enter Systolic", "Enter Diastolic"],
                     units: ["mmHg", "mmHg"]
                 )
             }
@@ -681,7 +694,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
                 self?.presentAddReadingAlert(
                     title: "Blood Glucose",
                     message: "Enter your blood glucose level\nBest measured either fasting (8+ hours) or 2 hours post-meal.",
-                    placeholders: ["98"],
+                    placeholders: ["Enter Value"],
                     units: ["mg/dL"]
                 )
             }
@@ -693,7 +706,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
                 self?.presentAddReadingAlert(
                     title: "Body Weight",
                     message: "Enter your current body weight\nFor best consistency, weigh yourself at the same time every day.",
-                    placeholders: ["80.6"],
+                    placeholders: ["Enter Value"],
                     units: ["kg"]
                 )
             }
@@ -918,82 +931,492 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         picker.dismiss(animated: true)
     }
     
-    private func presentAddReadingAlert(title: String, message: String, placeholders: [String], units: [String]) {
+    // MARK: - HealthKit Onboarding
+
+    /// Shows the big custom platter first time the user sees Home.
+    /// When they tap "Connect to Apple Health", the HealthKitOnboardingViewController is shown.
+    private func showHealthKitOnboardingIfNeeded() {
+        let hasSeenPrompt = UserDefaults.standard.bool(forKey: "consulto_healthkit_prompt_shown")
+        guard !hasSeenPrompt else { return }
+        guard HeartRateHealthKitManager.shared.isHealthKitAvailable else { return }
+
+        showConnectHealthPlatter()
+    }
+    
+    private var connectHealthPlatterViewController: ConnectHealthPlatterViewController?
+    private var connectHealthPlatterBottomConstraint: NSLayoutConstraint?
+
+    private func showConnectHealthPlatter() {
+        guard let container = platterContainerView else { return }
+        guard connectHealthPlatterViewController == nil else { return }
+        
+        container.isUserInteractionEnabled = true
+        
+        let platterVC = ConnectHealthPlatterViewController()
+        
+        platterVC.onConnectTap = { [weak self] in
+            self?.dismissConnectHealthPlatter {
+                self?.presentAppleHealthPermissionScreen()
+            }
+        }
+        
+        platterVC.view.translatesAutoresizingMaskIntoConstraints = false
+        addChild(platterVC)
+        container.addSubview(platterVC.view)
+        platterVC.didMove(toParent: self)
+        
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleConnectHealthPlatterPan(_:)))
+        platterVC.view.addGestureRecognizer(panGesture)
+        
+        let containerTap = UITapGestureRecognizer(target: self, action: #selector(connectHealthContainerBackgroundTapped(_:)))
+        containerTap.cancelsTouchesInView = false
+        container.addGestureRecognizer(containerTap)
+        
+        self.connectHealthPlatterViewController = platterVC
+        
+        let bottomConstraint = platterVC.view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: 500)
+        self.connectHealthPlatterBottomConstraint = bottomConstraint
+        
+        NSLayoutConstraint.activate([
+            platterVC.view.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 5),
+            platterVC.view.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -5),
+            bottomConstraint,
+            platterVC.view.heightAnchor.constraint(equalToConstant: 340) // Make it big
+        ])
+        
+        container.layoutIfNeeded()
+        
+        self.connectHealthPlatterBottomConstraint?.constant = -5
+        dimmingOverlayView?.alpha = 0
+        dimmingOverlayView?.isHidden = false
+        dimmingOverlayView?.isUserInteractionEnabled = true
+        if let dimmingOverlayView = dimmingOverlayView {
+            view.bringSubviewToFront(dimmingOverlayView)
+        }
+        view.bringSubviewToFront(container)
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
+            self.dimmingOverlayView?.alpha = 0.3
+            self.tabBarController?.tabBar.alpha = 0
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    @objc private func dismissConnectHealthPlatter(completion: (() -> Void)? = nil) {
+        guard let vc = connectHealthPlatterViewController else { return }
+        
+        self.connectHealthPlatterBottomConstraint?.constant = 500
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.dimmingOverlayView?.alpha = 0
+            self.tabBarController?.tabBar.alpha = 1
+            self.view.layoutIfNeeded()
+        }) { _ in
+            self.dimmingOverlayView?.isHidden = true
+            self.dimmingOverlayView?.isUserInteractionEnabled = false
+            
+            vc.willMove(toParent: nil)
+            vc.view.removeFromSuperview()
+            vc.removeFromParent()
+            
+            if let gestures = self.platterContainerView?.gestureRecognizers {
+                gestures.forEach { self.platterContainerView?.removeGestureRecognizer($0) }
+            }
+            
+            self.connectHealthPlatterViewController = nil
+            self.connectHealthPlatterBottomConstraint = nil
+            self.platterContainerView?.isUserInteractionEnabled = false
+            completion?()
+        }
+    }
+
+    @objc private func connectHealthContainerBackgroundTapped(_ gesture: UITapGestureRecognizer) {
+        guard let platterView = connectHealthPlatterViewController?.view else { return }
+        let location = gesture.location(in: platterContainerView)
+        if !platterView.frame.contains(location) {
+            dismissConnectHealthPlatter {
+                UserDefaults.standard.set(true, forKey: "consulto_healthkit_prompt_shown")
+            }
+        }
+    }
+
+    @objc private func handleConnectHealthPlatterPan(_ gesture: UIPanGestureRecognizer) {
+        guard let view = gesture.view else { return }
+        let translation = gesture.translation(in: view)
+        let velocity = gesture.velocity(in: view)
+        
+        switch gesture.state {
+        case .changed:
+            if translation.y > 0 {
+                self.connectHealthPlatterBottomConstraint?.constant = translation.y - 5
+                let progress = min(translation.y / 200, 1.0)
+                self.dimmingOverlayView?.alpha = 0.3 * (1 - progress)
+                self.view.layoutIfNeeded()
+            }
+        case .ended, .cancelled:
+            if translation.y > 150 || velocity.y > 1000 {
+                dismissConnectHealthPlatter {
+                    UserDefaults.standard.set(true, forKey: "consulto_healthkit_prompt_shown")
+                }
+            } else {
+                self.connectHealthPlatterBottomConstraint?.constant = -5
+                UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.5, options: .curveEaseOut) {
+                    self.dimmingOverlayView?.alpha = 0.3
+                    self.view.layoutIfNeeded()
+                }
+            }
+        default:
+            break
+        }
+    }
+
+    private func presentAppleHealthPermissionScreen() {
+        UserDefaults.standard.set(true, forKey: "consulto_healthkit_prompt_shown")
+        
+        let manager = HeartRateHealthKitManager.shared
+        guard manager.isHealthKitAvailable else {
+            showSimpleAlert(title: "HealthKit Unavailable",
+                            message: "HealthKit is not available on this device.")
+            return
+        }
+
+        // Triggering fetch will automatically present the native Apple Health permission screen.
+        // We do it sequentially to avoid overlapping loading alerts.
+        manager.requestAuthorization { [weak self] granted, _ in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                guard granted else {
+                    self.showSimpleAlert(
+                        title: "Permission Denied",
+                        message: "Please enable Heart Rate access in Settings → Privacy → Health → Consulto."
+                    )
+                    return
+                }
+                
+                self.performCombinedHealthKitFetch()
+            }
+        }
+    }
+
+    private func performCombinedHealthKitFetch() {
+        let manager = HeartRateHealthKitManager.shared
+
+        manager.requestAuthorization { [weak self] granted, _ in
+            guard let self = self else { return }
+            guard granted else {
+                self.showSimpleAlert(
+                    title: "Permission Denied",
+                    message: "Please enable Heart Rate access in Settings → Privacy → Health → Consulto."
+                )
+                return
+            }
+
+            let loading = UIAlertController(title: nil, message: "Fetching data from Health...\n\n", preferredStyle: .alert)
+            let indicator = UIActivityIndicatorView(style: .medium)
+            indicator.translatesAutoresizingMaskIntoConstraints = false
+            indicator.startAnimating()
+            loading.view.addSubview(indicator)
+            NSLayoutConstraint.activate([
+                indicator.centerXAnchor.constraint(equalTo: loading.view.centerXAnchor),
+                indicator.bottomAnchor.constraint(equalTo: loading.view.bottomAnchor, constant: -20)
+            ])
+            self.present(loading, animated: true) {
+                let group = DispatchGroup()
+                
+                var watchSamples: [(bpm: Double, date: Date)] = []
+                var restingSamples: [(bpm: Double, date: Date)] = []
+
+                group.enter()
+                manager.fetchHeartRateSamples(forLastDays: 90) { samples in
+                    watchSamples = samples
+                    group.leave()
+                }
+
+                group.enter()
+                manager.fetchRestingHeartRateSamples(forLastDays: 90) { samples in
+                    restingSamples = samples
+                    group.leave()
+                }
+
+                group.notify(queue: .main) {
+                    loading.dismiss(animated: true) {
+                        if watchSamples.isEmpty && restingSamples.isEmpty {
+                            self.showSimpleAlert(title: "No Data", message: "No heart rate samples found in the last 90 days from Apple Health.")
+                            return
+                        }
+
+                        if !watchSamples.isEmpty {
+                            VitalDataStore.shared.saveHealthKitPoints(samples: watchSamples, source: .watch)
+                        }
+                        if !restingSamples.isEmpty {
+                            VitalDataStore.shared.saveHealthKitPoints(samples: restingSamples, source: .resting)
+                        }
+
+                        self.vitalReadings = VitalDataStore.shared.loadReadings()
+                        self.homeCollectionView.reloadData()
+
+                        let totalCount = watchSamples.count + restingSamples.count
+                        let syncMessage = "\(totalCount) heart rate readings imported from Apple Health."
+                        self.showSimpleAlert(title: "Synced ✓", message: syncMessage)
+                        
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name("VitalsUpdated"),
+                            object: nil
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private func performCombinedSilentHealthKitFetch() {
+        let manager = HeartRateHealthKitManager.shared
+        manager.requestAuthorization { granted, _ in
+            guard granted else { return }
+            
+            let group = DispatchGroup()
+            
+            var watchSamples: [(bpm: Double, date: Date)] = []
+            var restingSamples: [(bpm: Double, date: Date)] = []
+
+            group.enter()
+            manager.fetchHeartRateSamples(forLastDays: 90) { samples in
+                watchSamples = samples
+                group.leave()
+            }
+
+            group.enter()
+            manager.fetchRestingHeartRateSamples(forLastDays: 90) { samples in
+                restingSamples = samples
+                group.leave()
+            }
+
+            group.notify(queue: .main) {
+                if !watchSamples.isEmpty {
+                    VitalDataStore.shared.saveHealthKitPoints(samples: watchSamples, source: .watch)
+                }
+                if !restingSamples.isEmpty {
+                    VitalDataStore.shared.saveHealthKitPoints(samples: restingSamples, source: .resting)
+                }
+                
+                if !watchSamples.isEmpty || !restingSamples.isEmpty {
+                    self.vitalReadings = VitalDataStore.shared.loadReadings()
+                    self.homeCollectionView.reloadData()
+                    NotificationCenter.default.post(name: NSNotification.Name("VitalsUpdated"), object: nil)
+                }
+            }
+        }
+    }
+
+    private func showSimpleAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+
+    private func presentAddReadingAlert(title: String, message: String, placeholders: [String], units: [String],
+                                        heartRateSource: String? = nil) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let isBloodGlucose = title == "Blood Glucose"
         
         for (index, placeholder) in placeholders.enumerated() {
             alertController.addTextField { textField in
                 textField.placeholder = placeholder
-                if placeholder.contains("Systolic") || placeholder.contains("Diastolic") || title.contains("Heart Rate") {
-                    textField.keyboardType = .numberPad
-                } else {
-                    textField.keyboardType = .decimalPad
-                }
+                textField.keyboardType = (title.contains("Heart Rate") || placeholder.contains("Systolic") || placeholder.contains("Diastolic")) ? .numberPad : .decimalPad
                 
                 if index < units.count {
                     let unitLabel = UILabel()
                     unitLabel.text = units[index]
-                    unitLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-                    unitLabel.textColor = .black
+                    unitLabel.font = .systemFont(ofSize: 14)
+                    unitLabel.textColor = .label
                     unitLabel.sizeToFit()
-                    
-                    let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: unitLabel.frame.width + 10, height: unitLabel.frame.height))
-                    unitLabel.center = CGPoint(x: paddingView.frame.width / 2 - 5, y: paddingView.frame.height / 2)
-                    paddingView.addSubview(unitLabel)
-                    
-                    textField.rightView = paddingView
+                    let padding = UIView(frame: CGRect(x: 0, y: 0, width: unitLabel.frame.width + 10, height: unitLabel.frame.height))
+                    unitLabel.center = CGPoint(x: padding.frame.width/2 - 5, y: padding.frame.height/2)
+                    padding.addSubview(unitLabel)
+                    textField.rightView = padding
                     textField.rightViewMode = .always
                 }
             }
         }
+
+        if isBloodGlucose {
+            let typePicker = UIPickerView()
+            typePicker.dataSource = self
+            typePicker.delegate = self
+
+            alertController.addTextField { [weak self] textField in
+                guard let self = self else { return }
+                textField.text = self.glucoseTypeOptions[0]
+                textField.placeholder = "Select type"
+                textField.tintColor = .clear
+                self.activeGlucoseTypeField = textField
+
+                let icon = UIImageView(image: UIImage(systemName: "chevron.down"))
+                icon.tintColor = .secondaryLabel
+                icon.contentMode = .scaleAspectFit
+                icon.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+                let pad = UIView(frame: CGRect(x: 0, y: 0, width: 28, height: 20))
+                pad.addSubview(icon)
+                textField.rightView = pad
+                textField.rightViewMode = .always
+                textField.inputView = typePicker
+            }
+
+            typePicker.selectRow(0, inComponent: 0, animated: false)
+        }
         
+        let datePicker = UIDatePicker()
+        let timePicker = UIDatePicker()
+        let dFormatter = DateFormatter(); dFormatter.dateFormat = "dd-MM-yyyy"
+        let tFormatter = DateFormatter(); tFormatter.dateFormat = "hh:mm a"
+
         alertController.addTextField { textField in
-            let formatter = DateFormatter()
-            formatter.dateFormat = "dd-MM-yyyy"
-            textField.text = formatter.string(from: Date())
+            textField.text = dFormatter.string(from: Date())
+            textField.tintColor = .clear
             
-            let iconImage = UIImage(systemName: "calendar")
-            let iconView = UIImageView(image: iconImage)
-            iconView.tintColor = .black
-            iconView.contentMode = .scaleAspectFit
-            iconView.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+            textField.addAction(UIAction { [weak textField] _ in
+                textField?.text = dFormatter.string(from: datePicker.date)
+            }, for: .editingChanged)
             
-            let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 20))
-            paddingView.addSubview(iconView)
-            paddingView.isUserInteractionEnabled = false
-            iconView.isUserInteractionEnabled = false
+            let icon = UIImageView(image: UIImage(systemName: "calendar"))
+            icon.tintColor = .secondaryLabel; icon.contentMode = .scaleAspectFit
+            icon.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+            let pad = UIView(frame: CGRect(x: 0, y: 0, width: 28, height: 20)); pad.addSubview(icon)
+            textField.rightView = pad; textField.rightViewMode = .always
             
-            textField.rightView = paddingView
-            textField.rightViewMode = .always
-            
-            let datePicker = UIDatePicker()
-            datePicker.datePickerMode = .date
-            datePicker.maximumDate = Date()
+            datePicker.datePickerMode = .date; datePicker.maximumDate = Date()
             if #available(iOS 14.0, *) {
                 datePicker.preferredDatePickerStyle = .wheels
             }
-            
             datePicker.addAction(UIAction { _ in
-                textField.text = formatter.string(from: datePicker.date)
+                textField.text = dFormatter.string(from: datePicker.date)
+                let isToday = Calendar.current.isDateInToday(datePicker.date)
+                timePicker.maximumDate = isToday ? Date() : nil
+                if isToday && timePicker.date > Date() { timePicker.setDate(Date(), animated: true) }
+                let tIdx = placeholders.count + (isBloodGlucose ? 2 : 1)
+                alertController.textFields?[tIdx].text = tFormatter.string(from: timePicker.date)
             }, for: .valueChanged)
-            
             textField.inputView = datePicker
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-        let addAction = UIAlertAction(title: "Add Reading", style: .default) { _ in
-            var values = [String]()
-            for index in 0..<placeholders.count {
-                values.append(alertController.textFields?[index].text ?? "")
+        alertController.addTextField { textField in
+            textField.text = tFormatter.string(from: Date())
+            textField.tintColor = .clear
+            textField.addAction(UIAction { [weak textField] _ in
+                textField?.text = tFormatter.string(from: timePicker.date)
+            }, for: .editingChanged)
+            
+            let icon = UIImageView(image: UIImage(systemName: "clock"))
+            icon.tintColor = .secondaryLabel; icon.contentMode = .scaleAspectFit
+            icon.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+            let pad = UIView(frame: CGRect(x: 0, y: 0, width: 28, height: 20)); pad.addSubview(icon)
+            textField.rightView = pad; textField.rightViewMode = .always
+            
+            timePicker.datePickerMode = .time
+            if #available(iOS 14.0, *) {
+                timePicker.preferredDatePickerStyle = .wheels
             }
-            let dateText = alertController.textFields?.last?.text ?? ""
-            print("Added \(title): \(values.joined(separator: " / ")) on \(dateText)")
+            timePicker.maximumDate = Date() 
+            timePicker.addAction(UIAction { _ in
+                textField.text = tFormatter.string(from: timePicker.date)
+            }, for: .valueChanged)
+            textField.inputView = timePicker
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        let addAction = UIAlertAction(title: "Add Reading", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+
+            var vals = [String]()
+            for i in 0..<placeholders.count { vals.append(alertController.textFields?[i].text ?? "") }
+
+            let fields = alertController.textFields ?? []
+            let glucoseTypeIndex = placeholders.count
+            let dateFieldIndex = placeholders.count + (isBloodGlucose ? 1 : 0)
+            let timeFieldIndex = dateFieldIndex + 1
+            let glucoseType = isBloodGlucose ? (fields.count > glucoseTypeIndex ? fields[glucoseTypeIndex].text ?? self.glucoseTypeOptions[0] : self.glucoseTypeOptions[0]) : nil
+            let dText = fields.count > dateFieldIndex ? fields[dateFieldIndex].text ?? "" : ""
+            let tText = fields.count > timeFieldIndex ? fields[timeFieldIndex].text ?? "" : ""
+
+            let dayLetter: String = {
+                let df = DateFormatter()
+                df.dateFormat = "dd-MM-yyyy"
+                if let date = df.date(from: dText) {
+                    let cal = Calendar.current
+                    let weekdaySymbols = ["S", "M", "T", "W", "T", "F", "S"]
+                    let idx = cal.component(.weekday, from: date) - 1
+                    return weekdaySymbols[idx]
+                }
+                return "?"
+            }()
+
+            let recordedDate: Date = {
+                let dateFmt = DateFormatter(); dateFmt.dateFormat = "dd-MM-yyyy"
+                let timeFmt = DateFormatter(); timeFmt.dateFormat = "hh:mm a"
+                timeFmt.locale = Locale(identifier: "en_US_POSIX")
+                guard let d = dateFmt.date(from: dText),
+                      let t = timeFmt.date(from: tText) else { return Date() }
+                let cal = Calendar.current
+                let tc = cal.dateComponents([.hour, .minute], from: t)
+                return cal.date(bySettingHour: tc.hour ?? 0, minute: tc.minute ?? 0, second: 0, of: d) ?? Date()
+            }()
+
+            switch title {
+            case "Heart Rate":
+                let bpm = vals.first ?? ""
+                VitalDataStore.shared.saveNewPoint(
+                    forTitle: title, value: bpm, day: dayLetter,
+                    recordedAt: recordedDate,
+                    heartRateSource: heartRateSource ?? HeartRateSourceType.manual.rawValue
+                )
+
+            case "Blood Pressure":
+                let sys = vals.first ?? ""
+                let dia = vals.count > 1 ? vals[1] : ""
+                let combined = "\(sys)/\(dia)"
+                let sysD = Double(sys) ?? 0
+                let diaD = Double(dia) ?? 0
+                VitalDataStore.shared.saveNewPoint(
+                    forTitle: title, value: combined, day: dayLetter,
+                    minValue: diaD, maxValue: sysD, recordedAt: recordedDate
+                )
+
+            case "Blood Glucose":
+                let mg = vals.first ?? ""
+                let subtitle = "\(glucoseType ?? self.glucoseTypeOptions[0]) Glucose"
+                VitalDataStore.shared.saveNewPoint(
+                    forTitle: title,
+                    value: mg,
+                    day: dayLetter,
+                    recordedAt: recordedDate,
+                    subtitleOverride: subtitle,
+                    glucoseType: glucoseType
+                )
+
+            case "Body Weight":
+                let kg = vals.first ?? ""
+                VitalDataStore.shared.saveNewPoint(forTitle: title, value: kg, day: dayLetter, recordedAt: recordedDate)
+
+            default:
+                break
+            }
+
+            self.vitalReadings = VitalDataStore.shared.loadReadings()
+            self.homeCollectionView.reloadData()
+
+            NotificationCenter.default.post(
+                name: NSNotification.Name("VitalsUpdated"),
+                object: nil
+            )
         }
         
         alertController.addAction(cancelAction)
         alertController.addAction(addAction)
         
-        present(alertController, animated: true)
+        alertController.preferredAction = addAction
+        alertController.view.tintColor  = .systemBlue
+        
+        self.present(alertController, animated: true)
     }
     
     private func processPlatterAssets(_ assets: [PHAsset]) {
@@ -1300,5 +1723,23 @@ final class HomeMoreMedicinesCollectionViewCell: UICollectionViewCell {
 
     @objc private func buttonTapped() {
         onTap?()
+    }
+}
+
+extension HomeViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        1
+    }
+
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        glucoseTypeOptions.count
+    }
+
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        glucoseTypeOptions[row]
+    }
+
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        activeGlucoseTypeField?.text = glucoseTypeOptions[row]
     }
 }
