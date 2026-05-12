@@ -53,4 +53,20 @@ final class UserProfileStore {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             .appendingPathComponent(fileName)
     }
+
+    /// Clears the persisted profile and resets to blank defaults. Call on sign-out.
+    func reset() {
+        let url = Self.profileFileURL(fileName: fileName)
+        try? FileManager.default.removeItem(at: url)
+        current = UserProfile(
+            id: UUID(),
+            firstName: "",
+            lastName: "",
+            dateOfBirth: Date(),
+            gender: .preferNotToSay,
+            email: "",
+            createdAt: Date()
+        )
+        NotificationCenter.default.post(name: .userProfileDidChange, object: current)
+    }
 }

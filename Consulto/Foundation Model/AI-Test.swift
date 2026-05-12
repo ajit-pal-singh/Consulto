@@ -139,8 +139,6 @@ private func displayRecordType(_ type: RecordType?) -> String {
             
             let response = try await session.respond(to: prompt, generating: FormDataExtractionTest.self)
             print(response)
-
-            // _ = response.content
             
         } catch {
             print("Error encountered: \(error)")

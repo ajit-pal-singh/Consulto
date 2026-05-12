@@ -3,133 +3,191 @@ import UIKit
 class OTPViewController: UIViewController {
 
     // MARK: - Outlets
-    @IBOutlet var otpTextFields: [UITextField]! // Sort these by X position in storyboard connections!
+    @IBOutlet var otpTextFields: [UITextField]! // Sort by X position in IB connections!
     @IBOutlet weak var verifyButton: UIButton!
-    @IBOutlet weak var buttonBottomConstraint: NSLayoutConstraint! // Connect this to the button's bottom constraint to safe area
-    
+    @IBOutlet weak var buttonBottomConstraint: NSLayoutConstraint!
+
+    /// Connect this to the label that shows "demomail***@gmail.com" in the storyboard
+    @IBOutlet weak var emailLabel: UILabel!
+
+    /// Set by SignUpViewController before pushing.
+    var email: String = ""
+
     private var initialBottomConstant: CGFloat = 0
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupTextFields()
         setupUI()
-        
-        // Hide keyboard when tapping outside
+
+        // Show masked email in the label
+        emailLabel?.text = maskedEmail(email)
+
         let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        // Store the original distance so we can revert to it
         if let constraint = buttonBottomConstraint {
             initialBottomConstant = constraint.constant
         }
-        
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self)
     }
-    
+
     // MARK: - UI Setup
+
     private func setupUI() {
         verifyButton.layer.cornerRadius = 27.5
         verifyButton.layer.masksToBounds = true
     }
-    
+
     private func setupTextFields() {
-        // Sort safely based on X position to make sure outlet ordering doesn't break logic
         otpTextFields.sort { $0.frame.origin.x < $1.frame.origin.x }
-        
         for textField in otpTextFields {
             textField.delegate = self
             textField.keyboardType = .numberPad
             textField.textAlignment = .center
             textField.font = .systemFont(ofSize: 24, weight: .semibold)
-            
-            // UI Border and radius
             textField.layer.cornerRadius = 12
             textField.layer.borderWidth = 2
             textField.layer.borderColor = UIColor.darkGray.cgColor
             textField.layer.masksToBounds = true
-            
-            // Empty placeholder or clear backgrounds can be set here
             textField.backgroundColor = .clear
         }
-        
-        // Auto focus the first one
         otpTextFields.first?.becomeFirstResponder()
     }
-    
-    // MARK: - Keyboard Handling
-    @objc private func keyboardWillShow(notification: NSNotification) {
-        if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardHeight = keyboardFrame.cgRectValue.height
-            
-            // Move it up above keyboard. The constant is usually inverted if it's pinned to bottom safe area
-            buttonBottomConstraint?.constant = keyboardHeight + 20 
-            
-            UIView.animate(withDuration: 0.3) {
-                self.view.layoutIfNeeded()
+
+    // MARK: - Helpers
+
+    /// Returns a masked version of the email, e.g. "ajit***@gmail.com"
+    private func maskedEmail(_ email: String) -> String {
+        guard let atIndex = email.firstIndex(of: "@") else { return email }
+        let localPart = String(email[email.startIndex..<atIndex])
+        let domain    = String(email[atIndex...])
+        let visible   = localPart.prefix(min(4, localPart.count))
+        return "\(visible)***\(domain)"
+    }
+
+    // MARK: - Actions
+
+    @IBAction func verifyButtonTapped(_ sender: UIButton) {
+        let token = otpTextFields.compactMap { $0.text }.joined()
+
+        guard token.count == otpTextFields.count else {
+            showAlert(title: "Incomplete Code", message: "Please enter all \(otpTextFields.count) digits.")
+            return
+        }
+
+        setLoading(true)
+
+        Task {
+            do {
+                try await AuthManager.shared.verifyOTP(email: email, token: token)
+                await MainActor.run { self.pushProfileSetup() }
+            } catch {
+                await MainActor.run {
+                    self.setLoading(false)
+                    self.showAlert(title: "Verification Failed", message: error.localizedDescription)
+                }
             }
         }
     }
-    
+
+    /// Called from the "Didn't receive the code?" button in the storyboard
+    @IBAction func resendCodeTapped(_ sender: UIButton) {
+        sender.isEnabled = false
+        sender.setTitle("Sending…", for: .normal)
+
+        Task {
+            do {
+                try await AuthManager.shared.resendOTP(email: email)
+                await MainActor.run {
+                    sender.isEnabled = true
+                    sender.setTitle("Didn't receive the code?", for: .normal)
+                    self.showAlert(title: "Code Sent", message: "A new code has been sent to \(self.email).")
+                }
+            } catch {
+                await MainActor.run {
+                    sender.isEnabled = true
+                    sender.setTitle("Didn't receive the code?", for: .normal)
+                    self.showAlert(title: "Failed to Resend", message: error.localizedDescription)
+                }
+            }
+        }
+    }
+
+    private func pushProfileSetup() {
+        let storyboard = UIStoryboard(name: "Onboarding-Login", bundle: nil)
+        guard let profileVC = storyboard.instantiateViewController(withIdentifier: "ProfileViewController") as? ProfileViewController else { return }
+        navigationController?.pushViewController(profileVC, animated: true)
+    }
+
+    private func setLoading(_ loading: Bool) {
+        verifyButton.isEnabled = !loading
+        verifyButton.setTitle(loading ? "Verifying…" : "Verify Code", for: .normal)
+    }
+
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+
+    // MARK: - Keyboard Handling
+
+    @objc private func keyboardWillShow(notification: NSNotification) {
+        if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardHeight = keyboardFrame.cgRectValue.height
+            buttonBottomConstraint?.constant = keyboardHeight + 20
+            UIView.animate(withDuration: 0.3) { self.view.layoutIfNeeded() }
+        }
+    }
+
     @objc private func keyboardWillHide(notification: NSNotification) {
         buttonBottomConstraint?.constant = initialBottomConstant
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
+        UIView.animate(withDuration: 0.3) { self.view.layoutIfNeeded() }
     }
 }
 
 // MARK: - UITextFieldDelegate
 extension OTPViewController: UITextFieldDelegate {
-    
+
     func textFieldDidBeginEditing(_ textField: UITextField) {
         let consultoBlue = UIColor(hex: "#1A90FF") ?? UIColor(red: 0x1A/255.0, green: 0x90/255.0, blue: 0xFF/255.0, alpha: 1.0)
         textField.layer.borderColor = consultoBlue.cgColor
     }
-    
+
     func textFieldDidEndEditing(_ textField: UITextField) {
         textField.layer.borderColor = UIColor.darkGray.cgColor
     }
-    
+
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
         guard let index = otpTextFields.firstIndex(of: textField) else { return true }
-        
-        // Hitting backspace
+
         if string.isEmpty {
             textField.text = ""
-            // Go back
-            if index > 0 {
-                otpTextFields[index - 1].becomeFirstResponder()
-            }
+            if index > 0 { otpTextFields[index - 1].becomeFirstResponder() }
             return false
         }
-        
-        // Typing a character
         if string.count == 1 {
             textField.text = string
-            // Go next
             if index < otpTextFields.count - 1 {
                 otpTextFields[index + 1].becomeFirstResponder()
             } else {
-                // Last one filled
                 textField.resignFirstResponder()
             }
             return false
         }
-        
-        // Handle full paste
         return false
     }
 }

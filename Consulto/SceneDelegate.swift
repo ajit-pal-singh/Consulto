@@ -1,4 +1,5 @@
 import UIKit
+import GoogleSignIn
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -6,49 +7,87 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        
+
         let window = UIWindow(windowScene: windowScene)
-        
-        // Check our persisted flag
-        let isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
-        
-        let storyboardName = isLoggedIn ? "Main" : "Onboarding-Login"
-        let storyboard = UIStoryboard(name: storyboardName, bundle: nil)
-        
-        // Set the initial view controller dynamically
-        window.rootViewController = storyboard.instantiateInitialViewController()
         self.window = window
         window.makeKeyAndVisible()
+
+        // Show a white placeholder immediately — prevents black flash while
+        // async routing determines the correct initial screen.
+        let placeholder = UIViewController()
+        placeholder.view.backgroundColor = .white
+        window.rootViewController = placeholder
+        window.backgroundColor = .white
+
+        // Determine root VC asynchronously — Supabase reads session from Keychain
+        Task {
+            // ── Fix: clear stale Keychain session on fresh install ──────────────
+            // UserDefaults is wiped on uninstall; Keychain is not.
+            // If the install marker is missing, this is a fresh install → force onboarding.
+            let installKey = "consulto_install_marker"
+            if !UserDefaults.standard.bool(forKey: installKey) {
+                UserDefaults.standard.set(true, forKey: installKey)
+                try? await AuthManager.shared.signOut() // clears Keychain + image cache + profile store
+                let sb = UIStoryboard(name: "Onboarding-Login", bundle: nil)
+                UIView.transition(with: window, duration: 0.25, options: .transitionCrossDissolve) {
+                    window.rootViewController = sb.instantiateInitialViewController()
+                }
+                return
+            }
+            // ────────────────────────────────────────────────────────────────────
+
+            let isLoggedIn = await AuthManager.shared.isAuthenticated
+            let destinationVC: UIViewController?
+
+            if !isLoggedIn {
+                let sb = UIStoryboard(name: "Onboarding-Login", bundle: nil)
+                destinationVC = sb.instantiateInitialViewController()
+            } else {
+                let profile = try? await AuthManager.shared.fetchProfile()
+                let hasProfile = (profile?.firstName ?? "").trimmingCharacters(in: .whitespaces).isEmpty == false
+
+                if hasProfile {
+                    let sb = UIStoryboard(name: "Main", bundle: nil)
+                    destinationVC = sb.instantiateInitialViewController()
+                    // Preload profile data + avatar in background so home screen is populated
+                    Task.detached(priority: .background) {
+                        await AuthManager.shared.preloadProfileData()
+                    }
+                } else {
+                    let sb = UIStoryboard(name: "Onboarding-Login", bundle: nil)
+                    if let profileVC = sb.instantiateViewController(withIdentifier: "ProfileViewController") as? ProfileViewController {
+                        let nav = UINavigationController(rootViewController: profileVC)
+                        nav.setNavigationBarHidden(true, animated: false)
+                        destinationVC = nav
+                    } else {
+                        destinationVC = UIStoryboard(name: "Onboarding-Login", bundle: nil).instantiateInitialViewController()
+                    }
+                }
+            }
+
+            guard let finalVC = destinationVC else { return }
+
+            // Cross-dissolve from white placeholder to real screen — no black flash
+            UIView.transition(with: window, duration: 0.25, options: .transitionCrossDissolve) {
+                window.rootViewController = finalVC
+            }
+        }
     }
 
-    func sceneDidDisconnect(_ scene: UIScene) {
-        // Called as the scene is being released by the system.
-        // This occurs shortly after the scene enters the background, or when its session is discarded.
-        // Release any resources associated with this scene that can be re-created the next time the scene connects.
-        // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
+    // MARK: - OAuth / deep-link callback (Google Sign-In, password reset)
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else { return }
+
+        // Let Google Sign-In handle its own callback first
+        if GIDSignIn.sharedInstance.handle(url) { return }
+
+        // Otherwise pass to Supabase (e.g. OAuth redirect, password reset)
+        Task { await AuthManager.shared.handleOpenURL(url) }
     }
 
-    func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-    }
-
-    func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
-    }
-
-    func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
-    }
-
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
-    }
-
-
+    func sceneDidDisconnect(_ scene: UIScene) {}
+    func sceneDidBecomeActive(_ scene: UIScene) {}
+    func sceneWillResignActive(_ scene: UIScene) {}
+    func sceneWillEnterForeground(_ scene: UIScene) {}
+    func sceneDidEnterBackground(_ scene: UIScene) {}
 }
-

@@ -25,5 +25,20 @@
 	</dict>
 	<key>UIFileSharingEnabled</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>consulto</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.105253785231-4h10ebiju7c3usl188v2raiuc41ivr4n</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

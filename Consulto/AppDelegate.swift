@@ -1,30 +1,35 @@
 import UIKit
 import UserNotifications
+import GoogleSignIn
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // MARK: - Supabase (supabase-swift auto-initialises via `supabase` global in AuthManager)
+        // Nothing extra needed — the client is lazy-loaded.
+
+        // MARK: - Google Sign-In configuration
+        GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: GoogleSignInConfig.clientID)
+
+        // MARK: - Local notifications
         let center = UNUserNotificationCenter.current()
         center.delegate = self
         ReminderNotificationScheduler.shared.requestAuthorizationIfNeeded()
         ReminderNotificationScheduler.shared.refreshAll()
+
         return true
     }
 
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
-    }
+    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {}
+
+    // MARK: - UNUserNotificationCenterDelegate
 
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
@@ -33,6 +38,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     ) {
         completionHandler([.banner, .sound, .badge])
     }
-
-
 }

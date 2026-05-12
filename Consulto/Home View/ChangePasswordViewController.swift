@@ -30,7 +30,6 @@ class ChangePasswordViewController: UIViewController {
     }
     
     @IBAction func changePasswordTapped(_ sender: UIButton) {
-        // Simple client-side validation logic
         if currentPassword.isEmpty || newPassword.isEmpty || confirmPassword.isEmpty {
             showAlert(title: "Error", message: "Please fill all fields.")
             return
@@ -39,9 +38,29 @@ class ChangePasswordViewController: UIViewController {
             showAlert(title: "Error", message: "New passwords do not match.")
             return
         }
-        
-        showAlert(title: "Success", message: "Password changed successfully!") {
-            self.navigationController?.popViewController(animated: true)
+        if newPassword.count < 8 {
+            showAlert(title: "Weak Password", message: "Password must be at least 8 characters.")
+            return
+        }
+
+        sender.isEnabled = false
+        sender.setTitle("Updating…", for: .normal)
+
+        Task {
+            do {
+                try await AuthManager.shared.updatePassword(to: newPassword)
+                await MainActor.run {
+                    self.showAlert(title: "Success", message: "Password updated successfully!") {
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    sender.isEnabled = true
+                    sender.setTitle("Change Password", for: .normal)
+                    self.showAlert(title: "Error", message: error.localizedDescription)
+                }
+            }
         }
     }
     

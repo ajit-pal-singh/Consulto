@@ -5,6 +5,8 @@
 
 import UIKit
 import PhotosUI
+import Supabase
+import Auth
 
 class ProfileEditViewController: UIViewController {
 
@@ -65,10 +67,37 @@ class ProfileEditViewController: UIViewController {
     }
     
     @IBAction func saveChangesTapped(_ sender: Any) {
+        // Keep the existing local save and UI callback
         if let image = selectedProfileImage {
             ProfileImageManager.shared.saveImage(image)
         }
         onSave?(firstName, lastName, dateOfBirth, selectedGender)
+
+        // Sync to Supabase in the background
+        Task {
+            do {
+                guard let user = try? await supabase.auth.session.user else { return }
+                let dobString: String? = {
+                    guard let dob = self.dateOfBirth else { return nil }
+                    let fmt = DateFormatter()
+                    fmt.dateFormat = "yyyy-MM-dd"
+                    return fmt.string(from: dob)
+                }()
+                let profile = SupabaseProfile(
+                    id: user.id,
+                    firstName: self.firstName,
+                    lastName:  self.lastName,
+                    gender:    self.selectedGender,
+                    dateOfBirth: dobString,
+                    avatarUrl: nil,
+                    createdAt: nil
+                )
+                try await AuthManager.shared.saveProfile(profile, avatarImage: self.selectedProfileImage)
+            } catch {
+                print("[ProfileEdit] Supabase sync failed:", error.localizedDescription)
+            }
+        }
+
         navigationController?.popViewController(animated: true)
     }
     

@@ -1,4 +1,5 @@
 import UIKit
+import Supabase
 
 
 class ProfileSettingsViewController: UIViewController {
@@ -7,6 +8,42 @@ class ProfileSettingsViewController: UIViewController {
 
     private var profile: UserProfile {
         UserProfileStore.shared.current
+    }
+
+    // MARK: - Load profile from Supabase
+    private func loadProfileFromSupabase() {
+        Task {
+            do {
+                let remote = try await AuthManager.shared.fetchProfile()
+                // Sync remote data into the on-device store
+                UserProfileStore.shared.update { local in
+                    if let fn = remote.firstName, !fn.isEmpty { local.firstName = fn }
+                    if let ln = remote.lastName,  !ln.isEmpty { local.lastName  = ln }
+                    if let g  = remote.gender,    !g.isEmpty  { local.gender    = Gender(displayName: g) }
+                    if let dobStr = remote.dateOfBirth {
+                        let fmt = DateFormatter()
+                        fmt.dateFormat = "yyyy-MM-dd"
+                        if let dob = fmt.date(from: dobStr) { local.dateOfBirth = dob }
+                    }
+                }
+                // Show real email from live Supabase session
+                if let user = try? await supabase.auth.session.user {
+                    UserProfileStore.shared.update { local in
+                        if let email = user.email { local.email = email }
+                    }
+                }
+                // Download avatar from Supabase if local cache was wiped (e.g. after reinstall)
+                await AuthManager.shared.restoreAvatarIfNeeded(from: remote.avatarUrl)
+
+                await MainActor.run {
+                    self.setupHeaderView()
+                    self.tableView.reloadData()
+                }
+            } catch {
+                // Non-fatal – just show whatever is cached
+                print("[ProfileSettings] Could not load remote profile:", error.localizedDescription)
+            }
+        }
     }
 
     var sections: [[(title: String, value: String, icon: String?)]] {
@@ -66,6 +103,9 @@ class ProfileSettingsViewController: UIViewController {
 
         setupHeaderView()
         setupFooterView()
+
+        // Fetch latest profile data from Supabase
+        loadProfileFromSupabase()
     }
 
     deinit {
@@ -116,19 +156,20 @@ class ProfileSettingsViewController: UIViewController {
             UIAlertAction(
                 title: "Sign Out", style: .destructive,
                 handler: { _ in
-                    UserDefaults.standard.removeObject(forKey: "consulto_healthkit_prompt_shown")
-                    
+                    // 1. Navigate to onboarding IMMEDIATELY — no visible clearing delay
                     let storyboard = UIStoryboard(name: "Onboarding-Login", bundle: nil)
-                    if let initialVC = storyboard.instantiateInitialViewController() {
-                        if let windowScene = UIApplication.shared.connectedScenes.first
-                            as? UIWindowScene,
-                            let window = windowScene.windows.first
-                        {
-                            window.rootViewController = initialVC
-                            UIView.transition(
-                                with: window, duration: 0.3, options: .transitionCrossDissolve,
-                                animations: nil, completion: nil)
-                        }
+                    if let initialVC = storyboard.instantiateInitialViewController(),
+                       let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let window = windowScene.windows.first {
+                        window.backgroundColor = .white
+                        UIView.transition(with: window, duration: 0.3,
+                                          options: .transitionCrossDissolve,
+                                          animations: { window.rootViewController = initialVC })
+                    }
+                    // 2. Clean up session + local data in background after navigating
+                    Task {
+                        UserDefaults.standard.removeObject(forKey: "consulto_healthkit_prompt_shown")
+                        try? await AuthManager.shared.signOut()
                     }
                 }))
         present(alert, animated: true, completion: nil)

@@ -20,6 +20,13 @@ class ProfileImageManager {
         }
         return nil
     }
+
+    /// Deletes the cached profile image from disk. Call on sign-out.
+    func clearImage() {
+        let url = getDocumentsDirectory().appendingPathComponent(fileName)
+        try? FileManager.default.removeItem(at: url)
+        NotificationCenter.default.post(name: NSNotification.Name("ProfileImageUpdated"), object: nil)
+    }
     #endif
     
     private func getDocumentsDirectory() -> URL {
