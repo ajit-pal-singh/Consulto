@@ -125,6 +125,8 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
 
         homeCollectionView.register(UINib(nibName: "HomeConsultCardCollectionViewCell", bundle: nil),
                                     forCellWithReuseIdentifier: "HomeConsultCell")
+        homeCollectionView.register(UINib(nibName: "EmptyHomeConsultCollectionViewCell", bundle: nil),
+                                    forCellWithReuseIdentifier: "EmptyHomeConsultCell")
         homeCollectionView.register(
             UINib(nibName: "HomeSectionHeaderCollectionReusableView", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "HeaderView")
@@ -132,6 +134,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
                                     forCellWithReuseIdentifier: "QuickActionCell")
         homeCollectionView.register(UINib(nibName: "HomeMedicineCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "HomeMedicineCell")
         homeCollectionView.register(HomeMoreMedicinesCollectionViewCell.self, forCellWithReuseIdentifier: HomeMoreMedicinesCollectionViewCell.reuseId)
+        homeCollectionView.register(UINib(nibName: "EmptyHomeMedicineCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "EmptyHomeMedicineCell")
         homeCollectionView.register(UINib(nibName: "HomeVitalsCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "HomeVitalsCell")
 
         homeCollectionView.collectionViewLayout = createLayout()
@@ -317,6 +320,36 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
         guard let remindersVC = storyboard.instantiateViewController(withIdentifier: "RemindersVC") as? RemindersViewController else { return }
         navigationController?.pushViewController(remindersVC, animated: true)
     }
+
+    private func openAddMedicineForm() {
+        let storyboard = UIStoryboard(name: "RemindersScreen", bundle: nil)
+        guard let addMedicineVC = storyboard.instantiateViewController(withIdentifier: "AddMedicineTableViewController") as? AddMedicineTableViewController else { return }
+        addMedicineVC.onSave = { [weak self] formData in
+            let medication = Medication(
+                id: UUID(),
+                recordID: UUID(),
+                name: formData.medicineName,
+                dosage: formData.dosage,
+                frequency: nil,
+                duration: nil,
+                notes: nil,
+                times: formData.times.isEmpty ? [Calendar.current.date(from: DateComponents(hour: 8, minute: 0)) ?? Date()] : formData.times,
+                mealTiming: formData.mealTiming,
+                repeatDays: formData.repeatDays,
+                isSnoozeOn: formData.isSnoozeOn,
+                snoozeTime: formData.snoozeTime,
+                inactiveTimes: formData.inactiveTimes,
+                reminderCreatedAt: Date()
+            )
+            var list = MedicationReminderStore.shared.medications
+            list.insert(medication, at: 0)
+            MedicationReminderStore.shared.medications = list
+            MedicationReminderStore.shared.notifyMedicinesChanged()
+            self?.homeCollectionView.reloadSections(IndexSet(integer: HomeSection.medicineReminders.rawValue))
+        }
+        let nav = UINavigationController(rootViewController: addMedicineVC)
+        present(nav, animated: true)
+    }
     
     private func openVitalsScreen() {
         let storyboard = UIStoryboard(name: "Vital", bundle: nil)
@@ -358,9 +391,9 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
 
         switch section {
         case .consultation:
-            return pendingConsultations.count
+            return pendingConsultations.isEmpty ? 1 : pendingConsultations.count
         case .medicineReminders:
-            return homeMedicineRows.count
+            return homeMedicineRows.isEmpty ? 1 : homeMedicineRows.count
         case .quickActions:
             return quickActions.count
         case .recentVitals:
@@ -375,22 +408,41 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
 
         switch section {
         case .consultation:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HomeConsultCell", for: indexPath) as! HomeConsultCardCollectionViewCell
+            if pendingConsultations.isEmpty {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmptyHomeConsultCell", for: indexPath) as! EmptyHomeConsultCollectionViewCell
+                cell.onCreateVisitTapped = { [weak self] in
+                    let storyboard = UIStoryboard(name: "Consult-Screen", bundle: nil)
+                    guard let navVC = storyboard.instantiateViewController(withIdentifier: "PrepareConsultationNav") as? UINavigationController else { return }
+                    self?.present(navVC, animated: true)
+                }
+                return cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HomeConsultCell", for: indexPath) as! HomeConsultCardCollectionViewCell
 
-            let consultation = pendingConsultations[indexPath.item]
-            cell.nameLabel.text = consultation.doctorName
-            cell.purposeLabel.text = consultation.title
-            cell.dateLabel.text = formatDate(consultation.date)
-            cell.timeLabel.text = formatTime(consultation.date)
-            cell.onTapMarkDone = { [weak self] in
-                self?.markConsultationAsCompleted(consultation)
+                let consultation = pendingConsultations[indexPath.item]
+                cell.nameLabel.text = consultation.doctorName
+                cell.purposeLabel.text = consultation.title
+                cell.dateLabel.text = formatDate(consultation.date)
+                cell.timeLabel.text = formatTime(consultation.date)
+                cell.onTapMarkDone = { [weak self] in
+                    self?.markConsultationAsCompleted(consultation)
+                }
+                cell.onTapOpenSession = { [weak self] in
+                    self?.openConsultationDetail(for: consultation)
+                }
+                return cell
             }
-            cell.onTapOpenSession = { [weak self] in
-                self?.openConsultationDetail(for: consultation)
-            }
-            return cell
 
         case .medicineReminders:
+            if homeMedicineRows.isEmpty {
+                let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: "EmptyHomeMedicineCell",
+                    for: indexPath) as! EmptyHomeMedicineCollectionViewCell
+                cell.onAddMedicineTapped = { [weak self] in
+                    self?.openAddMedicineForm()
+                }
+                return cell
+            }
             let row = homeMedicineRows[indexPath.item]
             switch row {
             case .dose(let item):
@@ -471,7 +523,7 @@ class HomeViewController: UIViewController, UINavigationControllerDelegate,
 
         switch section {
         case .consultation:
-            if indexPath.item < pendingConsultations.count {
+            if !pendingConsultations.isEmpty && indexPath.item < pendingConsultations.count {
                 openConsultationDetail(for: pendingConsultations[indexPath.item])
             }
         case .medicineReminders:

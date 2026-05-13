@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="EmptyHomeConsultCell" id="gTV-IL-0wX" customClass="EmptyHomeConsultCollectionViewCell" customModule="Consulto" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="395" height="191"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="395" height="191"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cardView">
+                        <rect key="frame" x="0.0" y="0.0" width="395" height="191"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1" verticalCompressionResistancePriority="1" image="ConsultBanner" translatesAutoresizingMaskIntoConstraints="NO" id="s3R-mA-wQk">
+                                <rect key="frame" x="0.0" y="0.0" width="395" height="191"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="All clear for now!" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tuV-Ml-Bhm">
+                                <rect key="frame" x="20" y="17" width="180" height="83.333333333333329"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="180" id="Iec-Zo-Jb7"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="32"/>
+                                <color key="textColor" red="0.075439445669999994" green="0.15051268039999999" blue="0.3662109375" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="You have no upcoming consultations scheduled." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MRN-aI-ZqY">
+                                <rect key="frame" x="20" y="106.33333333333333" width="180" height="28.666666666666671"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="180" id="i4U-dC-LcS"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="12"/>
+                                <color key="textColor" red="0.09381103516" green="0.17016603050000001" blue="0.404296875" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rMh-7V-2Df">
+                                <rect key="frame" x="20" y="145" width="215" height="28"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pencil.and.list.clipboard" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="0Qx-Qe-fpM" userLabel="Notes icon">
+                                        <rect key="frame" x="10.000000000000002" y="5.6666666666666687" width="15.66666666666667" height="16"/>
+                                        <color key="tintColor" red="0.09381103516" green="0.17016603050000001" blue="0.404296875" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="14" id="Btl-Bv-5JZ"/>
+                                            <constraint firstAttribute="width" constant="14" id="W0r-xp-E1G"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Need to prepare for consultation?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Fs-dN-jsh">
+                                        <rect key="frame" x="28" y="7.3333333333333437" width="179" height="13.333333333333336"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="11"/>
+                                        <color key="textColor" red="0.071411125359999994" green="0.1424560547" blue="0.3464355469" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="6Fs-dN-jsh" firstAttribute="leading" secondItem="0Qx-Qe-fpM" secondAttribute="trailing" constant="4" id="GOc-wb-bPp"/>
+                                    <constraint firstItem="6Fs-dN-jsh" firstAttribute="centerY" secondItem="rMh-7V-2Df" secondAttribute="centerY" id="Hbn-nH-Szw"/>
+                                    <constraint firstItem="0Qx-Qe-fpM" firstAttribute="leading" secondItem="rMh-7V-2Df" secondAttribute="leading" constant="10" id="UAr-sm-pWI"/>
+                                    <constraint firstAttribute="width" constant="215" id="gRe-qY-TMb"/>
+                                    <constraint firstItem="0Qx-Qe-fpM" firstAttribute="centerY" secondItem="rMh-7V-2Df" secondAttribute="centerY" id="iqi-BZ-KPR"/>
+                                    <constraint firstAttribute="trailing" secondItem="6Fs-dN-jsh" secondAttribute="trailing" constant="8" id="lvX-EB-xDM"/>
+                                    <constraint firstAttribute="height" constant="28" id="wXL-mh-9Kv"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vok-Pc-EOI">
+                                <rect key="frame" x="277" y="143" width="98" height="30"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create Visit" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V4r-f5-eo1">
+                                        <rect key="frame" x="11.999999999999996" y="8.3333333333333428" width="62.666666666666657" height="13.333333333333336"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="11"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="rWE-9q-Omv">
+                                        <rect key="frame" x="76.666666666666686" y="10" width="14" height="10.333333333333332"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="14" id="Xbe-eM-NGV"/>
+                                            <constraint firstAttribute="width" constant="14" id="jGe-Kk-UaD"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" red="0.3273925781" green="0.5615234375" blue="0.9584960938" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <constraints>
+                                    <constraint firstItem="V4r-f5-eo1" firstAttribute="centerY" secondItem="vok-Pc-EOI" secondAttribute="centerY" id="6ey-Nv-gTd"/>
+                                    <constraint firstAttribute="height" constant="30" id="YxD-Ur-eud"/>
+                                    <constraint firstAttribute="width" constant="98" id="ed8-St-H7u"/>
+                                    <constraint firstItem="rWE-9q-Omv" firstAttribute="centerY" secondItem="vok-Pc-EOI" secondAttribute="centerY" id="fzX-cw-0zD"/>
+                                    <constraint firstItem="V4r-f5-eo1" firstAttribute="leading" secondItem="vok-Pc-EOI" secondAttribute="leading" constant="12" id="uJf-Ud-ibO"/>
+                                    <constraint firstItem="rWE-9q-Omv" firstAttribute="leading" secondItem="V4r-f5-eo1" secondAttribute="trailing" constant="2" id="xLD-sR-cy7"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.810546875" green="0.8706054688" blue="0.958984375" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstItem="rMh-7V-2Df" firstAttribute="leading" secondItem="cardView" secondAttribute="leading" constant="20" id="1Pc-rD-nTw"/>
+                            <constraint firstItem="MRN-aI-ZqY" firstAttribute="top" secondItem="tuV-Ml-Bhm" secondAttribute="bottom" constant="6" id="7Eu-ht-9Wa"/>
+                            <constraint firstAttribute="bottom" secondItem="rMh-7V-2Df" secondAttribute="bottom" constant="18" id="9ir-Ar-DHK"/>
+                            <constraint firstItem="tuV-Ml-Bhm" firstAttribute="top" secondItem="cardView" secondAttribute="top" constant="17" id="Dl3-9d-hiP"/>
+                            <constraint firstItem="s3R-mA-wQk" firstAttribute="leading" secondItem="cardView" secondAttribute="leading" id="IEc-RP-N2A"/>
+                            <constraint firstItem="rMh-7V-2Df" firstAttribute="top" secondItem="MRN-aI-ZqY" secondAttribute="bottom" constant="10" id="VMV-NQ-72S"/>
+                            <constraint firstAttribute="trailing" secondItem="s3R-mA-wQk" secondAttribute="trailing" id="YtF-SG-BdN"/>
+                            <constraint firstAttribute="bottom" secondItem="vok-Pc-EOI" secondAttribute="bottom" constant="18" id="a1I-08-Eyz"/>
+                            <constraint firstItem="tuV-Ml-Bhm" firstAttribute="leading" secondItem="cardView" secondAttribute="leading" constant="20" id="aGF-20-t23"/>
+                            <constraint firstAttribute="trailing" secondItem="vok-Pc-EOI" secondAttribute="trailing" constant="20" id="l0U-Yg-dEW"/>
+                            <constraint firstItem="MRN-aI-ZqY" firstAttribute="leading" secondItem="cardView" secondAttribute="leading" constant="20" id="nTc-dm-Xel"/>
+                            <constraint firstAttribute="bottom" secondItem="s3R-mA-wQk" secondAttribute="bottom" id="nyD-iN-nRo"/>
+                            <constraint firstItem="s3R-mA-wQk" firstAttribute="top" secondItem="cardView" secondAttribute="top" id="oPt-Ut-LQd"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="cardView" secondAttribute="bottom" id="cv-bot"/>
+                <constraint firstItem="cardView" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="cv-lead"/>
+                <constraint firstItem="cardView" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="cv-top"/>
+                <constraint firstAttribute="trailing" secondItem="cardView" secondAttribute="trailing" id="cv-trail"/>
+            </constraints>
+            <size key="customSize" width="395" height="191"/>
+            <connections>
+                <outlet property="cardView" destination="cardView" id="out-ban-img"/>
+                <outlet property="createVisitLabel" destination="V4r-f5-eo1" id="oEX-8l-sPZ"/>
+                <outlet property="createVisitView" destination="vok-Pc-EOI" id="out-cre-vis"/>
+                <outlet property="headingLabel" destination="tuV-Ml-Bhm" id="ePV-SZ-1dB"/>
+                <outlet property="prepareConsultationLabel" destination="6Fs-dN-jsh" id="6cA-Mz-uQr"/>
+                <outlet property="prepareConsultationView" destination="rMh-7V-2Df" id="out-pre-con"/>
+                <outlet property="subheadingLabel" destination="MRN-aI-ZqY" id="Xle-gl-U8u"/>
+            </connections>
+            <point key="canvasLocation" x="332.06106870229007" y="175"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="ConsultBanner" width="705" height="372"/>
+        <image name="chevron.right" catalog="system" width="97" height="128"/>
+        <image name="pencil.and.list.clipboard" catalog="system" width="114" height="128"/>
+    </resources>
+</document>

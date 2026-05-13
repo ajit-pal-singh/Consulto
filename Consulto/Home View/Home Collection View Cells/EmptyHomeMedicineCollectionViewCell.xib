@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="EmptyHomeMedicineCell" id="gTV-IL-0wX" customClass="EmptyHomeMedicineCollectionViewCell" customModule="Consulto" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="373" height="147"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="373" height="147"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sIn-C8-GAq">
+                        <rect key="frame" x="0.0" y="0.0" width="373" height="147"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MedicineBanner" translatesAutoresizingMaskIntoConstraints="NO" id="dl3-is-qsr">
+                                <rect key="frame" x="10" y="10" width="353" height="95"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="95" id="zV2-4I-3Ac"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Med Icon" translatesAutoresizingMaskIntoConstraints="NO" id="0jF-7x-StT">
+                                <rect key="frame" x="25" y="25" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="XgS-dZ-KGK"/>
+                                    <constraint firstAttribute="height" constant="40" id="ffE-sl-wag"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No medicines scheduled" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HO1-Mb-FSF">
+                                <rect key="frame" x="79" y="24" width="135" height="43"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="135" id="etD-Ld-rSx"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You have no medicines for today." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tur-iB-wcE">
+                                <rect key="frame" x="22" y="77" width="192" height="15"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="192" id="BQW-IQ-s58"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="12"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add medicines to stay on track." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dcb-Eo-q4t">
+                                <rect key="frame" x="16" y="115" width="183" height="16"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="12"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bHs-qI-LvW">
+                                <rect key="frame" x="253" y="107" width="110" height="32"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add medicine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OcB-ru-1OD">
+                                        <rect key="frame" x="8" y="8.6666666666666714" width="79" height="15"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="12"/>
+                                        <color key="textColor" systemColor="linkColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="h7y-qE-LMB">
+                                        <rect key="frame" x="87" y="10.66666666666667" width="15" height="11.33333333333333"/>
+                                        <color key="tintColor" systemColor="linkColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="15" id="N1t-Qf-jnX"/>
+                                            <constraint firstAttribute="width" constant="15" id="wac-Wg-Dqc"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="OcB-ru-1OD" firstAttribute="centerY" secondItem="bHs-qI-LvW" secondAttribute="centerY" id="UFo-M0-0Cd"/>
+                                    <constraint firstAttribute="trailing" secondItem="h7y-qE-LMB" secondAttribute="trailing" constant="8" id="b8R-0O-zfK"/>
+                                    <constraint firstAttribute="width" constant="110" id="bBq-og-7Ie"/>
+                                    <constraint firstItem="h7y-qE-LMB" firstAttribute="leading" secondItem="OcB-ru-1OD" secondAttribute="trailing" id="pgX-27-uzi"/>
+                                    <constraint firstItem="h7y-qE-LMB" firstAttribute="centerY" secondItem="bHs-qI-LvW" secondAttribute="centerY" id="y96-bM-BpU"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Tur-iB-wcE" firstAttribute="leading" secondItem="sIn-C8-GAq" secondAttribute="leading" constant="22" id="0sh-mq-pjt"/>
+                            <constraint firstAttribute="trailing" secondItem="dl3-is-qsr" secondAttribute="trailing" constant="10" id="9jp-Ht-OY8"/>
+                            <constraint firstItem="Dcb-Eo-q4t" firstAttribute="leading" secondItem="sIn-C8-GAq" secondAttribute="leading" constant="16" id="HUK-Kt-xxa"/>
+                            <constraint firstAttribute="trailing" secondItem="bHs-qI-LvW" secondAttribute="trailing" constant="10" id="JiI-UY-JCU"/>
+                            <constraint firstItem="bHs-qI-LvW" firstAttribute="top" secondItem="dl3-is-qsr" secondAttribute="bottom" constant="2" id="LjR-aj-Sul"/>
+                            <constraint firstItem="HO1-Mb-FSF" firstAttribute="leading" secondItem="0jF-7x-StT" secondAttribute="trailing" constant="14" id="Wxb-vZ-zHy"/>
+                            <constraint firstAttribute="bottom" secondItem="Dcb-Eo-q4t" secondAttribute="bottom" constant="16" id="azY-q4-PdU"/>
+                            <constraint firstItem="dl3-is-qsr" firstAttribute="top" secondItem="sIn-C8-GAq" secondAttribute="top" constant="10" id="cyb-0U-WeZ"/>
+                            <constraint firstAttribute="bottom" secondItem="bHs-qI-LvW" secondAttribute="bottom" constant="8" id="jo2-QL-uS8"/>
+                            <constraint firstItem="0jF-7x-StT" firstAttribute="leading" secondItem="sIn-C8-GAq" secondAttribute="leading" constant="25" id="kHq-tc-Kpa"/>
+                            <constraint firstItem="Dcb-Eo-q4t" firstAttribute="top" secondItem="dl3-is-qsr" secondAttribute="bottom" constant="10" id="o4e-aP-C4Y"/>
+                            <constraint firstItem="0jF-7x-StT" firstAttribute="top" secondItem="sIn-C8-GAq" secondAttribute="top" constant="25" id="o6h-oV-37N"/>
+                            <constraint firstItem="HO1-Mb-FSF" firstAttribute="top" secondItem="sIn-C8-GAq" secondAttribute="top" constant="24" id="u3Q-yR-oYH"/>
+                            <constraint firstItem="dl3-is-qsr" firstAttribute="leading" secondItem="sIn-C8-GAq" secondAttribute="leading" constant="10" id="xCV-Hx-qGf"/>
+                            <constraint firstItem="Tur-iB-wcE" firstAttribute="top" secondItem="HO1-Mb-FSF" secondAttribute="bottom" constant="10" id="yHL-IH-LhP"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstItem="sIn-C8-GAq" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="1g1-Bf-7cb"/>
+                <constraint firstItem="sIn-C8-GAq" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="BT6-DS-CwN"/>
+                <constraint firstAttribute="bottom" secondItem="sIn-C8-GAq" secondAttribute="bottom" id="IEO-UQ-qMQ"/>
+                <constraint firstAttribute="trailing" secondItem="sIn-C8-GAq" secondAttribute="trailing" id="MGG-hl-e6K"/>
+            </constraints>
+            <size key="customSize" width="373" height="147"/>
+            <connections>
+                <outlet property="addMedicineLabel" destination="OcB-ru-1OD" id="jka-eo-Rpk"/>
+                <outlet property="addMedicineView" destination="bHs-qI-LvW" id="outlet-amv"/>
+                <outlet property="bannerImageView" destination="dl3-is-qsr" id="outlet-biv"/>
+                <outlet property="captionLabel" destination="Dcb-Eo-q4t" id="PiA-Cr-xK0"/>
+                <outlet property="cardView" destination="sIn-C8-GAq" id="outlet-cv"/>
+                <outlet property="headingLabel" destination="HO1-Mb-FSF" id="MOD-pO-wdf"/>
+                <outlet property="subHeadingLabel" destination="Tur-iB-wcE" id="bOq-xY-ohw"/>
+            </connections>
+            <point key="canvasLocation" x="350.38167938931298" y="146.83098591549296"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="Med Icon" width="164" height="164"/>
+        <image name="MedicineBanner" width="669" height="192"/>
+        <image name="chevron.right" catalog="system" width="97" height="128"/>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
