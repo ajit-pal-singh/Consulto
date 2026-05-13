@@ -2,16 +2,27 @@ import UIKit
 
 class OTPViewController: UIViewController {
 
+    // MARK: - Mode
+    enum OTPMode {
+        case signUp        // default: verify email after registration
+        case passwordReset // verify OTP from forgot-password flow
+    }
+
     // MARK: - Outlets
-    @IBOutlet var otpTextFields: [UITextField]! // Sort by X position in IB connections!
+    // Sort by X position in IB connections!
+    @IBOutlet var otpTextFields: [UITextField]!
     @IBOutlet weak var verifyButton: UIButton!
     @IBOutlet weak var buttonBottomConstraint: NSLayoutConstraint!
 
     /// Connect this to the label that shows "demomail***@gmail.com" in the storyboard
     @IBOutlet weak var emailLabel: UILabel!
 
-    /// Set by SignUpViewController before pushing.
+    /// Set by the presenting VC before pushing.
     var email: String = ""
+    /// Controls post-verification navigation destination.
+    var mode: OTPMode = .signUp
+    /// When true, ResetPasswordVC will pop back to ProfileSettings instead of root.
+    var isInAppFlow: Bool = false
 
     private var initialBottomConstant: CGFloat = 0
 
@@ -92,8 +103,14 @@ class OTPViewController: UIViewController {
 
         Task {
             do {
-                try await AuthManager.shared.verifyOTP(email: email, token: token)
-                await MainActor.run { self.pushProfileSetup() }
+                switch mode {
+                case .signUp:
+                    try await AuthManager.shared.verifyOTP(email: email, token: token)
+                    await MainActor.run { self.pushProfileSetup() }
+                case .passwordReset:
+                    try await AuthManager.shared.verifyPasswordResetOTP(email: email, token: token)
+                    await MainActor.run { self.pushResetPassword() }
+                }
             } catch {
                 await MainActor.run {
                     self.setLoading(false)
@@ -130,6 +147,13 @@ class OTPViewController: UIViewController {
         let storyboard = UIStoryboard(name: "Onboarding-Login", bundle: nil)
         guard let profileVC = storyboard.instantiateViewController(withIdentifier: "ProfileViewController") as? ProfileViewController else { return }
         navigationController?.pushViewController(profileVC, animated: true)
+    }
+
+    private func pushResetPassword() {
+        let storyboard = UIStoryboard(name: "Onboarding-Login", bundle: nil)
+        guard let resetVC = storyboard.instantiateViewController(withIdentifier: "ResetPasswordViewController") as? ResetPasswordViewController else { return }
+        resetVC.isInAppFlow = isInAppFlow   // forward the context
+        navigationController?.pushViewController(resetVC, animated: true)
     }
 
     private func setLoading(_ loading: Bool) {

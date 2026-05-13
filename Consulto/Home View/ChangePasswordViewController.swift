@@ -1,4 +1,6 @@
 import UIKit
+import Supabase
+import Auth
 
 class ChangePasswordViewController: UIViewController {
     
@@ -30,25 +32,44 @@ class ChangePasswordViewController: UIViewController {
     }
     
     @IBAction func changePasswordTapped(_ sender: UIButton) {
-        if currentPassword.isEmpty || newPassword.isEmpty || confirmPassword.isEmpty {
-            showAlert(title: "Error", message: "Please fill all fields.")
+        // MARK: Empty field checks
+        guard !currentPassword.isEmpty else {
+            showAlert(title: "Missing Field", message: "Please enter your current password.")
             return
         }
-        if newPassword != confirmPassword {
-            showAlert(title: "Error", message: "New passwords do not match.")
+        guard !newPassword.isEmpty else {
+            showAlert(title: "Missing Field", message: "Please enter a new password.")
             return
         }
-        if newPassword.count < 8 {
-            showAlert(title: "Weak Password", message: "Password must be at least 8 characters.")
+        guard !confirmPassword.isEmpty else {
+            showAlert(title: "Missing Field", message: "Please confirm your new password.")
+            return
+        }
+
+        // MARK: New password rules
+        guard newPassword == confirmPassword else {
+            showAlert(title: "Password Mismatch", message: "New password and confirm password do not match.")
+            return
+        }
+        guard newPassword.count >= 8 else {
+            showAlert(title: "Weak Password", message: "New password must be at least 8 characters.")
+            return
+        }
+        guard newPassword != currentPassword else {
+            showAlert(title: "Same Password", message: "New password must be different from your current password.")
             return
         }
 
         sender.isEnabled = false
-        sender.setTitle("Updating…", for: .normal)
+        sender.setTitle("Verifying…", for: .normal)
 
         Task {
             do {
-                try await AuthManager.shared.updatePassword(to: newPassword)
+                // Verify current password, then update — throws if current is wrong
+                try await AuthManager.shared.verifyAndUpdatePassword(
+                    current: currentPassword,
+                    new: newPassword
+                )
                 await MainActor.run {
                     self.showAlert(title: "Success", message: "Password updated successfully!") {
                         self.navigationController?.popViewController(animated: true)
@@ -58,10 +79,24 @@ class ChangePasswordViewController: UIViewController {
                 await MainActor.run {
                     sender.isEnabled = true
                     sender.setTitle("Change Password", for: .normal)
-                    self.showAlert(title: "Error", message: error.localizedDescription)
+
+                    // Provide a friendly message for wrong current password
+                    let message = self.isInvalidCredentialsError(error)
+                        ? "Current password is incorrect. Please try again."
+                        : error.localizedDescription
+                    self.showAlert(title: "Error", message: message)
                 }
             }
         }
+    }
+
+    /// Returns true if the Supabase error indicates wrong credentials.
+    private func isInvalidCredentialsError(_ error: Error) -> Bool {
+        let desc = error.localizedDescription.lowercased()
+        return desc.contains("invalid login") ||
+               desc.contains("invalid credentials") ||
+               desc.contains("email not confirmed") ||
+               desc.contains("wrong password")
     }
     
     private func showAlert(title: String, message: String, completion: (() -> Void)? = nil) {
@@ -72,75 +107,44 @@ class ChangePasswordViewController: UIViewController {
         present(alert, animated: true)
     }
     @IBAction func forgotPasswordTapped(_ sender: Any) {
-        showEmailPromptAlert()
+        let button = sender as? UIButton
+        button?.isEnabled = false
+
+        Task {
+            do {
+                // Get the current signed-in user's email — no need to ask them to type it
+                guard let email = try? await supabase.auth.session.user.email,
+                      !email.isEmpty else {
+                    await MainActor.run {
+                        button?.isEnabled = true
+                        self.showAlert(title: "Error", message: "Unable to retrieve your account email. Please try again.")
+                    }
+                    return
+                }
+
+                // Send OTP to that email
+                try await AuthManager.shared.sendPasswordResetOTP(to: email)
+
+                await MainActor.run {
+                    button?.isEnabled = true
+                    self.pushOTPForPasswordReset(email: email)
+                }
+            } catch {
+                await MainActor.run {
+                    button?.isEnabled = true
+                    self.showAlert(title: "Error", message: error.localizedDescription)
+                }
+            }
+        }
     }
-    
-    private func showEmailPromptAlert() {
-        let alert = UIAlertController(title: "Reset Password", message: "Enter your registered email address to receive a verification code.", preferredStyle: .alert)
-        alert.addTextField { textField in
-            textField.placeholder = "Email Address"
-            textField.keyboardType = .emailAddress
-        }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Send Code", style: .default) { [weak self] _ in
-            guard let email = alert.textFields?.first?.text, !email.isEmpty else {
-                self?.showAlert(title: "Error", message: "Please enter a valid email address.")
-                return
-            }
-            // Simulate sending code
-            self?.showVerifyCodeAlert()
-        })
-        present(alert, animated: true)
-    }
-    
-    private func showVerifyCodeAlert() {
-        let alert = UIAlertController(title: "Enter Code", message: "Enter the verification code sent to your email.", preferredStyle: .alert)
-        alert.addTextField { textField in
-            textField.placeholder = "Verification Code"
-            textField.keyboardType = .numberPad
-        }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Verify", style: .default) { [weak self] _ in
-            guard let code = alert.textFields?.first?.text, !code.isEmpty else {
-                self?.showAlert(title: "Error", message: "Please enter the verification code.")
-                return
-            }
-            // Simulate verifying code
-            self?.showResetPasswordAlert()
-        })
-        present(alert, animated: true)
-    }
-    
-    private func showResetPasswordAlert() {
-        let alert = UIAlertController(title: "Create New Password", message: "Enter and confirm your new password.", preferredStyle: .alert)
-        alert.addTextField { textField in
-            textField.placeholder = "New Password"
-            textField.isSecureTextEntry = true
-        }
-        alert.addTextField { textField in
-            textField.placeholder = "Confirm Password"
-            textField.isSecureTextEntry = true
-        }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Save", style: .default) { [weak self] _ in
-            guard let textFields = alert.textFields, textFields.count == 2,
-                  let newPass = textFields[0].text, !newPass.isEmpty,
-                  let confirmPass = textFields[1].text, !confirmPass.isEmpty else {
-                self?.showAlert(title: "Error", message: "Please fill both fields.")
-                return
-            }
-            
-            if newPass != confirmPass {
-                self?.showAlert(title: "Error", message: "Passwords do not match.")
-                return
-            }
-            
-            // Password successfully reset
-            self?.showAlert(title: "Success", message: "Your password has been successfully reset!") {
-                self?.navigationController?.popViewController(animated: true)
-            }
-        })
-        present(alert, animated: true)
+
+    private func pushOTPForPasswordReset(email: String) {
+        let storyboard = UIStoryboard(name: "Onboarding-Login", bundle: nil)
+        guard let otpVC = storyboard.instantiateViewController(withIdentifier: "OTPViewController") as? OTPViewController else { return }
+        otpVC.email = email
+        otpVC.mode = .passwordReset
+        otpVC.isInAppFlow = true   // tells ResetPasswordVC to pop back to ProfileSettings
+        navigationController?.pushViewController(otpVC, animated: true)
     }
 }
 

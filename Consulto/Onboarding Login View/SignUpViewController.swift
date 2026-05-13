@@ -124,14 +124,14 @@ extension SignUpViewController: UITableViewDelegate, UITableViewDataSource {
             cell.inputTextField.text = emailText
             cell.didChangeText = { [weak self] text in self?.emailText = text }
         } else if indexPath.section == 1 {
+            cell.setupPasswordToggle()
             cell.inputTextField.placeholder = "Create new password"
-            cell.inputTextField.isSecureTextEntry = true
             cell.inputTextField.keyboardType = .default
             cell.inputTextField.text = passwordText
             cell.didChangeText = { [weak self] text in self?.passwordText = text }
         } else {
+            cell.setupPasswordToggle()
             cell.inputTextField.placeholder = "Confirm new password"
-            cell.inputTextField.isSecureTextEntry = true
             cell.inputTextField.keyboardType = .default
             cell.inputTextField.text = confirmPasswordText
             cell.didChangeText = { [weak self] text in self?.confirmPasswordText = text }

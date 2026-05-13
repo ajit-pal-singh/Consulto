@@ -13,7 +13,6 @@ class LoginViewController: UIViewController {
     // MARK: - Outlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var loginButton: UIButton!
-    @IBOutlet weak var createAccountButton: UIButton!
 
     // Form state
     private var emailText: String = ""
@@ -70,6 +69,24 @@ class LoginViewController: UIViewController {
                 }
             }
         }
+    }
+
+    /// Called from storyboard "Continue with Apple" button
+    @IBAction func appleSignInTapped(_ sender: UIButton) {
+        let alert = UIAlertController(
+            title: "Coming Soon",
+            message: "Sign in with Apple is currently unavailable and will be introduced in a future update. Please use email or Google to continue.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Got It", style: .default))
+        present(alert, animated: true)
+    }
+
+    /// Called from storyboard "Forgot Password?" button
+    @IBAction func forgotPasswordTapped(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "Onboarding-Login", bundle: nil)
+        guard let enterEmailVC = storyboard.instantiateViewController(withIdentifier: "EnterEmailViewController") as? EnterEmailViewController else { return }
+        navigationController?.pushViewController(enterEmailVC, animated: true)
     }
 
     /// Called from storyboard "Continue with Google" button
@@ -202,8 +219,8 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
             cell.inputTextField.text = emailText
             cell.didChangeText = { [weak self] text in self?.emailText = text }
         } else {
+            cell.setupPasswordToggle()
             cell.inputTextField.placeholder = "Enter your password"
-            cell.inputTextField.isSecureTextEntry = true
             cell.inputTextField.keyboardType = .default
             cell.inputTextField.text = passwordText
             cell.didChangeText = { [weak self] text in self?.passwordText = text }

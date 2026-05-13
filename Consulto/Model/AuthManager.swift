@@ -12,7 +12,12 @@ import GoogleSignIn
 // MARK: - Supabase client (shared singleton)
 let supabase = SupabaseClient(
     supabaseURL: SupabaseConfig.url,
-    supabaseKey: SupabaseConfig.anonKey
+    supabaseKey: SupabaseConfig.anonKey,
+    options: .init(
+        auth: .init(
+            emitLocalSessionAsInitialSession: true
+        )
+    )
 )
 
 // MARK: - Decodable profile row (matches public.profiles table)
@@ -196,6 +201,41 @@ final class AuthManager {
 
     /// Update the authenticated user's password.
     func updatePassword(to newPassword: String) async throws {
+        try await supabase.auth.update(user: .init(password: newPassword))
+    }
+
+    /// Verifies `currentPassword` by re-signing in, then updates to `newPassword`.
+    /// Throws if the current password is wrong or the user is not authenticated.
+    func verifyAndUpdatePassword(current currentPassword: String, new newPassword: String) async throws {
+        // 1. Get the signed-in user's email
+        guard let user = try? await supabase.auth.session.user,
+              let email = user.email, !email.isEmpty else {
+            throw AuthError.notAuthenticated
+        }
+        // 2. Re-authenticate — this will throw if the password is wrong
+        try await supabase.auth.signIn(email: email, password: currentPassword)
+        // 3. Current password verified — now set the new one
+        try await supabase.auth.update(user: .init(password: newPassword))
+    }
+
+    /// Sends a password-reset OTP to the given email (forgot password flow).
+    func sendPasswordResetOTP(to email: String) async throws {
+        try await supabase.auth.resetPasswordForEmail(email)
+    }
+
+    /// Verifies the recovery OTP sent via resetPasswordForEmail.
+    /// NOTE: Uses type .recovery — distinct from the .signup OTP used in sign-up flow.
+    func verifyPasswordResetOTP(email: String, token: String) async throws {
+        try await supabase.auth.verifyOTP(
+            email: email,
+            token: token,
+            type: .recovery
+        )
+    }
+
+    /// Updates the password after the reset OTP has been verified.
+    /// Must be called while a valid Supabase session exists (i.e. after OTP verification succeeds).
+    func updatePasswordForReset(to newPassword: String) async throws {
         try await supabase.auth.update(user: .init(password: newPassword))
     }
 
