@@ -67,6 +67,7 @@ final class VitalChartView: UIView {
     private var latestHighlightWorkItem: DispatchWorkItem?
     private var watchHRLatestDotLayer: CAShapeLayer?
     private var watchHRLatestLabel: UILabel?
+    private var watchHRGreyLayers: [CAShapeLayer] = []
 
     private static let sharedDF: DateFormatter = {
         let df = DateFormatter()
@@ -209,10 +210,7 @@ final class VitalChartView: UIView {
                 scrollView.setContentOffset(CGPoint(x: min(maxScroll, targetX), y: 0), animated: false)
             } else if config.isContinuousWeekly {
                 let lastDataWeekStart = startOfWeek(for: lastDataDate)
-                let today = cal.startOfDay(for: Date())
-                let currentWeekStart = startOfWeek(for: today)
-                let anchorWeekStart = max(lastDataWeekStart, currentWeekStart)
-                let weekOffset = cal.dateComponents([.day], from: minWeekStart, to: anchorWeekStart).day ?? (1000 * 7)
+                let weekOffset = cal.dateComponents([.day], from: minWeekStart, to: lastDataWeekStart).day ?? (1000 * 7)
                 let ox = config.plotInset + CGFloat(weekOffset) * weeklyColumnWidth
                 let targetX = max(0, ox - config.plotInset)
                 let maxScroll = max(0, scrollView.contentSize.width - scrollView.bounds.width)
@@ -221,11 +219,7 @@ final class VitalChartView: UIView {
                 var comps = cal.dateComponents([.year, .month], from: lastDataDate)
                 comps.day = 1
                 let lastDataMonthStart = cal.date(from: comps) ?? lastDataDate
-                var currentComps = cal.dateComponents([.year, .month], from: cal.startOfDay(for: Date()))
-                currentComps.day = 1
-                let currentMonthStart = cal.date(from: currentComps) ?? lastDataMonthStart
-                let anchorMonthStart = max(lastDataMonthStart, currentMonthStart)
-                let dayOffset = cal.dateComponents([.day], from: minMonthStart, to: anchorMonthStart).day ?? 0
+                let dayOffset = cal.dateComponents([.day], from: minMonthStart, to: lastDataMonthStart).day ?? 0
                 let ox = config.plotInset + CGFloat(dayOffset) * monthlyDayWidth
                 let targetX = max(0, ox - config.plotInset)
                 let maxScroll = max(0, scrollView.contentSize.width - scrollView.bounds.width)
@@ -327,23 +321,33 @@ final class VitalChartView: UIView {
                 let actualMax = vals.max()!
                 
                 let maxDiff = max(abs(actualMax - base), abs(base - actualMin))
+                var step: Double = 0.5
                 if maxDiff > 10 {
-                    bodyWeightStep = 5.0
+                    step = 5.0
                 } else if maxDiff > 5 {
-                    bodyWeightStep = 2.0
+                    step = 2.0
                 } else if maxDiff > 2 {
-                    bodyWeightStep = 1.0
-                } else {
-                    bodyWeightStep = 0.5
+                    step = 1.0
                 }
                 
-                var bMin = base - bodyWeightStep
-                var bMax = base + bodyWeightStep
-                while actualMin <= bMin { bMin -= bodyWeightStep }
-                while actualMax >= bMax { bMax += bodyWeightStep }
+                // Ensure step is large enough to keep labels count <= 6 (5 intervals max)
+                while (actualMax - actualMin) / step > 5.0 {
+                    if step == 0.5 { step = 1.0 }
+                    else if step == 1.0 { step = 2.0 }
+                    else if step == 2.0 { step = 5.0 }
+                    else if step == 5.0 { step = 10.0 }
+                    else { step *= 2 }
+                }
                 
-                yMin = bMin - (bodyWeightStep * 0.4)
-                yMax = bMax + (bodyWeightStep * 0.4)
+                bodyWeightStep = step
+                
+                var bMin = base - step
+                var bMax = base + step
+                while actualMin <= bMin { bMin -= step }
+                while actualMax >= bMax { bMax += step }
+                
+                yMin = bMin - (step * 0.4)
+                yMax = bMax + (step * 0.4)
             } else {
                 bodyWeightStep = 0.5
                 yMin = base - 0.7
@@ -387,10 +391,19 @@ final class VitalChartView: UIView {
         watchHRLatestDotLayer = nil
         watchHRLatestLabel?.removeFromSuperview()
         watchHRLatestLabel = nil
+        watchHRGreyLayers.removeAll()
         yAxisView.subviews.forEach              { $0.removeFromSuperview() }
         yAxisView.layer.sublayers?.forEach      { $0.removeFromSuperlayer() }
         plotCanvas.subviews.forEach             { $0.removeFromSuperview() }
         plotCanvas.layer.sublayers?.forEach     { $0.removeFromSuperlayer() }
+
+        // For continuous charts, scope the Y-axis to the currently-visible
+        // data so each viewport gets its own correctly-scaled axis.
+        if config.isContinuousDaily || config.isContinuousWeekly || config.isContinuousMonthly {
+            let visiblePoints = plottedPointsForCurrentViewport()
+            computeVisibleYRange(for: visiblePoints)
+        }
+        normalizeYPadding()
 
         drawHorizontalGrid()
         if config.isContinuousDaily || config.isContinuousWeekly || config.isContinuousMonthly {
@@ -436,7 +449,7 @@ final class VitalChartView: UIView {
     private func chartH() -> CGFloat { plotCanvas.bounds.height - config.xAxisHeight }
 
     private func yPos(_ value: Double) -> CGFloat {
-        let topPad: CGFloat = 3
+        let topPad: CGFloat = 8
         guard yMax > yMin else { return topPad }
         let availableH = chartH() - topPad
         return topPad + availableH * CGFloat((yMax - value) / (yMax - yMin))
@@ -571,30 +584,57 @@ final class VitalChartView: UIView {
 
     private func generateYLabels() -> [Double] {
         if config.title == "Heart Rate" || config.title == "Blood Pressure" || config.title == "Blood Glucose" {
-            let step = config.title == "Blood Pressure" ? 20.0 : 10.0
-            let start = ceil(yMin / step) * step
-            var labels: [Double] = []
-            var curr = start
-            while curr <= yMax {
-                labels.append(curr)
-                curr += step
+            var step = config.title == "Blood Pressure" ? 20.0 : 10.0
+            let maxLabels = 6
+
+            // Build labels with the current step; if too many, double the step and retry.
+            func buildLabels(step: Double) -> [Double] {
+                let start = ceil(yMin / step) * step
+                var result: [Double] = []
+                var curr = start
+                while curr <= yMax {
+                    result.append(curr)
+                    curr += step
+                }
+                return result
+            }
+
+            var labels = buildLabels(step: step)
+            while labels.count > maxLabels {
+                step *= 2
+                labels = buildLabels(step: step)
             }
             return labels
         } else if config.title == "Body Weight" {
             let base = config.baselineValue > 0 ? config.baselineValue : ((yMin + yMax) / 2)
-            let step = bodyWeightStep
-            var labels: [Double] = []
-            var curr = base
-            while curr >= yMin {
-                labels.append(curr)
-                curr -= step
+            var step = bodyWeightStep
+            let maxLabels = 4
+
+            func buildLabels(step: Double) -> [Double] {
+                var result: [Double] = []
+                var curr = base
+                while curr >= yMin {
+                    result.append(curr)
+                    curr -= step
+                }
+                curr = base + step
+                while curr <= yMax {
+                    result.append(curr)
+                    curr += step
+                }
+                return Array(Set(result)).sorted()
             }
-            curr = base + step
-            while curr <= yMax {
-                labels.append(curr)
-                curr += step
+
+            var labels = buildLabels(step: step)
+            while labels.count > maxLabels {
+                if step == 0.5 { step = 1.0 }
+                else if step == 1.0 { step = 2.0 }
+                else if step == 2.0 { step = 5.0 }
+                else if step == 5.0 { step = 10.0 }
+                else { step *= 2 }
+                labels = buildLabels(step: step)
             }
-            return Array(Set(labels)).sorted()
+            return labels
         } else {
             let steps = config.yGridLines
             var labels: [Double] = []
@@ -606,6 +646,117 @@ final class VitalChartView: UIView {
         }
     }
 
+    /// Recomputes yMin / yMax from only the currently-visible data points.
+    /// Uses the same ±step padding logic as computeRange() but scoped to
+    /// what the user can actually see right now.  Falls back to global range
+    /// when there are no visible values (e.g. empty viewport).
+    private func computeVisibleYRange(for visiblePoints: [ChartDataPoint]) {
+        var vals: [Double] = []
+        for pt in visiblePoints {
+            if let v = pt.value    { vals.append(v) }
+            if let v = pt.minValue { vals.append(v) }
+            if let v = pt.maxValue { vals.append(v) }
+        }
+        guard !vals.isEmpty else { return }   // keep current global range if no data
+
+        let actualMin = vals.min()!
+        let actualMax = vals.max()!
+
+        if config.title == "Heart Rate" {
+            let step = 10.0
+            var lo = (floor(actualMin / step) - 1) * step   // one step below the floor
+            var hi = (ceil(actualMax  / step) + 1) * step   // one step above the ceiling
+            // guarantee at least two grid lines
+            if hi - lo < step * 2 { lo -= step; hi += step }
+            yMin = lo - 4
+            yMax = hi + 2
+
+        } else if config.title == "Blood Pressure" {
+            let step = 20.0
+            var lo = (floor(actualMin / step) - 1) * step
+            var hi = (ceil(actualMax  / step) + 1) * step
+            if hi - lo < step * 2 { lo -= step; hi += step }
+            yMin = lo - 5
+            yMax = hi + 5
+
+        } else if config.title == "Blood Glucose", let glucoseRange = config.glucoseTargetRange {
+            let step = 10.0
+            var lo = (floor(actualMin / step) - 1) * step
+            var hi = (ceil(actualMax  / step) + 1) * step
+            // never hide the target-range band
+            lo = min(lo, floor(glucoseRange.min / step) * step)
+            hi = max(hi, ceil(glucoseRange.max  / step) * step + step)
+            yMin = lo
+            yMax = hi
+
+        } else if config.title == "Body Weight" {
+            let base = config.baselineValue > 0 ? config.baselineValue : ((actualMin + actualMax) / 2)
+            let maxDiff = max(abs(actualMax - base), abs(base - actualMin))
+            var step: Double
+            if maxDiff > 10      { step = 5.0 }
+            else if maxDiff > 5  { step = 2.0 }
+            else if maxDiff > 2  { step = 1.0 }
+            else                 { step = 0.5 }
+
+            // Ensure step is large enough to keep labels count <= 6 (5 intervals max)
+            while (actualMax - actualMin) / step > 5.0 {
+                if step == 0.5 { step = 1.0 }
+                else if step == 1.0 { step = 2.0 }
+                else if step == 2.0 { step = 5.0 }
+                else if step == 5.0 { step = 10.0 }
+                else { step *= 2 }
+            }
+
+            bodyWeightStep = step
+            var bMin = base - step
+            var bMax = base + step
+            while actualMin <= bMin { bMin -= step }
+            while actualMax >= bMax { bMax += step }
+            yMin = bMin - (step * 0.4)
+            yMax = bMax + (step * 0.4)
+
+        } else {
+            let pad = max((actualMax - actualMin) * 0.20, 5)
+            yMin = (actualMin - pad).rounded(.down)
+            yMax = (actualMax + pad).rounded(.up)
+        }
+    }
+
+    /// Adjusts yMin / yMax so that the visual gap above the top grid line
+    /// and below the bottom grid line is the same across every vital type.
+    /// Uses half the label step as padding on each side.
+    private func normalizeYPadding() {
+        let labels = generateYLabels()
+        guard labels.count >= 2,
+              let topLabel = labels.last,
+              let bottomLabel = labels.first else { return }
+        let step = labels[1] - labels[0]
+        let padding = step * 0.3
+        yMax = topLabel + padding
+        yMin = bottomLabel - padding
+    }
+
+    /// Tears down and redraws only the Y-axis labels and the horizontal grid
+    /// lines — much cheaper than a full redraw() when only the range changed.
+    private func refreshYAxis() {
+        // Clear old axis labels
+        yAxisView.subviews.forEach { $0.removeFromSuperview() }
+        yAxisView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+
+        // Redraw labels
+        drawYAxisLabels()
+
+        // Redraw horizontal grid
+        let plotW  = plotCanvas.bounds.width
+        let labels = generateYLabels()
+        let path = UIBezierPath()
+        for yValue in labels {
+            let y = self.yPos(yValue)
+            path.move(to: CGPoint(x: 0,     y: y))
+            path.addLine(to: CGPoint(x: plotW, y: y))
+        }
+        horizontalGridLayer?.path = path.cgPath
+    }
 
     private func drawYAxisLabels() {
         let font  = UIFont.systemFont(ofSize: 11, weight: .regular)
@@ -1072,8 +1223,8 @@ final class VitalChartView: UIView {
             if config.title == "Blood Pressure" || config.title == "Body Weight" {
                 return max(6, continuousColumnWidth * 0.15)
             }
-            // Watch HR pills — slimmer
-            if config.title == "Heart Rate" && config.chartType == .rangeBar {
+            // Watch HR & Blood Glucose pills — slimmer
+            if (config.title == "Heart Rate" || config.title == "Blood Glucose") && config.chartType == .rangeBar {
                 return max(5, weeklyColumnWidth * 0.26)
             }
             return max(6, weeklyColumnWidth * 0.40)
@@ -1109,7 +1260,6 @@ final class VitalChartView: UIView {
         }) : nil
 
         let greyFill = UIColor.systemGray2.withAlphaComponent(0.45).cgColor
-        var greyLayers: [CAShapeLayer] = []
 
         for dp in points {
             guard let sourceIndex = pointIndexByID[dp.id] else { continue }
@@ -1119,8 +1269,9 @@ final class VitalChartView: UIView {
             let top  = yPos(hi)
             let barH = max(yPos(lo) - top, 4)
 
-            // Skip translucent background pill for Heart Rate (cleaner look)
-            if !isHRPill {
+            // Skip translucent background pill for Heart Rate and Blood Glucose (cleaner look)
+            let skipBackgroundPill = config.title == "Heart Rate" || config.title == "Blood Glucose"
+            if !skipBackgroundPill {
                 let bgR = expandedPillRect(forDarkPill: CGRect(x: cx - barW/2, y: top, width: barW, height: barH), withinHeight: h)
                 let bg  = CAShapeLayer()
                 bg.path      = UIBezierPath(roundedRect: bgR, cornerRadius: barW/2).cgPath
@@ -1137,7 +1288,7 @@ final class VitalChartView: UIView {
             fg.fillColor = pillColor
             plotCanvas.layer.addSublayer(fg)
 
-            if isWatchHRDaily && !isLatest { greyLayers.append(fg) }
+            if isWatchHRDaily && !isLatest { watchHRGreyLayers.append(fg) }
 
             // ── Latest pill: dot + value label ──
             if isLatest {
@@ -1179,17 +1330,25 @@ final class VitalChartView: UIView {
         }
 
         // ── Schedule the "reveal all" animation after 1.5 s ──
-        guard isWatchHRDaily, !greyLayers.isEmpty else { return }
-        let tintCG = color.cgColor
+        guard isWatchHRDaily, !watchHRGreyLayers.isEmpty else { return }
         let workItem = DispatchWorkItem { [weak self] in
-            guard let self = self else { return }
-            // Animate grey pills → tint colour
+            self?.revealWatchHRLatestIntro()
+        }
+        latestHighlightWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: workItem)
+    }
+
+    private func revealWatchHRLatestIntro(animated: Bool = true) {
+        guard !watchHRGreyLayers.isEmpty else { return }
+        let tintCG = config.tintColor.cgColor
+        
+        if animated {
             CATransaction.begin()
             CATransaction.setAnimationDuration(0.5)
             CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: .easeOut))
-            for layer in greyLayers { layer.fillColor = tintCG }
+            for layer in watchHRGreyLayers { layer.fillColor = tintCG }
             CATransaction.commit()
-            // Fade out dot + label
+            
             UIView.animate(withDuration: 0.3) {
                 self.watchHRLatestDotLayer?.opacity = 0
                 self.watchHRLatestLabel?.alpha = 0
@@ -1198,10 +1357,22 @@ final class VitalChartView: UIView {
                 self.watchHRLatestDotLayer = nil
                 self.watchHRLatestLabel?.removeFromSuperview()
                 self.watchHRLatestLabel = nil
+                self.watchHRGreyLayers.removeAll()
             }
+        } else {
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            for layer in watchHRGreyLayers { layer.fillColor = tintCG }
+            self.watchHRLatestDotLayer?.opacity = 0
+            CATransaction.commit()
+            
+            self.watchHRLatestLabel?.alpha = 0
+            self.watchHRLatestDotLayer?.removeFromSuperlayer()
+            self.watchHRLatestDotLayer = nil
+            self.watchHRLatestLabel?.removeFromSuperview()
+            self.watchHRLatestLabel = nil
+            self.watchHRGreyLayers.removeAll()
         }
-        latestHighlightWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: workItem)
     }
 
 
@@ -1522,30 +1693,36 @@ final class VitalChartView: UIView {
             ]
         ))
         valueLbl.attributedText = valAttr
-        valueLbl.textAlignment = .center
+        valueLbl.textAlignment = .left
 
         let dateLbl = UILabel()
         dateLbl.text = dateText
         dateLbl.font = UIFont.systemFont(ofSize: 13, weight: .medium).rounded
         dateLbl.textColor = .secondaryLabel
-        dateLbl.textAlignment = .center
+        dateLbl.textAlignment = .left
 
         // For step-line (Resting HR) add a header label matching Apple Health style
         // For Watch HR range pills add a "RANGE" header
         var stackViews: [UIView] = []
-        if config.chartType == .stepLine {
+        let isRestingHR = config.title == "Heart Rate" && (config.chartType == .stepLine || dp.glucoseType == "Resting")
+        
+        if isRestingHR {
             let headerLbl = UILabel()
             headerLbl.text      = "RESTING HEART RATE"
             headerLbl.font      = UIFont.systemFont(ofSize: 14, weight: .semibold).rounded
             headerLbl.textColor = .secondaryLabel
-            headerLbl.textAlignment = .center
+            headerLbl.textAlignment = .left
             stackViews.append(headerLbl)
         } else if config.chartType == .rangeBar && config.title == "Heart Rate" {
             let headerLbl = UILabel()
-            headerLbl.text      = "RANGE"
+            if let lo = dp.minValue, let hi = dp.maxValue, abs(hi - lo) > 0.01 {
+                headerLbl.text = "RANGE"
+            } else {
+                headerLbl.text = "AVERAGE"
+            }
             headerLbl.font      = UIFont.systemFont(ofSize: 14, weight: .semibold).rounded
             headerLbl.textColor = .secondaryLabel
-            headerLbl.textAlignment = .center
+            headerLbl.textAlignment = .left
             stackViews.append(headerLbl)
         }
         stackViews.append(contentsOf: [valueLbl, dateLbl])
@@ -1553,7 +1730,7 @@ final class VitalChartView: UIView {
         let stack = UIStackView(arrangedSubviews: stackViews)
         stack.axis = .vertical
         stack.spacing = 2
-        stack.alignment = .center
+        stack.alignment = .leading
         stack.translatesAutoresizingMaskIntoConstraints = false
 
         tooltip.addSubview(stack)
@@ -1641,8 +1818,24 @@ final class VitalChartView: UIView {
 extension VitalChartView: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         clearHighlight()
+        
+        if scrollView.isTracking || scrollView.isDragging || scrollView.isDecelerating {
+            if latestHighlightWorkItem != nil {
+                latestHighlightWorkItem?.cancel()
+                latestHighlightWorkItem = nil
+                revealWatchHRLatestIntro(animated: true)
+            }
+        }
+        
         if config.isContinuousDaily || config.isContinuousWeekly || config.isContinuousMonthly {
             updateDynamicViewport()
+
+            // Recompute Y-axis from the data currently visible in the viewport
+            let visiblePoints = plottedPointsForCurrentViewport()
+            computeVisibleYRange(for: visiblePoints)
+            normalizeYPadding()
+            refreshYAxis()
+
             let periodKey = currentVisiblePeriodKey()
             if periodKey != lastRenderedPeriodKey {
                 redraw()

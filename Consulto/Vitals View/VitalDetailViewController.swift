@@ -51,6 +51,7 @@ class VitalDetailViewController: UIViewController {
         
         navigationItem.largeTitleDisplayMode = .never
         
+
         view.backgroundColor = UIColor(hex: "#F5F5F5")
         
         if let scrollView = view.subviews.first(where: { $0 is UIScrollView }) {
@@ -294,7 +295,7 @@ class VitalDetailViewController: UIViewController {
         let latestRecordedDate: Date? = {
             let df = DateFormatter()
             df.dateFormat = "dd-MM-yyyy"
-            return reading.hourlyChartData
+            return points
                 .compactMap { $0.fullDate }
                 .compactMap { df.date(from: $0) }
                 .max()
@@ -312,6 +313,12 @@ class VitalDetailViewController: UIViewController {
             effectiveChartType = .rangeBar
         } else if isRestingHRDaily {
             effectiveChartType = .stepLine
+        } else if reading.title == "Heart Rate" && selectedPeriod != 0 {
+            // Manual HR weekly/monthly: show min/max pills like Watch
+            effectiveChartType = .rangeBar
+        } else if reading.title == "Blood Glucose" && selectedPeriod != 0 {
+            // Blood Glucose weekly/monthly: show min/max pills
+            effectiveChartType = .rangeBar
         } else {
             effectiveChartType = reading.chartType
         }
@@ -379,12 +386,18 @@ class VitalDetailViewController: UIViewController {
             today: today
         )
 
+        let useMinMaxForDaily = reading.title == "Heart Rate" && currentFilterType == HeartRateSourceType.watch.rawValue
+
         if selectedPeriod == 0 {
-            chartRangeTagLabel?.text = window.label.contains("–") ? "RANGE" : ""
+            chartRangeTagLabel?.text = rangeTagLabel(for: reading, points: window.points, label: window.label, isDaily: true, useMinMaxForDaily: useMinMaxForDaily)
             chartDateLabel?.text = window.label
-            setEdgeValueLabel(from: window.points, reading: reading, unit: unit)
+            if useMinMaxForDaily {
+                setValueLabel(from: window.points, reading: reading, unit: unit)
+            } else {
+                setEdgeValueLabel(from: window.points, reading: reading, unit: unit)
+            }
         } else {
-            chartRangeTagLabel?.text = extremaDateTag(from: window.points, reading: reading, df: df)
+            chartRangeTagLabel?.text = rangeTagLabel(for: reading, points: window.points, label: window.label, isDaily: false, useMinMaxForDaily: false)
             chartDateLabel?.text = window.label
             setValueLabel(from: window.points, reading: reading, unit: unit)
         }
@@ -493,8 +506,35 @@ class VitalDetailViewController: UIViewController {
         return "--"
     }
 
-    private func extremaDateTag(from points: [ChartDataPoint], reading: VitalReading, df: DateFormatter) -> String {
-        return "RANGE"
+    private func rangeTagLabel(for reading: VitalReading, points: [ChartDataPoint], label: String, isDaily: Bool, useMinMaxForDaily: Bool) -> String {
+        let isSingleValue: Bool
+        if isDaily && !useMinMaxForDaily {
+            let ordered = sortChronologically(points)
+            if let startPoint = ordered.first, let endPoint = ordered.last {
+                isSingleValue = formattedPointValue(startPoint, reading: reading) == formattedPointValue(endPoint, reading: reading)
+            } else {
+                isSingleValue = false
+            }
+        } else {
+            let allVals: [Double] = points.compactMap { $0.value }
+                                  + points.compactMap { $0.minValue }
+                                  + points.compactMap { $0.maxValue }
+            if let lo = allVals.min(), let hi = allVals.max(), abs(hi - lo) < 0.01 {
+                isSingleValue = true
+            } else {
+                isSingleValue = false
+            }
+        }
+
+        if reading.title == "Heart Rate" {
+            if currentFilterType == HeartRateSourceType.resting.rawValue {
+                return "AVERAGE"
+            } else if currentFilterType == HeartRateSourceType.watch.rawValue {
+                return isSingleValue && !points.isEmpty ? "AVERAGE" : "RANGE"
+            }
+        }
+        
+        return isDaily && !useMinMaxForDaily ? (label.contains("–") ? "RANGE" : "") : "RANGE"
     }
 
     private func makeVisibleWindow(
@@ -828,12 +868,12 @@ class VitalDetailViewController: UIViewController {
             }
             switch selectedPeriod {
             case 1:
-                return buildDailyPoints(from: filteredHourly, reading: reading)
+                return buildManualDailyRangeBuckets(from: filteredHourly, isGlucose: true)
             case 2:
                 let persistedFiltered = reading.persistedHourlyChartData.filter {
                     ($0.glucoseType ?? BloodGlucoseType.fasting.rawValue) == currentFilterType
                 }
-                return buildDailyPoints(from: persistedFiltered, reading: reading)
+                return buildManualDailyRangeBuckets(from: persistedFiltered, isGlucose: true)
             default:
                 return filteredHourly
             }
@@ -864,8 +904,8 @@ class VitalDetailViewController: UIViewController {
                 if isWatchSource {
                     return buildWatchDailyRangeBuckets(from: source)
                 }
-                // Resting + Manual weekly: daily averaged line
-                return buildDailyPoints(from: source, reading: reading)
+                // Manual + Resting weekly: per-day min/max pills
+                return buildManualDailyRangeBuckets(from: source)
             case 2: // Monthly
                 let persistedFiltered = reading.persistedHourlyChartData.filter {
                     ($0.glucoseType ?? HeartRateSourceType.manual.rawValue) == currentFilterType
@@ -874,8 +914,8 @@ class VitalDetailViewController: UIViewController {
                 if isWatchSource {
                     return buildWatchDailyRangeBuckets(from: persistedSource)
                 }
-                // Resting + Manual monthly: daily averaged line
-                return buildDailyPoints(from: persistedSource, reading: reading)
+                // Manual + Resting monthly: per-day min/max pills
+                return buildManualDailyRangeBuckets(from: persistedSource)
             default:
                 return source
             }
@@ -988,6 +1028,40 @@ class VitalDetailViewController: UIViewController {
         }
     }
 
+    /// Groups Manual / Resting HR readings by calendar day, returning per-day
+    /// min/max range-bar pills — same visual style as Watch HR weekly/monthly.
+    /// Collects both `.value` and `.minValue`/`.maxValue` fields so it works
+    /// regardless of the data source format.
+    private func buildManualDailyRangeBuckets(from points: [ChartDataPoint], isGlucose: Bool = false) -> [ChartDataPoint] {
+        let df = DateFormatter()
+        df.dateFormat = "dd-MM-yyyy"
+
+        var buckets: [String: [Double]] = [:]
+
+        for point in points {
+            guard let fullDate = point.fullDate else { continue }
+            if let v = point.value    { buckets[fullDate, default: []].append(v) }
+            if let v = point.minValue { buckets[fullDate, default: []].append(v) }
+            if let v = point.maxValue { buckets[fullDate, default: []].append(v) }
+        }
+
+        return buckets.compactMap { (fullDate, values) -> ChartDataPoint? in
+            guard df.date(from: fullDate) != nil,
+                  let minBPM = values.min(),
+                  let maxBPM = values.max() else { return nil }
+            return ChartDataPoint(
+                day: fullDate,
+                min: isGlucose ? minBPM : floor(minBPM),
+                max: isGlucose ? maxBPM : floor(maxBPM),
+                fullDate: fullDate,
+                glucoseType: currentFilterType
+            )
+        }
+        .sorted {
+            (df.date(from: $0.fullDate ?? "") ?? .distantPast) < (df.date(from: $1.fullDate ?? "") ?? .distantPast)
+        }
+    }
+
     private func buildDailyPoints(from points: [ChartDataPoint], reading: VitalReading) -> [ChartDataPoint] {
         let df = DateFormatter()
         df.dateFormat = "dd-MM-yyyy"
@@ -1037,6 +1111,260 @@ class VitalDetailViewController: UIViewController {
         }
     }
 
+    @IBAction func editButtonTapped(_ sender: Any) {
+        guard let currentReading = reading else { return }
+        
+        let filteredHourly: [ChartDataPoint]
+        if currentReading.title == "Blood Glucose" {
+            filteredHourly = currentReading.persistedHourlyChartData.filter { ($0.glucoseType ?? BloodGlucoseType.fasting.rawValue) == currentFilterType }
+        } else if currentReading.title == "Heart Rate" {
+            filteredHourly = currentReading.persistedHourlyChartData.filter { ($0.glucoseType ?? HeartRateSourceType.manual.rawValue) == currentFilterType }
+        } else {
+            filteredHourly = currentReading.persistedHourlyChartData
+        }
+        
+        let sortedPoints = sortChronologically(filteredHourly)
+        let lastThreePoints = Array(sortedPoints.suffix(3)).reversed()
+        
+        if lastThreePoints.isEmpty {
+            let alert = UIAlertController(title: "No Readings", message: "There are no readings to edit.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+            return
+        }
+        
+        let title = "Edit \(currentReading.title)"
+        let alert = UIAlertController(title: title, message: "Select a reading to edit", preferredStyle: .actionSheet)
+        
+        let df = DateFormatter()
+        df.dateFormat = "dd-MM-yyyy"
+        let displayDf = DateFormatter()
+        displayDf.dateFormat = "d MMM yyyy"
+        
+        for point in lastThreePoints {
+            var dateStr = ""
+            if let fullDateStr = point.fullDate, let d = df.date(from: fullDateStr) {
+                dateStr = displayDf.string(from: d)
+            }
+            
+            var timeStr = ""
+            if let hourOfDay = point.hourOfDay {
+                var h = Int(hourOfDay)
+                var mins = Int(round((hourOfDay - Double(h)) * 60))
+                if mins == 60 { mins = 0; h += 1 }
+                if h == 24 { h = 0 }
+                let ampm = h < 12 ? "AM" : "PM"
+                let h12 = h == 0 ? 12 : (h > 12 ? h - 12 : h)
+                timeStr = String(format: "%d:%02d %@", h12, mins, ampm)
+            }
+            
+            var valStr = ""
+            if let min = point.minValue, let max = point.maxValue {
+                valStr = "\(Int(max.rounded()))/\(Int(min.rounded()))"
+            } else if let val = point.value {
+                valStr = val.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(val)) : String(format: "%.1f", val)
+            }
+            
+            let actionTitle = "\(valStr) \(currentReading.unit) • \(dateStr) \(timeStr)".trimmingCharacters(in: .whitespaces)
+            let action = UIAlertAction(title: actionTitle, style: .default) { [weak self] _ in
+                self?.presentEditReadingAlert(for: point, currentReading: currentReading)
+            }
+            alert.addAction(action)
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
+    }
+
+    private func presentEditReadingAlert(for point: ChartDataPoint, currentReading: VitalReading) {
+        let title = "Edit \(currentReading.title)"
+        let message = "Update your \(currentReading.title.lowercased()) reading."
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let isBloodGlucose = title == "Blood Glucose"
+        let isBloodPressure = title == "Blood Pressure"
+        
+        let placeholders = isBloodPressure ? ["Enter Systolic", "Enter Diastolic"] : ["Enter Value"]
+        var units = [currentReading.unit]
+        if isBloodPressure { units = [currentReading.unit, currentReading.unit] }
+        
+        for (index, placeholder) in placeholders.enumerated() {
+            alertController.addTextField { textField in
+                textField.placeholder = placeholder
+                textField.keyboardType = (title.contains("Heart Rate") || placeholder.contains("Systolic") || placeholder.contains("Diastolic")) ? .numberPad : .decimalPad
+                
+                if isBloodPressure {
+                    if index == 0, let max = point.maxValue { textField.text = String(Int(max.rounded())) }
+                    if index == 1, let min = point.minValue { textField.text = String(Int(min.rounded())) }
+                } else if let val = point.value {
+                    textField.text = val.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(val)) : String(format: "%.1f", val)
+                }
+                
+                if index < units.count {
+                    let unitLabel = UILabel()
+                    unitLabel.text = units[index]
+                    unitLabel.font = .systemFont(ofSize: 14)
+                    unitLabel.textColor = .label
+                    unitLabel.sizeToFit()
+                    let padding = UIView(frame: CGRect(x: 0, y: 0, width: unitLabel.frame.width + 10, height: unitLabel.frame.height))
+                    unitLabel.center = CGPoint(x: padding.frame.width/2 - 5, y: padding.frame.height/2)
+                    padding.addSubview(unitLabel)
+                    textField.rightView = padding
+                    textField.rightViewMode = .always
+                }
+            }
+        }
+        
+        let df = DateFormatter()
+        df.dateFormat = "dd-MM-yyyy"
+        let dateStr = point.fullDate ?? df.string(from: Date())
+        
+        var timeStr = ""
+        if let hourOfDay = point.hourOfDay {
+            var h = Int(hourOfDay)
+            var mins = Int(round((hourOfDay - Double(h)) * 60))
+            if mins == 60 { mins = 0; h += 1 }
+            if h == 24 { h = 0 }
+            let ampm = h < 12 ? "AM" : "PM"
+            let h12 = h == 0 ? 12 : (h > 12 ? h - 12 : h)
+            timeStr = String(format: "%02d:%02d %@", h12, mins, ampm)
+        } else {
+            let tFormatter = DateFormatter()
+            tFormatter.dateFormat = "hh:mm a"
+            timeStr = tFormatter.string(from: Date())
+        }
+        
+        let datePicker = UIDatePicker()
+        let timePicker = UIDatePicker()
+        
+        alertController.addTextField { textField in
+            textField.text = dateStr
+            textField.tintColor = .clear
+            
+            textField.addAction(UIAction { [weak textField] _ in
+                textField?.text = df.string(from: datePicker.date)
+            }, for: .editingChanged)
+            
+            let icon = UIImageView(image: UIImage(systemName: "calendar"))
+            icon.tintColor = .secondaryLabel; icon.contentMode = .scaleAspectFit
+            icon.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+            let pad = UIView(frame: CGRect(x: 0, y: 0, width: 28, height: 20)); pad.addSubview(icon)
+            textField.rightView = pad; textField.rightViewMode = .always
+            
+            datePicker.datePickerMode = .date; datePicker.maximumDate = Date(); datePicker.preferredDatePickerStyle = .wheels
+            if let d = df.date(from: dateStr) { datePicker.date = d }
+            datePicker.addAction(UIAction { _ in
+                textField.text = df.string(from: datePicker.date)
+            }, for: .valueChanged)
+            textField.inputView = datePicker
+        }
+        
+        alertController.addTextField { textField in
+            textField.text = timeStr
+            textField.tintColor = .clear
+            
+            let tFormatter = DateFormatter()
+            tFormatter.dateFormat = "hh:mm a"
+            
+            textField.addAction(UIAction { [weak textField] _ in
+                textField?.text = tFormatter.string(from: timePicker.date)
+            }, for: .editingChanged)
+            
+            let icon = UIImageView(image: UIImage(systemName: "clock"))
+            icon.tintColor = .secondaryLabel; icon.contentMode = .scaleAspectFit
+            icon.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+            let pad = UIView(frame: CGRect(x: 0, y: 0, width: 28, height: 20)); pad.addSubview(icon)
+            textField.rightView = pad; textField.rightViewMode = .always
+            
+            timePicker.datePickerMode = .time; timePicker.preferredDatePickerStyle = .wheels
+            timePicker.maximumDate = Date()
+            if let t = tFormatter.date(from: timeStr) { timePicker.date = t }
+            timePicker.addAction(UIAction { _ in
+                textField.text = tFormatter.string(from: timePicker.date)
+            }, for: .valueChanged)
+            textField.inputView = timePicker
+        }
+        
+        let saveAction = UIAlertAction(title: "Save Changes", style: .default) { [weak self, weak alertController] _ in
+            guard let self = self, let alert = alertController else { return }
+            let fields = alert.textFields ?? []
+            let valText  = fields.count > 0 ? (fields[0].text ?? "").trimmingCharacters(in: .whitespaces) : ""
+            let valText2 = isBloodPressure && fields.count > 1 ? (fields[1].text ?? "").trimmingCharacters(in: .whitespaces) : ""
+
+            let dateIdx = isBloodPressure ? 2 : 1
+            let timeIdx = isBloodPressure ? 3 : 2
+
+            let dText = fields.count > dateIdx ? fields[dateIdx].text ?? "" : ""
+            let tText = fields.count > timeIdx ? fields[timeIdx].text ?? "" : ""
+
+            let tFormatter = DateFormatter()
+            tFormatter.dateFormat = "hh:mm a"
+            let timeDate = tFormatter.date(from: tText) ?? Date()
+            let cal = Calendar.current
+            let h = cal.component(.hour, from: timeDate)
+            let m = cal.component(.minute, from: timeDate)
+            let hourFrac = Double(h) + Double(m) / 60.0
+
+            // ── Determine whether the user has zeroed out the reading ──────────
+            let shouldDelete: Bool
+            if isBloodPressure {
+                let sys = Double(valText) ?? 0
+                let dia = Double(valText2) ?? 0
+                shouldDelete = (sys == 0 && dia == 0) || (valText.isEmpty && valText2.isEmpty)
+            } else {
+                let val = Double(valText.replacingOccurrences(of: ",", with: ".")) ?? 0
+                shouldDelete = val == 0 || valText.isEmpty
+            }
+
+            if shouldDelete {
+                // Ask for confirmation before permanently removing
+                let confirm = UIAlertController(
+                    title: "Remove Reading?",
+                    message: "Setting the value to zero or leaving it blank will delete this reading and its date & time. This cannot be undone.",
+                    preferredStyle: .alert
+                )
+                confirm.addAction(UIAlertAction(title: "Remove", style: .destructive) { _ in
+                    VitalDataStore.shared.deletePoint(
+                        title: currentReading.title,
+                        dateStr: point.fullDate ?? "",
+                        hour: point.hourOfDay ?? 0
+                    )
+                })
+                confirm.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                self.present(confirm, animated: true)
+                return
+            }
+
+            // ── Normal update ──────────────────────────────────────────────────
+            var newMin: Double? = nil
+            var newMax: Double? = nil
+            var newValStr = valText
+
+            if isBloodPressure {
+                newMax = Double(valText)
+                newMin = Double(valText2)
+                newValStr = ""
+            }
+
+            VitalDataStore.shared.updatePoint(
+                title: currentReading.title,
+                oldDateStr: point.fullDate ?? "",
+                oldHour: point.hourOfDay ?? 0,
+                newValue: newValStr,
+                newDateStr: dText,
+                newHour: hourFrac,
+                newMinValue: newMin,
+                newMaxValue: newMax
+            )
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        alertController.addAction(cancelAction)
+        alertController.addAction(saveAction)
+        alertController.preferredAction = saveAction
+        alertController.view.tintColor = .systemBlue
+
+        present(alertController, animated: true)
+    }
 }
 
 extension VitalDetailViewController: VitalChartScrollDelegate {

@@ -149,7 +149,7 @@ class ProfileSettingsViewController: UIViewController {
 
     @objc func logoutTapped() {
         let alert = UIAlertController(
-            title: "Log out", message: "Are you sure you want to log out of your account?",
+            title: "Log out", message: "Are you sure you want to sign out of your account?",
             preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(

@@ -115,6 +115,117 @@ class VitalDataStore {
         persist(dtos)
     }
 
+    func updatePoint(title: String,
+                     oldDateStr: String,
+                     oldHour: Double,
+                     newValue: String,
+                     newDateStr: String,
+                     newHour: Double,
+                     newMinValue: Double? = nil,
+                     newMaxValue: Double? = nil) {
+        var dtos = loadDTOs()
+        
+        guard let idx = dtos.firstIndex(where: { $0.title == title }) else { return }
+        
+        let dto = dtos[idx]
+        
+        let updateArray = { (arr: [HourlyDataPointDTO]?) -> [HourlyDataPointDTO] in
+            guard var points = arr else { return [] }
+            if let pIdx = points.firstIndex(where: { $0.dateString == oldDateStr && abs($0.hour - oldHour) < 0.001 }) {
+                let p = points[pIdx]
+                let isRange = newMinValue != nil && newMaxValue != nil
+                points[pIdx] = HourlyDataPointDTO(
+                    hour: newHour,
+                    value: isRange ? nil : Double(newValue.replacingOccurrences(of: ",", with: ".")),
+                    minValue: newMinValue,
+                    maxValue: newMaxValue,
+                    dateString: newDateStr,
+                    glucoseType: p.glucoseType,
+                    baselineValue: p.baselineValue,
+                    heartRateSource: p.heartRateSource
+                )
+            }
+            return points
+        }
+        
+        let updatedHourly = updateArray(dto.hourlyChartData)
+        let updatedPersisted = updateArray(dto.persistedHourlyChartData)
+        
+        let updatedDTO = VitalReadingDTO(
+            title: dto.title,
+            value: dto.value,
+            unit: dto.unit,
+            subtitle: dto.subtitle,
+            iconImageName: dto.iconImageName,
+            detailIconImageName: dto.detailIconImageName,
+            iconTintHex: dto.iconTintHex,
+            chartType: dto.chartType,
+            chartColor: dto.chartColor,
+            chartData: dto.chartData,
+            weeklyChartData: dto.weeklyChartData,
+            monthlyChartData: dto.monthlyChartData,
+            hourlyChartData: updatedHourly,
+            persistedHourlyChartData: updatedPersisted,
+            baselineValue: dto.baselineValue
+        )
+        
+        let cal = Calendar.current
+        let df = DateFormatter()
+        df.dateFormat = "dd-MM-yyyy"
+        
+        dtos[idx] = Self.normalizedDTO(updatedDTO, cal: cal, df: df)
+        persist(dtos)
+        
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .vitalDataDidUpdate, object: nil, userInfo: ["title": title])
+        }
+    }
+
+    func deletePoint(title: String, dateStr: String, hour: Double) {
+        var dtos = loadDTOs()
+
+        guard let idx = dtos.firstIndex(where: { $0.title == title }) else { return }
+
+        let dto = dtos[idx]
+
+        let removeFromArray = { (arr: [HourlyDataPointDTO]?) -> [HourlyDataPointDTO] in
+            guard let points = arr else { return [] }
+            return points.filter { !($0.dateString == dateStr && abs($0.hour - hour) < 0.001) }
+        }
+
+        let updatedHourly    = removeFromArray(dto.hourlyChartData)
+        let updatedPersisted = removeFromArray(dto.persistedHourlyChartData)
+
+        let updatedDTO = VitalReadingDTO(
+            title: dto.title,
+            value: dto.value,
+            unit: dto.unit,
+            subtitle: dto.subtitle,
+            iconImageName: dto.iconImageName,
+            detailIconImageName: dto.detailIconImageName,
+            iconTintHex: dto.iconTintHex,
+            chartType: dto.chartType,
+            chartColor: dto.chartColor,
+            chartData: dto.chartData,
+            weeklyChartData: dto.weeklyChartData,
+            monthlyChartData: dto.monthlyChartData,
+            hourlyChartData: updatedHourly,
+            persistedHourlyChartData: updatedPersisted,
+            baselineValue: dto.baselineValue
+        )
+
+        let cal = Calendar.current
+        let df  = DateFormatter()
+        df.dateFormat = "dd-MM-yyyy"
+
+        dtos[idx] = Self.normalizedDTO(updatedDTO, cal: cal, df: df)
+        persist(dtos)
+
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .vitalDataDidUpdate, object: nil, userInfo: ["title": title])
+        }
+    }
+
     private static func replacingTodayPlaceholder(in dto: VitalReadingDTO, todayStr: String) -> VitalReadingDTO {
         guard let hourly = dto.hourlyChartData, hourly.contains(where: { $0.dateString == "__TODAY__" }) else {
             return dto
