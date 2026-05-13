@@ -10,6 +10,7 @@ class ConsultViewController: UIViewController,
     @IBOutlet weak var headerActionsContainerView: UIView!
     @IBOutlet weak var consultCollectionView: UICollectionView!
     @IBOutlet weak var blurEffectView: UIVisualEffectView!
+    @IBOutlet weak var emptyStateView: UIView!
 
     // MARK: - Data Source
     private var consultSessions: [ConsultSession] = []
@@ -52,6 +53,7 @@ class ConsultViewController: UIViewController,
         )
 
         setupHeaderActions()
+        emptyStateView?.isHidden = true
 
         NotificationCenter.default.addObserver(
             self, selector: #selector(handleSessionUpdate(_:)),
@@ -64,8 +66,8 @@ class ConsultViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        consultSessions = ConsultSessionStore.shared.loadSessions()
-        consultCollectionView.reloadData()
+        allConsultSessions = ConsultSessionStore.shared.loadSessions()
+        applyFilters()
     }
 
     @objc private func handleSessionUpdate(_ notification: Notification) {
@@ -143,6 +145,7 @@ class ConsultViewController: UIViewController,
         consultSessions = filtered
         consultCollectionView.reloadData()
         setupHeaderActions()
+        updateEmptyState()
     }
 
     func setupHeaderActions() {
@@ -212,6 +215,13 @@ class ConsultViewController: UIViewController,
             hostingController.view.trailingAnchor.constraint(equalTo: container.trailingAnchor),
         ])
         hostingController.didMove(toParent: self)
+    }
+
+    // MARK: - Empty State
+    func updateEmptyState() {
+        let isEmpty = allConsultSessions.isEmpty
+        emptyStateView?.isHidden = !isEmpty
+        consultCollectionView?.isHidden = isEmpty
     }
 
     func openDatePicker() {

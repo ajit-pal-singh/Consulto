@@ -23,16 +23,6 @@ final class ConsultSessionStore {
             try ensureWritableStoreExists()
             let data = try Data(contentsOf: sessionsFileURL())
             let sessions = try decoder.decode([ConsultSession].self, from: data)
-            // If the file exists but decoded to empty, it might be stale from a
-            // previous crash.  Re-seed when the bundle still has data.
-            if sessions.isEmpty, let seedURL = Bundle.main.url(forResource: "seed_consult_sessions", withExtension: "json") {
-                let seedData = try Data(contentsOf: seedURL)
-                let seedSessions = try decoder.decode([ConsultSession].self, from: seedData)
-                if !seedSessions.isEmpty {
-                    try seedData.write(to: sessionsFileURL(), options: .atomic)
-                    return seedSessions
-                }
-            }
             return sessions
         } catch {
             print("⚠️ Failed to load consult sessions: \(error)")

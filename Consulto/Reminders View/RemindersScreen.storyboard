@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -20,11 +20,19 @@
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No reminders added yet" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4M9-5z-D6Z">
+                                <rect key="frame" x="107.33333333333333" y="416" width="178.33333333333337" height="20.333333333333314"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
+                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="bji-Wd-frk"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="cek-0o-bld" firstAttribute="leading" secondItem="bji-Wd-frk" secondAttribute="leading" id="8No-2I-bfx"/>
+                            <constraint firstItem="4M9-5z-D6Z" firstAttribute="centerX" secondItem="bxS-uY-ncP" secondAttribute="centerX" id="AYj-Lk-vjj"/>
+                            <constraint firstItem="4M9-5z-D6Z" firstAttribute="centerY" secondItem="bxS-uY-ncP" secondAttribute="centerY" id="Kjj-99-oGn"/>
                             <constraint firstItem="cek-0o-bld" firstAttribute="top" secondItem="bxS-uY-ncP" secondAttribute="top" id="NBh-jG-FVB"/>
                             <constraint firstAttribute="bottom" secondItem="cek-0o-bld" secondAttribute="bottom" id="NRF-aU-nMh"/>
                             <constraint firstItem="cek-0o-bld" firstAttribute="trailing" secondItem="bji-Wd-frk" secondAttribute="trailing" id="kJC-kU-5aC"/>
@@ -34,6 +42,7 @@
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="RFx-Le-s25"/>
                     </navigationItem>
                     <connections>
+                        <outlet property="emptyStateLabel" destination="4M9-5z-D6Z" id="emp-ty-lbl"/>
                         <outlet property="tableView" destination="cek-0o-bld" id="jfl-g2-1HP"/>
                         <segue destination="Mx3-7C-iJg" kind="presentation" identifier="showAddMedicineReminder" id="kas-7f-tMQ"/>
                     </connections>

@@ -18,6 +18,7 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
     }
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var emptyStateLabel: UILabel!
 
     private var consultationReminders: [ConsultationReminder] = []
     private var selectedSegment: ReminderSegment = .medicine
@@ -123,12 +124,14 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
             name: NSNotification.Name("ConsultationReminderUpdated"),
             object: nil
         )
+        updateEmptyState()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.largeTitleDisplayMode = .never
+        updateEmptyState()
     }
 
     private func configureAddMenu() {
@@ -310,9 +313,37 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
         present(navigationController, animated: true)
     }
 
+    private func updateEmptyState(delayAnimation: Bool = false) {
+        let isEmpty: Bool
+        let text: String
+        switch selectedSegment {
+        case .medicine:
+            isEmpty = currentRows.isEmpty && pausedRows.isEmpty
+            text = "No medicine reminders added yet"
+        case .consultation:
+            isEmpty = currentConsultationRows.isEmpty && pausedConsultationRows.isEmpty
+            text = "No appointment reminders added yet"
+        }
+        
+        emptyStateLabel?.text = text
+        
+        if delayAnimation && isEmpty {
+            emptyStateLabel?.alpha = 0
+            emptyStateLabel?.isHidden = false
+            UIView.animate(withDuration: 0.1, delay: 0.0, options: .curveEaseInOut, animations: {
+                self.emptyStateLabel?.alpha = 1
+            })
+        } else {
+            emptyStateLabel?.layer.removeAllAnimations()
+            emptyStateLabel?.alpha = 1
+            emptyStateLabel?.isHidden = !isEmpty
+        }
+    }
+
     private func reloadReminderTable() {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
+            self.updateEmptyState()
             UIView.transition(with: self.tableView, duration: 0.25, options: .transitionCrossDissolve) {
                 self.tableView.reloadData()
             }
@@ -359,8 +390,11 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
         selectedSegment = newValue
         pendingSegmentReload?.cancel()
 
+        emptyStateLabel?.isHidden = true
+
         let workItem = DispatchWorkItem { [weak self] in
             guard let self = self else { return }
+            self.updateEmptyState(delayAnimation: true)
             UIView.performWithoutAnimation {
                 self.tableView.reloadData()
             }

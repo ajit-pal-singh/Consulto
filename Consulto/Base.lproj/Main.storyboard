@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="7NX-sU-DqO">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="7NX-sU-DqO">
     <device id="retina6_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -92,6 +92,64 @@
                             </view>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NGH-hr-bsf" userLabel="Platter">
                                 <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                                <subviews>
+                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yDA-7l-iCi" userLabel="EmptyView">
+                                        <rect key="frame" x="75.666666666666657" y="353" width="278.66666666666674" height="226"/>
+                                        <subviews>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="records_empty" translatesAutoresizingMaskIntoConstraints="NO" id="2Aj-7X-DIF">
+                                                <rect key="frame" x="48.333333333333314" y="0.0" width="182" height="134"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="182" id="R5y-KX-tOu"/>
+                                                    <constraint firstAttribute="height" constant="134" id="cLi-Yf-VbA"/>
+                                                </constraints>
+                                            </imageView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Records yet" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Yf-XN-qIQ">
+                                                <rect key="frame" x="61.333333333333314" y="144" width="156" height="27"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="27" id="fm3-jf-Vmc"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Looks like you haven't added any record." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rGO-Ah-nm3" userLabel="subtitle">
+                                                <rect key="frame" x="0.0" y="178" width="278.66666666666669" height="28"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="28" id="HRC-sg-Dsx"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tap + to add your first record." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dLx-0R-Q1C">
+                                                <rect key="frame" x="37.666666666666671" y="198" width="203.66666666666663" height="28"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="28" id="G6W-36-Lhm"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="dLx-0R-Q1C" firstAttribute="top" secondItem="rGO-Ah-nm3" secondAttribute="bottom" constant="-8" id="UTD-ST-LiO"/>
+                                            <constraint firstItem="rGO-Ah-nm3" firstAttribute="top" secondItem="9Yf-XN-qIQ" secondAttribute="bottom" constant="7" id="Wab-88-79x"/>
+                                            <constraint firstAttribute="bottom" secondItem="dLx-0R-Q1C" secondAttribute="bottom" id="ev-bot-001"/>
+                                            <constraint firstItem="9Yf-XN-qIQ" firstAttribute="top" secondItem="2Aj-7X-DIF" secondAttribute="bottom" constant="10" id="ij9-Ka-WY1"/>
+                                            <constraint firstItem="2Aj-7X-DIF" firstAttribute="centerX" secondItem="yDA-7l-iCi" secondAttribute="centerX" id="img-cx-001"/>
+                                            <constraint firstItem="2Aj-7X-DIF" firstAttribute="top" secondItem="yDA-7l-iCi" secondAttribute="top" id="img-top-001"/>
+                                            <constraint firstItem="dLx-0R-Q1C" firstAttribute="centerX" secondItem="yDA-7l-iCi" secondAttribute="centerX" id="st2-cx-001"/>
+                                            <constraint firstItem="rGO-Ah-nm3" firstAttribute="centerX" secondItem="yDA-7l-iCi" secondAttribute="centerX" id="sub-cx-001"/>
+                                            <constraint firstItem="rGO-Ah-nm3" firstAttribute="leading" secondItem="yDA-7l-iCi" secondAttribute="leading" id="sub-ld-001"/>
+                                            <constraint firstAttribute="trailing" secondItem="rGO-Ah-nm3" secondAttribute="trailing" id="sub-tr-001"/>
+                                            <constraint firstItem="9Yf-XN-qIQ" firstAttribute="centerX" secondItem="yDA-7l-iCi" secondAttribute="centerX" id="ttl-cx-001"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="yDA-7l-iCi" firstAttribute="centerX" secondItem="NGH-hr-bsf" secondAttribute="centerX" id="hzY-po-gE7"/>
+                                    <constraint firstItem="yDA-7l-iCi" firstAttribute="centerY" secondItem="NGH-hr-bsf" secondAttribute="centerY" id="nr9-eU-dxL"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="wUU-jm-Bq9"/>
@@ -125,6 +183,7 @@
                         <outlet property="blurEffectView" destination="84P-W1-JKe" id="z76-lI-2nc"/>
                         <outlet property="chipsContainerView" destination="JIF-0T-jtO" id="a54-pC-4HM"/>
                         <outlet property="dimmingOverlayView" destination="YtO-WH-vBO" id="Qif-Q7-fRY"/>
+                        <outlet property="emptyStateView" destination="yDA-7l-iCi" id="bx4-TY-TrW"/>
                         <outlet property="headerActionsContainerView" destination="yfI-hC-qwn" id="WQS-s2-G4u"/>
                         <outlet property="platterContainerView" destination="NGH-hr-bsf" id="1Gk-cs-hrb"/>
                         <outlet property="recordsCollectionView" destination="3Cf-aK-3oC" id="zIy-8B-j4C"/>
@@ -134,7 +193,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tB3-b5-3qe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1313.0232558139535" y="505.36480686695285"/>
+            <point key="canvasLocation" x="1311.6279069767443" y="505.36480686695285"/>
         </scene>
         <!--Platter-->
         <scene sceneID="2C0-S5-aOB">
@@ -877,6 +936,7 @@
         <image name="chevron.left" catalog="system" width="97" height="128"/>
         <image name="chevron.right" catalog="system" width="97" height="128"/>
         <image name="document" catalog="system" width="115" height="128"/>
+        <image name="records_empty" width="356" height="266"/>
         <image name="square.and.pencil" catalog="system" width="128" height="121"/>
         <image name="trash" catalog="system" width="117" height="128"/>
         <systemColor name="systemBackgroundColor">

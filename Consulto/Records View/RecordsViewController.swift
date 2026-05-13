@@ -11,6 +11,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
     @IBOutlet weak var headerActionsContainerView: UIView!
     @IBOutlet weak var platterContainerView: UIView!
     @IBOutlet weak var dimmingOverlayView: UIView!
+    @IBOutlet weak var emptyStateView: UIView!
 
     private var allRecords: [HealthRecord] = []
     var records: [HealthRecord] = []
@@ -49,7 +50,8 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
 
         setupCollectionView()
         setupChipsView()
-        setupHeaderActions()    
+        setupHeaderActions()
+        emptyStateView?.isHidden = true
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -151,6 +153,16 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
         hostingController.didMove(toParent: self)
     }
 
+    // MARK: - Empty State
+    func updateEmptyState() {
+        let isEmpty = allRecords.isEmpty
+        print("🔍 updateEmptyState called — allRecords.count: \(allRecords.count), isEmpty: \(isEmpty), outlet nil: \(emptyStateView == nil)")
+        
+        emptyStateView?.isHidden = !isEmpty
+        chipsContainerView?.isHidden = isEmpty
+        recordsCollectionView?.isHidden = isEmpty
+    }
+
     // MARK: - Sticky Chips View Setup
     func setupChipsView() {
         guard let container = chipsContainerView else { return }
@@ -207,6 +219,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             print("Failed to load records: \(error)")
         }
         setupHeaderActions()
+        updateEmptyState()
         filterRecords(by: currentChipFilter)
     }
     
@@ -360,6 +373,7 @@ class RecordsViewController: UIViewController, UINavigationControllerDelegate, P
             try HealthRecordStore.shared.deleteRecord(id: record.id)
             allRecords.removeAll { $0.id == record.id }
             selectedRecords.removeAll { $0.id == record.id }
+            updateEmptyState()
             filterRecords(by: currentChipFilter)
         } catch {
             let alert = UIAlertController(
