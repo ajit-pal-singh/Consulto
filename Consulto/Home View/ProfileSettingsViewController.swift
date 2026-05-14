@@ -316,6 +316,16 @@ extension ProfileSettingsViewController: UITableViewDelegate, UITableViewDataSou
             {
                 navigationController?.pushViewController(vc, animated: true)
             }
+        } else if indexPath.section == 2 {
+            if item.title == "Terms & Conditions" {
+                if let url = URL(string: "https://ajit-pal-singh.github.io/Consulto/terms.html") {
+                    UIApplication.shared.open(url)
+                }
+            } else if item.title == "Privacy Policy" {
+                if let url = URL(string: "https://ajit-pal-singh.github.io/Consulto/privacy-policy.html") {
+                    UIApplication.shared.open(url)
+                }
+            }
         } else if indexPath.section == 3 {
             if item.title == "Sign Out" {
                 logoutTapped()
