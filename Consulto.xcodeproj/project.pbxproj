@@ -184,7 +184,7 @@
 				DEVELOPMENT_TEAM = BL4G455K39;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Consulto/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Consulto;
+				INFOPLIST_KEY_CFBundleDisplayName = Consultoo;
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to capture new medical documents.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "\"Consulto reads your heart rate from Apple Watch via Health.\"";
@@ -228,7 +228,7 @@
 				DEVELOPMENT_TEAM = BL4G455K39;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Consulto/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Consulto;
+				INFOPLIST_KEY_CFBundleDisplayName = Consultoo;
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to capture new medical documents.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "\"Consulto reads your heart rate from Apple Watch via Health.\"";

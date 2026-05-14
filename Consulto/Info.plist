@@ -40,5 +40,9 @@
 	</dict>
 	<key>UIFileSharingEnabled</key>
 	<true/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Consulto needs access to your health data to track your heart rate, sleep, and steps in the app.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Consulto needs permission to update your health data to ensure your vitals are accurately recorded and synced.</string>
 </dict>
 </plist>
