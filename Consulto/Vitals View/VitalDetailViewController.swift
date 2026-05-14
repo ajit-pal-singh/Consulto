@@ -164,7 +164,7 @@ class VitalDetailViewController: UIViewController {
                 let todayStr = df.string(from: today)
                 let yesterdayStr = df.string(from: yesterday)
                 
-                if targetDateStr == todayStr || targetDateStr == "__TODAY__" || targetDateStr == "" {
+                if targetDateStr == todayStr || targetDateStr == "" {
                     subtitleStr = "Today's Logged Reading"
                 } else if targetDateStr == yesterdayStr {
                     subtitleStr = "Yesterday's Logged Reading"

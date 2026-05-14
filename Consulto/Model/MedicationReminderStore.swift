@@ -13,15 +13,13 @@ final class MedicationReminderStore {
 
     private init() {
         if let saved = Self.load() {
-            medications = saved
-        } else {
-            // First launch — bootstrap from sample data and persist it immediately
-            medications = SampleData.reminders
-            let encoder = JSONEncoder()
-            encoder.dateEncodingStrategy = .iso8601
-            if let data = try? encoder.encode(medications) {
-                UserDefaults.standard.set(data, forKey: "MedicationReminderStore.medications")
+            medications = Self.removingLegacySampleMedications(from: saved)
+            if medications.count != saved.count {
+                save()
             }
+        } else {
+            medications = []
+            save()
         }
     }
 
@@ -34,6 +32,19 @@ final class MedicationReminderStore {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return try? decoder.decode([Medication].self, from: data)
+    }
+
+    private static func removingLegacySampleMedications(from medications: [Medication]) -> [Medication] {
+        let legacyNames = Set(["glimepiride", "paracetamol", "ibuprofen", "combiflam"])
+        return medications.filter { medication in
+            let name = medication.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            guard legacyNames.contains(name) else { return true }
+
+            return medication.dosage != nil
+                || medication.frequency != nil
+                || medication.duration != nil
+                || medication.notes != nil
+        }
     }
 
     private func save() {

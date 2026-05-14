@@ -3,14 +3,18 @@ import Foundation
 final class ConsultationReminderStore {
     static let shared = ConsultationReminderStore()
 
+    private let storageKey = "ConsultationReminderStore.reminders"
+
     var reminders: [ConsultationReminder] {
         didSet {
+            save()
             ReminderNotificationScheduler.shared.refreshConsultationReminders()
         }
     }
 
     private init() {
-        reminders = SampleData.consultationReminders
+        reminders = Self.load() ?? []
+        save()
     }
 
     func notifyRemindersChanged() {
@@ -83,5 +87,23 @@ final class ConsultationReminderStore {
 
     func removeReminder(id: UUID) {
         reminders.removeAll { $0.id == id }
+    }
+
+    private static func load() -> [ConsultationReminder]? {
+        guard let data = UserDefaults.standard.data(forKey: "ConsultationReminderStore.reminders") else {
+            return nil
+        }
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try? decoder.decode([ConsultationReminder].self, from: data)
+    }
+
+    private func save() {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        if let data = try? encoder.encode(reminders) {
+            UserDefaults.standard.set(data, forKey: storageKey)
+        }
     }
 }

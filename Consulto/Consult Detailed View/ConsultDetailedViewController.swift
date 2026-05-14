@@ -57,12 +57,15 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
     var visibleSections: [DetailSection] = []
 
     @IBAction func editTapped(_ sender: Any) {
+        guard let session = consultSession else {
+            dismiss(animated: true)
+            return
+        }
+
         let storyboard = UIStoryboard(name: "Consult-Screen", bundle: nil)
         if let navVC = storyboard.instantiateViewController(withIdentifier: "PrepareConsultationNav") as? UINavigationController,
            let prepareVC = navVC.topViewController as? PrepareConsultationTableViewController {
-            
-            let session = consultSession ?? SampleData.consultSessions.first!
-            
+
             prepareVC.sessionTitle = self.sessionTitle
             prepareVC.doctorName = session.doctorName
             prepareVC.sessionDate = session.date
@@ -151,14 +154,13 @@ class ConsultDetailedViewController: UIViewController, UICollectionViewDelegate 
             notes = session.notes
             postConsultationNotes = session.postConsultationNotes
         } else {
-            let sampleSession = SampleData.consultSessions.first!
-            sessionTitle = sampleSession.title
-            symptoms = sampleSession.symptoms
-            medications = sampleSession.medications
-            records = sampleSession.records
-            questions = sampleSession.questions
-            notes = sampleSession.notes
-            postConsultationNotes = sampleSession.postConsultationNotes
+            sessionTitle = ""
+            symptoms = []
+            medications = []
+            records = []
+            questions = []
+            notes = nil
+            postConsultationNotes = nil
         }
         buildVisibleSections()
     }

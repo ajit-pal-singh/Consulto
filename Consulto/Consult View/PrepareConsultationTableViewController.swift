@@ -114,7 +114,7 @@ class PrepareConsultationTableViewController: UITableViewController {
 
         let newSession = ConsultSession(
             id: existingSessionID ?? UUID(),
-            userID: existingUserID ?? UUID(),
+            userID: existingUserID ?? UserProfileStore.shared.current.id,
             doctorName: doctorName,
             title: sessionTitle,
             date: consultationDateTime,

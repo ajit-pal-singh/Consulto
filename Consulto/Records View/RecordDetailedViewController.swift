@@ -122,14 +122,7 @@ extension RecordDetailedViewController: UITableViewDataSource, UITableViewDelega
                 return UITableViewCell()
             }
             
-            // Fetch all uploaded images for the carousel
-            var imagesToDisplay = HealthRecordStore.shared.allImages(for: record)
-            
-            // Fallback to sample image if no images exist
-            if imagesToDisplay.isEmpty, let fallback = UIImage(named: "sample") {
-                imagesToDisplay.append(fallback)
-            }
-            
+            let imagesToDisplay = HealthRecordStore.shared.allImages(for: record)
             cell.configure(with: imagesToDisplay, state: .pending)
             
             // Hide the delete button — this is a read-only view

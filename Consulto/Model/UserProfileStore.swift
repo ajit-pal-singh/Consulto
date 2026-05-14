@@ -32,11 +32,11 @@ final class UserProfileStore {
               let profile = try? JSONDecoder().decode(UserProfile.self, from: data) else {
             return UserProfile(
                 id: UUID(),
-                firstName: "Demo",
-                lastName: "User",
+                firstName: "",
+                lastName: "",
                 dateOfBirth: Date(),
                 gender: .preferNotToSay,
-                email: "demouser@gmail.com",
+                email: "",
                 createdAt: Date()
             )
         }

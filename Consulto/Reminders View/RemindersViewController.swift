@@ -193,7 +193,7 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
     }
 
     private func appendConsultationReminder(from formData: AddConsultationFormData) {
-        let reminder = ConsultationReminderStore.shared.addReminder(
+        ConsultationReminderStore.shared.addReminder(
             doctorName: formData.doctorName,
             purpose: formData.purpose,
             consultationDate: formData.consultationDate,
@@ -204,7 +204,7 @@ class RemindersViewController: UIViewController, UITableViewDelegate, UITableVie
             isPaused: formData.isPaused
         )
 
-        consultationReminders.insert(reminder, at: 0)
+        consultationReminders = ConsultationReminderStore.shared.reminders
         selectedSegment = .consultation
         reloadReminderTable()
     }

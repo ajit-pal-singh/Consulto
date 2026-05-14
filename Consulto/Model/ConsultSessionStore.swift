@@ -6,6 +6,7 @@ final class ConsultSessionStore {
     private let fileManager = FileManager.default
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
+    private let legacySeedUserID = UUID(uuidString: "11111111-1111-1111-1111-111111111111")
 
     private init() {
         decoder = JSONDecoder()
@@ -23,24 +24,19 @@ final class ConsultSessionStore {
             try ensureWritableStoreExists()
             let data = try Data(contentsOf: sessionsFileURL())
             let sessions = try decoder.decode([ConsultSession].self, from: data)
-            return sessions
+            let cleanedSessions = removeLegacySeedSessions(from: sessions)
+            if cleanedSessions.count != sessions.count {
+                saveSessions(cleanedSessions)
+            }
+            return cleanedSessions
         } catch {
             print("⚠️ Failed to load consult sessions: \(error)")
-            // Attempt recovery: remove the corrupt writable file so the next
-            // call re-copies from the seed bundle.
             let fileURL = sessionsFileURL()
             if fileManager.fileExists(atPath: fileURL.path) {
                 try? fileManager.removeItem(at: fileURL)
             }
-            // Retry once after removing the bad file
-            do {
-                try ensureWritableStoreExists()
-                let data = try Data(contentsOf: sessionsFileURL())
-                return try decoder.decode([ConsultSession].self, from: data)
-            } catch {
-                print("⚠️ Recovery also failed: \(error)")
-                return []
-            }
+            saveSessions([])
+            return []
         }
     }
 
@@ -135,12 +131,12 @@ final class ConsultSessionStore {
         let fileURL = sessionsFileURL()
         guard !fileManager.fileExists(atPath: fileURL.path) else { return }
 
-        // First launch — copy seed JSON from bundle into writable location
-        guard let seedURL = Bundle.main.url(forResource: "seed_consult_sessions", withExtension: "json") else {
-            throw NSError(domain: "ConsultSessionStore", code: 1,
-                          userInfo: [NSLocalizedDescriptionKey: "Missing seed_consult_sessions.json"])
-        }
-        try fileManager.copyItem(at: seedURL, to: fileURL)
+        saveSessions([])
+    }
+
+    private func removeLegacySeedSessions(from sessions: [ConsultSession]) -> [ConsultSession] {
+        guard let legacySeedUserID = legacySeedUserID else { return sessions }
+        return sessions.filter { $0.userID != legacySeedUserID }
     }
 
     private func ensureDirectoryExists() throws {

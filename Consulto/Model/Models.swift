@@ -8,7 +8,7 @@ struct UserProfile: Codable {
     var lastName: String
     var dateOfBirth: Date
     var gender: Gender
-    var email: String = "demouser@gmail.com"
+    var email: String = ""
     var createdAt: Date
 
     init(
@@ -17,7 +17,7 @@ struct UserProfile: Codable {
         lastName: String,
         dateOfBirth: Date,
         gender: Gender,
-        email: String = "demouser@gmail.com",
+        email: String = "",
         createdAt: Date
     ) {
         self.id = id
@@ -36,7 +36,7 @@ struct UserProfile: Codable {
         lastName = try container.decode(String.self, forKey: .lastName)
         dateOfBirth = try container.decode(Date.self, forKey: .dateOfBirth)
         gender = try container.decode(Gender.self, forKey: .gender)
-        email = try container.decodeIfPresent(String.self, forKey: .email) ?? "demouser@gmail.com"
+        email = try container.decodeIfPresent(String.self, forKey: .email) ?? ""
         createdAt = try container.decode(Date.self, forKey: .createdAt)
     }
 }
@@ -313,7 +313,7 @@ enum ConsultStatus: String, Codable {
     case completed
 }
 
-struct ConsultationReminder {
+struct ConsultationReminder: Codable {
     let id: UUID
     var consultSessionID: UUID?
     var doctorName: String
@@ -325,4 +325,3 @@ struct ConsultationReminder {
     var snoozeTime: String?
     var isPaused: Bool
 }
-

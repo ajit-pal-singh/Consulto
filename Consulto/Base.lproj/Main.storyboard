@@ -103,8 +103,8 @@
                                                     <constraint firstAttribute="height" constant="134" id="cLi-Yf-VbA"/>
                                                 </constraints>
                                             </imageView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Records yet" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Yf-XN-qIQ">
-                                                <rect key="frame" x="61.333333333333314" y="144" width="156" height="27"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No records yet" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Yf-XN-qIQ">
+                                                <rect key="frame" x="64.333333333333314" y="144" width="150" height="27"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="27" id="fm3-jf-Vmc"/>
                                                 </constraints>

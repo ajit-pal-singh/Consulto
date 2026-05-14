@@ -120,7 +120,7 @@ class VitalCardCell: UICollectionViewCell {
                 df.dateFormat = "dd-MM-yyyy"
                 let todayStr = df.string(from: Date())
                 
-                let isToday = (lastHourly.fullDate == todayStr) || (lastHourly.fullDate == "__TODAY__") || (lastHourly.fullDate == nil)
+                let isToday = (lastHourly.fullDate == todayStr) || (lastHourly.fullDate == nil)
                 
                 if isToday {
                     label.text = timeStr

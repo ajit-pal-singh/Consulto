@@ -12,41 +12,39 @@ class VitalDataStore {
     }
 
     private var storeURL: URL {
-        documentsURL.appendingPathComponent("vitalsData_v14.json")
+        documentsURL.appendingPathComponent("vitalsData_v15.json")
     }
 
     func loadDTOs() -> [VitalReadingDTO] {
         if !FileManager.default.fileExists(atPath: storeURL.path) {
-            copyBundleFileToDisk()
+            let defaultDTOs = Self.emptyDefaultDTOs()
+            persist(defaultDTOs)
+            return processDTOs(defaultDTOs)
         }
 
+        return processPersistedDTOs()
+    }
+
+    private func processDTOs(_ dtos: [VitalReadingDTO]) -> [VitalReadingDTO] {
         let cal = Calendar.current
         let df = DateFormatter()
         df.dateFormat = "dd-MM-yyyy"
-        let todayStr = df.string(from: Date())
 
-        func process(_ dtos: [VitalReadingDTO]) -> [VitalReadingDTO] {
-            dtos.map { dto in
-                let placeholderFixed = Self.replacingTodayPlaceholder(in: dto, todayStr: todayStr)
-                return Self.normalizedDTO(placeholderFixed, cal: cal, df: df)
-            }
+        return dtos.map { dto in
+            Self.normalizedDTO(dto, cal: cal, df: df)
         }
+    }
 
+    private func processPersistedDTOs() -> [VitalReadingDTO] {
         if let data = try? Data(contentsOf: storeURL),
            let dtos = try? VitalData.decodeDTOs(from: data) {
-            return process(dtos)
+            return processDTOs(dtos)
         }
 
-        print("VitalDataStore: Documents store failed, falling back to bundle")
-        if let bundleURL = Bundle.main.url(forResource: "vitalsData", withExtension: "json"),
-           let data = try? Data(contentsOf: bundleURL),
-           let dtos = try? VitalData.decodeDTOs(from: data) {
-            try? data.write(to: storeURL, options: .atomic)
-            return process(dtos)
-        }
-
-        print("VitalDataStore: bundle fallback also failed — returning empty")
-        return []
+        print("VitalDataStore: Documents store failed, recreating empty vitals")
+        let defaultDTOs = Self.emptyDefaultDTOs()
+        persist(defaultDTOs)
+        return processDTOs(defaultDTOs)
     }
 
     func loadReadings() -> [VitalReading] {
@@ -226,30 +224,6 @@ class VitalDataStore {
         }
     }
 
-    private static func replacingTodayPlaceholder(in dto: VitalReadingDTO, todayStr: String) -> VitalReadingDTO {
-        guard let hourly = dto.hourlyChartData, hourly.contains(where: { $0.dateString == "__TODAY__" }) else {
-            return dto
-        }
-
-        let fixed = hourly.map { hp -> HourlyDataPointDTO in
-            hp.dateString == "__TODAY__"
-                ? HourlyDataPointDTO(hour: hp.hour, value: hp.value, minValue: hp.minValue,
-                                     maxValue: hp.maxValue, dateString: todayStr,
-                                     glucoseType: hp.glucoseType, baselineValue: hp.baselineValue)
-                : hp
-        }
-
-        return VitalReadingDTO(
-            title: dto.title, value: dto.value, unit: dto.unit, subtitle: dto.subtitle,
-            iconImageName: dto.iconImageName, detailIconImageName: dto.detailIconImageName,
-            iconTintHex: dto.iconTintHex, chartType: dto.chartType, chartColor: dto.chartColor,
-            chartData: dto.chartData, weeklyChartData: dto.weeklyChartData,
-            monthlyChartData: dto.monthlyChartData, hourlyChartData: fixed,
-            persistedHourlyChartData: dto.persistedHourlyChartData ?? fixed,
-            baselineValue: dto.baselineValue
-        )
-    }
-
     private static func normalizedDTO(_ dto: VitalReadingDTO, cal: Calendar, df: DateFormatter) -> VitalReadingDTO {
         switch dto.title {
         case "Heart Rate":     return normalizedHeartRateDTO(dto, cal: cal, df: df)
@@ -368,6 +342,8 @@ class VitalDataStore {
     }
 
     private static func computeVariabilitySubtitle(for title: String, hourly: [HourlyDataPointDTO], cal: Calendar, df: DateFormatter) -> String? {
+        guard !hourly.isEmpty else { return nil }
+
         let today = cal.startOfDay(for: Date())
         let weekday = cal.component(.weekday, from: today)
         let daysFromMonday = (weekday + 5) % 7
@@ -671,30 +647,77 @@ class VitalDataStore {
         }
     }
 
-    private func copyBundleFileToDisk() {
-        guard let bundleURL = Bundle.main.url(forResource: "vitalsData", withExtension: "json") else {
-            print("VitalDataStore: bundle file not found"); return
-        }
-
-        let storedVersionKey = "vitals_data_version_14"
-        if !UserDefaults.standard.bool(forKey: storedVersionKey) {
-            let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let fm = FileManager.default
-            if let items = try? fm.contentsOfDirectory(atPath: docs.path) {
-                for item in items where item.hasPrefix("vitalsData_v") && item.hasSuffix(".json") {
-                    try? fm.removeItem(at: docs.appendingPathComponent(item))
-                }
-            }
-            UserDefaults.standard.set(true, forKey: storedVersionKey)
-        }
-
-        guard !FileManager.default.fileExists(atPath: storeURL.path) else { return }
-
-        do {
-            try FileManager.default.copyItem(at: bundleURL, to: storeURL)
-        } catch {
-            print("VitalDataStore: copy error — \(error)")
-        }
+    private static func emptyDefaultDTOs() -> [VitalReadingDTO] {
+        [
+            VitalReadingDTO(
+                title: "Heart Rate",
+                value: "--",
+                unit: "BPM",
+                subtitle: HeartRateSourceType.manual.subtitleText,
+                iconImageName: "HeartSymbol",
+                detailIconImageName: "HeartFill",
+                iconTintHex: "#CC1111",
+                chartType: "line",
+                chartColor: "red",
+                chartData: [],
+                weeklyChartData: [],
+                monthlyChartData: [],
+                hourlyChartData: [],
+                persistedHourlyChartData: [],
+                baselineValue: nil
+            ),
+            VitalReadingDTO(
+                title: "Blood Pressure",
+                value: "--",
+                unit: "mmHg",
+                subtitle: "No logged readings",
+                iconImageName: "Blood Symbol",
+                detailIconImageName: "DropFill",
+                iconTintHex: "#D43C2F",
+                chartType: "rangeBar",
+                chartColor: "red",
+                chartData: [],
+                weeklyChartData: [],
+                monthlyChartData: [],
+                hourlyChartData: [],
+                persistedHourlyChartData: [],
+                baselineValue: nil
+            ),
+            VitalReadingDTO(
+                title: "Blood Glucose",
+                value: "--",
+                unit: "mg/dL",
+                subtitle: BloodGlucoseType.fasting.subtitleText,
+                iconImageName: "Glucometer",
+                detailIconImageName: "GlucometerFill",
+                iconTintHex: "#1163C7",
+                chartType: "line",
+                chartColor: "blue",
+                chartData: [],
+                weeklyChartData: [],
+                monthlyChartData: [],
+                hourlyChartData: [],
+                persistedHourlyChartData: [],
+                baselineValue: nil
+            ),
+            VitalReadingDTO(
+                title: "Body Weight",
+                value: "--",
+                unit: "kg",
+                subtitle: "No logged readings",
+                iconImageName: "Body Symbol",
+                detailIconImageName: "BodyFill",
+                iconTintHex: "#5A8E38",
+                chartType: "baselineBar",
+                chartColor: "green",
+                chartData: [],
+                weeklyChartData: [],
+                monthlyChartData: [],
+                hourlyChartData: [],
+                persistedHourlyChartData: [],
+                baselineValue: nil
+            )
+        ]
     }
 
     private func persist(_ dtos: [VitalReadingDTO]) {

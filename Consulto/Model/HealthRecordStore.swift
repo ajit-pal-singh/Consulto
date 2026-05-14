@@ -8,7 +8,6 @@ final class HealthRecordStore {
     private let fileManager = FileManager.default
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
-    private let seededUserID = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
 
     private init() {
         decoder = JSONDecoder()
@@ -24,11 +23,15 @@ final class HealthRecordStore {
 
         do {
             let data = try Data(contentsOf: recordsFileURL())
-            return try decoder.decode([HealthRecord].self, from: data)
+            let records = try decoder.decode([HealthRecord].self, from: data)
+            let cleanedRecords = records.filter { !isLegacySeedRecord($0) }
+            if cleanedRecords.count != records.count {
+                try persist(cleanedRecords)
+            }
+            return cleanedRecords
         } catch {
-            let seedRecords = try loadSeedRecords()
-            try persist(seedRecords)
-            return seedRecords
+            try persist([])
+            return []
         }
     }
 
@@ -47,7 +50,7 @@ final class HealthRecordStore {
         var records = try loadRecords()
         let newRecord = HealthRecord(
             id: recordID,
-            userID: seededUserID,
+            userID: UserProfileStore.shared.current.id,
             title: title,
             recordType: recordType,
             healthFacilityName: healthFacilityName,
@@ -84,23 +87,8 @@ final class HealthRecordStore {
         }
     }
 
-    // MARK: - Asset path helper
-    // Seed records use "asset:imageName" convention to reference images bundled in Assets.xcassets
-    private func isAssetPath(_ path: String) -> Bool {
-        return path.hasPrefix("asset:")
-    }
-
-    private func assetName(from path: String) -> String {
-        return String(path.dropFirst("asset:".count))
-    }
-
     func previewImage(for record: HealthRecord) -> UIImage? {
         if let imageFile = record.files.first(where: { $0.fileType == .image }) {
-            // Check if this is a bundled asset image (from seed data)
-            if isAssetPath(imageFile.filePath) {
-                return UIImage(named: assetName(from: imageFile.filePath))
-            }
-            // Otherwise load from the Documents directory (user-added record)
             if let url = try? absoluteURL(forRelativePath: imageFile.filePath),
                let image = UIImage(contentsOfFile: url.path) {
                 return image
@@ -121,11 +109,7 @@ final class HealthRecordStore {
         
         for file in record.files {
             if file.fileType == .image {
-                // Check for bundled asset image first
-                if isAssetPath(file.filePath),
-                   let image = UIImage(named: assetName(from: file.filePath)) {
-                    images.append(image)
-                } else if let url = try? absoluteURL(forRelativePath: file.filePath),
+                if let url = try? absoluteURL(forRelativePath: file.filePath),
                           let image = UIImage(contentsOfFile: url.path) {
                     images.append(image)
                 }
@@ -141,31 +125,7 @@ final class HealthRecordStore {
     
     // Extracted absolute URL exposed for QuickLook native previewing
     func url(for file: RecordFile) -> URL? {
-        // Handle bundled asset images by saving them to a temporary URL for QuickLook
-        if isAssetPath(file.filePath) {
-            let name = assetName(from: file.filePath)
-            guard let image = UIImage(named: name),
-                  let data = image.jpegData(compressionQuality: 1.0) else { return nil }
-            
-            let tempURL = fileManager.temporaryDirectory.appendingPathComponent("\(name).jpg")
-            do {
-                try data.write(to: tempURL, options: .atomic)
-                return tempURL
-            } catch {
-                print("Failed to save temporary asset preview: \(error)")
-                return nil
-            }
-        }
-        
         return try? absoluteURL(forRelativePath: file.filePath)
-    }
-
-    private func loadSeedRecords() throws -> [HealthRecord] {
-        guard let url = Bundle.main.url(forResource: "seed_records", withExtension: "json") else {
-            throw NSError(domain: "HealthRecordStore", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing seed_records.json"])
-        }
-        let data = try Data(contentsOf: url)
-        return try decoder.decode([HealthRecord].self, from: data)
     }
 
     private func persist(_ records: [HealthRecord]) throws {
@@ -179,10 +139,11 @@ final class HealthRecordStore {
         let recordsURL = recordsFileURL()
         guard !fileManager.fileExists(atPath: recordsURL.path) else { return }
 
-        guard let seedURL = Bundle.main.url(forResource: "seed_records", withExtension: "json") else {
-            throw NSError(domain: "HealthRecordStore", code: 2, userInfo: [NSLocalizedDescriptionKey: "Missing seed_records.json"])
-        }
-        try fileManager.copyItem(at: seedURL, to: recordsURL)
+        try persist([])
+    }
+
+    private func isLegacySeedRecord(_ record: HealthRecord) -> Bool {
+        record.files.contains { $0.filePath.hasPrefix("asset:") }
     }
 
     private func ensureDirectoriesExist() throws {
